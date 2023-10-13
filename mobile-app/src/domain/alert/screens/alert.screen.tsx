@@ -1,4 +1,4 @@
-import CircleButton from '@/domain/alert/components/CircleButton';
+import CircleButton from '@/domain/alert/components/circle-button';
 import { AppScreen } from '@/shared/constants';
 import useLocation from '@/shared/hooks/useLocation';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
@@ -6,6 +6,7 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { styles } from './alert.screen.style';
 import { View, StyleSheet, Text } from 'react-native';
 
 export interface Props
@@ -32,11 +33,3 @@ const AlertScreen = () => {
 };
 
 export default AlertScreen;
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-});
