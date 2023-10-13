@@ -8,7 +8,10 @@ const useLocation = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isAllowed, setIsAllowed] = useState(false);
 	const [getLocation, setGetLocation] = useState(false);
-	const [regionName, setRegionName] = useState(false);
+	const [city, setCity] = useState<string | null>('');
+	const [country, setCountry] = useState<string | null>('');
+	const [street, setStreet] = useState<string | null>('');
+	const [streetNumber, setStreetNumber] = useState<string | null>('');
 
 	useEffect(() => {
 		(async () => {
@@ -21,6 +24,19 @@ const useLocation = () => {
 			setIsAllowed(true);
 
 			let location = await Location.getLastKnownPositionAsync({});
+			const place = await Location.reverseGeocodeAsync({
+				latitude: location?.coords.latitude as number,
+				longitude: location?.coords.longitude as number,
+			});
+
+			let city = place[0]['city'];
+			let country = place[0]['country'];
+			let street = place[0]['street'];
+			let streetNumber = place[0]['streetNumber'];
+			setCity(city);
+			setCountry(country);
+			setStreet(street);
+			setStreetNumber(streetNumber);
 			setLocation(location);
 			setIsLoading(false);
 		})();
@@ -32,6 +48,10 @@ const useLocation = () => {
 		isAllowed,
 		getLocation,
 		setGetLocation,
+		city,
+		country,
+		street,
+		streetNumber,
 	};
 };
 
