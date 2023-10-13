@@ -7,6 +7,7 @@ import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { View } from 'react-native';
 import { styles } from './contacts.screen.style';
+import { ScreenTemplate } from '@/shared/components';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -16,9 +17,9 @@ export interface Props
 
 const ContactsScreen = () => {
 	return (
-		<View style={styles.container}>
+		<ScreenTemplate>
 			<Label color='black'>Contacts</Label>
-		</View>
+		</ScreenTemplate>
 	);
 };
 
