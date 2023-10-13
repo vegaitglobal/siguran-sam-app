@@ -4,7 +4,8 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, View } from 'react-native';
+import { styles } from './contacts.screen.style';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -15,17 +16,11 @@ export interface Props
 const ContactsScreen = () => {
 	return (
 		<View style={styles.container}>
-			<Text>This is contacts screen</Text>
+			<View style={styles.content}>
+				<Text>This is contacts screen</Text>
+			</View>
 		</View>
 	);
 };
 
 export default ContactsScreen;
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-});

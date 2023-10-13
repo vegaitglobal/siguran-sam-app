@@ -1,6 +1,6 @@
 export enum AppScreen {
 	BOTTOM_TABS = 'Bottom tabs',
-	ALERT = 'Alert',
-	CONTACTS = 'Contacts',
-	EDUCATION = 'Education',
+	ALERT = 'Početna',
+	CONTACTS = 'Moji brojevi',
+	EDUCATION = 'Edukacija',
 }
