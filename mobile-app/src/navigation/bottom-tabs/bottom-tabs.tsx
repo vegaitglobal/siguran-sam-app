@@ -1,9 +1,9 @@
 import AlertScreen from '@/domain/alert/screens';
 import ContactsScreen from '@/domain/contacts/screens';
 import EducationScreen from '@/domain/education/screens';
+import { AppScreen } from '@/shared/constants';
+import { BottomTabsParamList } from '@/shared/types';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AppScreen } from 'src/shared/constants';
-import { BottomTabsParamList } from 'src/shared/types';
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
 

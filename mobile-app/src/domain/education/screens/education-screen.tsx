@@ -1,9 +1,9 @@
+import { AppScreen } from '@/shared/constants';
+import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { View, Text, StyleSheet } from 'react-native';
-import { AppScreen } from 'src/shared/constants';
-import { BottomTabsParamList, RootStackParamList } from 'src/shared/types';
 
 export interface Props
 	extends CompositeScreenProps<

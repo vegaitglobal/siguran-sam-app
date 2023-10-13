@@ -1,6 +1,6 @@
+import { AppScreen } from '@/shared/constants';
+import { RootStackParamList } from '@/shared/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AppScreen } from 'src/shared/constants';
-import { RootStackParamList } from 'src/shared/types';
 import BottomTabs from '../bottom-tabs';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

@@ -1,7 +1,6 @@
+import RootStack from '@/navigation/root-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-
-import RootStack from 'src/navigation/root-stack';
 
 export default function App() {
 	return (
