@@ -1,3 +1,4 @@
+import Icon from '@/shared/components/icon';
 import Label from '@/shared/components/label';
 import { AppScreen } from '@/shared/constants';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
