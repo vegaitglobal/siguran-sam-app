@@ -6,7 +6,7 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 
 export interface Props
 	extends CompositeScreenProps<
