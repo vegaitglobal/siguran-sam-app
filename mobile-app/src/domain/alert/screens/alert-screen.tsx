@@ -15,12 +15,18 @@ export interface Props
 	> {}
 
 const AlertScreen = () => {
-	const { location, isLoading, isAllowed } = useLocation();
+	const { location, isLoading, isAllowed, getLocation, setGetLocation } =
+		useLocation();
 	return (
 		<View style={styles.container}>
-			<CircleButton onPress={() => {}} />
+			<CircleButton
+				text='SIGURAN SAM'
+				onPress={() => setGetLocation(!getLocation)}
+			/>
+			<Text>Grad, Država</Text>
 			<Text>Lat: {location?.coords.latitude}</Text>
 			<Text>Long: {location?.coords.longitude}</Text>
+			<Text>Vaša poslednja poznata lokacija</Text>
 		</View>
 	);
 };

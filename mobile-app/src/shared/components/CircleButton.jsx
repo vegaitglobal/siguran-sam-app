@@ -1,10 +1,10 @@
 import { View, Pressable, StyleSheet, Text } from 'react-native';
 
-export default function CircleButton({ onPress }) {
+export default function CircleButton({ text, onPress }) {
 	return (
 		<View style={styles.circleButtonContainer}>
 			<Pressable onPress={onPress} style={styles.circleButton}>
-				<Text>SIGURAN SAM</Text>
+				<Text>{text}</Text>
 			</Pressable>
 		</View>
 	);
