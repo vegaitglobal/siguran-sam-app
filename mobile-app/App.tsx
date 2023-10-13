@@ -1,22 +1,13 @@
-import ExampleComponent from '@/domain/example-feature/components/example-component';
+import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+
+import RootStack from 'src/navigation/root-stack';
 
 export default function App() {
 	return (
-		<View style={styles.container}>
-			<Text>Open up App.tsx to start working on your app!</Text>
+		<NavigationContainer>
 			<StatusBar style='auto' />
-			<ExampleComponent exampleProp={1} />
-		</View>
+			<RootStack />
+		</NavigationContainer>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-});
