@@ -1,9 +1,10 @@
+import Label from '@/shared/components/label';
 import { AppScreen } from '@/shared/constants';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -14,7 +15,7 @@ export interface Props
 const EducationScreen = () => {
 	return (
 		<View style={styles.container}>
-			<Text>This is education screen</Text>
+			<Label color='black'>Education</Label>
 		</View>
 	);
 };

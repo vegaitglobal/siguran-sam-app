@@ -3,4 +3,5 @@ export enum AppScreen {
 	ALERT = 'Početna',
 	CONTACTS = 'Moji brojevi',
 	EDUCATION = 'Edukacija',
+	SPLASH = 'Splash',
 }
