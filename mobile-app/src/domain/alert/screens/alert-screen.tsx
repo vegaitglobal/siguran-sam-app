@@ -1,4 +1,4 @@
-import CircleButton from '@/shared/components/CircleButton';
+import CircleButton from '@/domain/alert/components/CircleButton';
 import { AppScreen } from '@/shared/constants';
 import useLocation from '@/shared/hooks/useLocation';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
