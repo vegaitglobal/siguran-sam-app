@@ -35,3 +35,5 @@ yarn-error.*
 *.tsbuildinfo
 
 .DS_Store
+
+package-lock.json
