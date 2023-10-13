@@ -6,6 +6,10 @@ import {
 } from '@expo-google-fonts/roboto';
 import { useMemo } from 'react';
 
+/**
+ *
+ * @returns true when app finishes initializing
+ */
 export const useAppInit = () => {
 	let [fontsLoaded, fontError] = useFonts({
 		Roboto_700Bold,
