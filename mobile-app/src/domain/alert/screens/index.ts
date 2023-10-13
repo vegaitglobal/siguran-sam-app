@@ -1,1 +1,1 @@
-export { default } from './alert-screen';
+export { default } from './alert.screen';
