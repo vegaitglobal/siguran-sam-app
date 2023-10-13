@@ -1,1 +1,1 @@
-export { default } from './contacts-screen';
+export { default } from './contacts/contacts.screen';
