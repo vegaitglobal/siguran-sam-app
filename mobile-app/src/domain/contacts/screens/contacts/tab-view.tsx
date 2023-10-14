@@ -1,5 +1,5 @@
 import Label from '@/shared/components/label';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 export const TabView = () => {
 	return (

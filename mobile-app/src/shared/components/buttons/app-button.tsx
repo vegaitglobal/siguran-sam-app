@@ -1,8 +1,7 @@
-import { WithChildren } from '@/shared/types';
 import React from 'react';
 import { Pressable, PressableProps, Text } from 'react-native';
-import { styles } from './app-button.style';
 import Icon, { IconName } from '../icon';
+import { styles } from './app-button.style';
 export type AppButtonType = 'red' | 'white' | 'gray';
 
 interface Props extends PressableProps {
@@ -13,14 +12,21 @@ interface Props extends PressableProps {
 export const AppButton = ({
 	type = 'red',
 	children,
-  icon,
-  style,
+	icon,
+	style,
+	disabled,
 	...props
 }: Props) => {
 	return (
-		<Pressable style={[styles.button, styles[type]]} {...props}>
+		<Pressable
+			style={[styles.button, styles[type], disabled && styles.disabled]}
+			disabled={disabled}
+			{...props}
+		>
 			{icon && <Icon name={icon} size={16} style={styles.icon} />}
-			<Text style={[styles.content, styles[type]]}>{children as String}</Text>
+			<Text style={[styles.content, styles[type], disabled && styles.disabled]}>
+				{children as String}
+			</Text>
 		</Pressable>
 	);
 };

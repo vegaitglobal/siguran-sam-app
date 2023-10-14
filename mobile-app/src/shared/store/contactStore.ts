@@ -1,22 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { Contact } from '../types';
 
-export type Contact = {
-	name: string;
-	phoneNumber: string;
-	id: string;
-};
 interface ContactStoreState {
 	contacts: Contact[];
 }
-class DuplicateContactError extends Error {
+export class DuplicateContactError extends Error {
 	constructor(message: string) {
 		super(message);
 		this.name = 'Duplicate contact';
 	}
 }
-class ContactsFullError extends Error {
+export class ContactsFullError extends Error {
 	constructor(message: string) {
 		super(message);
 		this.name = 'Emergency contacts full';
@@ -45,10 +41,12 @@ export const addContact = (contact: Contact): Contact[] => {
 			'Emergency contacts cannot exceed max capacity.'
 		);
 	}
-	if (contactStore.getState().contacts.includes(contact)) {
+	if (
+		contactStore.getState().contacts.find((c) => c.number === contact.number)
+	) {
 		throw new DuplicateContactError(
 			'Contact with number: ' +
-				contact.phoneNumber +
+				contact.number +
 				' and name ' +
 				contact.name +
 				' already exists.'
@@ -62,11 +60,9 @@ export const addContact = (contact: Contact): Contact[] => {
 	return getContacts();
 };
 
-export const deleteContact = (contact: Contact): Contact[] => {
+export const deleteContact = (number: string): Contact[] => {
 	contactStore.setState((state) => ({
-		contacts: state.contacts.filter(
-			(c) => contact.phoneNumber !== c.phoneNumber
-		),
+		contacts: state.contacts.filter((c) => number !== c.number),
 	}));
 	return getContacts();
 };
