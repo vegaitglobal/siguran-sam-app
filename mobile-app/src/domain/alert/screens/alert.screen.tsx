@@ -13,6 +13,7 @@ import sendSMS from '../services/sms-service';
 import { Fragment, useState } from 'react';
 import * as Location from 'expo-location';
 import getLocation from '../services/location-service';
+import { AppButton } from '@/shared/components';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -43,10 +44,9 @@ const AlertScreen = () => {
 						<Label style={{ marginBottom: 16 }}>
 							Molim Vas prihvatite permisije za lokaciju.
 						</Label>
-						<Button
-							title='Settings'
-							onPress={() => Linking.openSettings()}
-						></Button>
+						<AppButton onPress={() => Linking.openSettings()}>
+							PODEŠAVANJA
+						</AppButton>
 					</View>
 				</Fragment>
 			) : (
