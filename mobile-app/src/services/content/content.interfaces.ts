@@ -1,5 +1,19 @@
+interface Category {
+	id: string;
+	title: string;
+	description: string;
+	iconURL: string;
+}
+
+interface BlogPost {
+	id: string;
+	title: string;
+	category: string;
+	heroImageURL: string;
+	thumbnailURL: string;
+}
+
 export interface ContentService {
-	GetCategories: () => Promise<Category[]>;
-	GetBlogPosts: (categoryID: string) => Promise<BlogPost[]>;
-	GetAsset: (assetID: string) => Promise<Asset>;
+	getCategories: () => Promise<Category[]>;
+	getBlogPosts: (categoryID: string) => Promise<BlogPost[]>;
 }

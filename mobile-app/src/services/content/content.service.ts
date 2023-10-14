@@ -1,91 +1,71 @@
-import { ContentfulClientApi, createClient } from 'contentful';
+import * as Contentful from 'contentful';
 import { ContentService } from './content.interfaces';
 
+type CategoryEntrySkeleton = {
+	contentTypeId: 'category';
+	fields: {
+		title: Contentful.EntryFieldTypes.Text;
+		description: Contentful.EntryFieldTypes.Text;
+		icon: Contentful.EntryFieldTypes.AssetLink;
+	};
+};
+
+type BlogPostEntrySkeleton = {
+	contentTypeId: 'blogPost';
+	fields: {
+		title: Contentful.EntryFieldTypes.Text;
+		heroImage: Contentful.EntryFieldTypes.AssetLink;
+		category: Contentful.EntryFieldTypes.EntryLink<CategoryEntrySkeleton>;
+		content: Contentful.EntryFieldTypes.RichText;
+	};
+};
+
 class ContentfulContentService implements ContentService {
-	private client: ContentfulClientApi<undefined>;
-	constructor(
-		private readonly spaceID: string,
-		private readonly accessToken: string
-	) {
-		this.client = createClient({
+	private client: Contentful.ContentfulClientApi<undefined>;
+	constructor(spaceID: string, accessToken: string) {
+		this.client = Contentful.createClient({
 			space: spaceID,
 			accessToken,
 		});
 	}
 
-	async GetCategories(): Promise<Category[]> {
-		const data = await this.client.getEntries({
+	async getCategories() {
+		const data = await this.client.getEntries<CategoryEntrySkeleton>({
 			content_type: 'category',
 			include: 1,
 		});
 
-		console.log(data.items[0]);
-
-		return [];
-
-		// return data.items.map((item) => ({
-		// 	id: item.sys.id,
-		// 	title: item.fields.title,
-		// 	description: item.fields.description,
-		// 	iconURL: item.fields.icon.sys.id,
-		// }));
+		return data.items.map((item) => {
+			const icon = item.fields.icon as Contentful.Asset;
+			return {
+				id: item.sys.id,
+				title: item.fields.title,
+				description: item.fields.description,
+				iconURL: icon.fields.file?.url as string,
+			};
+		});
 	}
 
-	async GetBlogPosts(categoryID: string): Promise<BlogPost[]> {
-		const data = await this.client.getEntries({ content_type: 'blogPost' });
+	async getBlogPosts(categoryID: string) {
+		const data = await this.client.getEntries<BlogPostEntrySkeleton>({
+			content_type: 'blogPost',
+			include: 1,
+			'fields.category.sys.id': categoryID,
+		});
 
-		console.log(data.items[0]);
+		return data.items.map((item) => {
+			const category = item.fields
+				.category as Contentful.Entry<CategoryEntrySkeleton>;
+			const image = item.fields.heroImage as Contentful.Asset;
 
-		return [];
-
-		// const blogPostContent: BlogPostContent[] =
-		// 	blogPostItem.fields.content.content.map((richContentItem: any) => {
-		// 		const contentValue = richContentItem.content.map(
-		// 			(contentData: any) => contentData.value
-		// 		);
-
-		// 		return {
-		// 			type: richContentItem.nodeType,
-		// 			values: contentValue,
-		// 		};
-		// 	});
-
-		// return {
-		// 	id: blogPostItem.sys.id,
-		// 	title: blogPostItem.fields.title,
-		// 	categoryId: blogPostItem.fields.category.sys.id,
-		// 	heroImageURL: blogPostItem.fields.heroImage.sys.id,
-		// 	thumbnailURL: blogPostItem.fields.heroImage.sys.id,
-		// 	content: blogPostContent,
-		// };
-	}
-
-	async GetAsset(assetID: string): Promise<Asset> {
-		const asset = await this.client.getAsset(assetID);
-		const file = asset.fields.file;
-		if (!file) {
-			throw new Error('Asset does not have a file');
-		}
-
-		try {
-			if (file.contentType.startsWith('image/')) {
-				return {
-					assetURL: file.url,
-					assetType: AssetType.IMAGE,
-				};
-			} else if (file.contentType.startsWith('video/')) {
-				return {
-					assetURL: file.url,
-					assetType: AssetType.VIDEO,
-				};
-			} else {
-				console.log('Asset is not an image or a video.');
-				throw new Error('Asset is not an image or a video.');
-			}
-		} catch (error) {
-			console.error('Error fetching asset:', error);
-			throw error;
-		}
+			return {
+				id: item.sys.id,
+				title: item.fields.title,
+				category: category.fields.title as string,
+				heroImageURL: image.fields.file?.url as string,
+				thumbnailURL: image.fields.file?.url as string,
+			};
+		});
 	}
 }
 
