@@ -13,23 +13,29 @@ class NewRelicTrackingService implements TrackingService {
 
 	public track(event: ApplicationEvent) {
 		switch (event.name) {
-			case (EventType.ApplicationOpened, EventType.OnboardingFinished):
+			case (EventType.ApplicationOpened, EventType.OnboardingFinished): {
+				const attributes = new Map().set('deviceId', event.deviceId);
+
 				return NewRelic.recordCustomEvent(
 					event.name,
 					event.deviceId,
-					new Map().set('deviceId', event.deviceId)
+					attributes
 				);
+			}
 
-			case (EventType.ContactAdded, EventType.ContactRemoved):
+			case (EventType.ContactAdded, EventType.ContactRemoved): {
+				const attributes = new Map()
+					.set('deviceId', event.deviceId)
+					.set('totalContacts', event.totalContacts);
+
 				return NewRelic.recordCustomEvent(
 					event.name,
 					event.deviceId,
-					new Map()
-						.set('deviceId', event.deviceId)
-						.set('totalContacts', event.totalContacts)
+					attributes
 				);
+			}
 
-			case EventType.EmergencyRequested:
+			case EventType.EmergencyRequested: {
 				const attributes = new Map()
 					.set('deviceId', event.deviceId)
 					.set('batteryPercentage', event.context.device.batteryPercentage)
@@ -46,6 +52,7 @@ class NewRelicTrackingService implements TrackingService {
 					event.deviceId,
 					attributes
 				);
+			}
 		}
 	}
 }
