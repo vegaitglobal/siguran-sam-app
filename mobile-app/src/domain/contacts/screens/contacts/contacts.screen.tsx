@@ -93,9 +93,9 @@ const ContactsScreen = () => {
 
 	return (
 		<ScreenTemplate>
-			<TabView  />
+			<TabView />
 			<ContactListWidget />
-			<SaveButton onPress={handleSave}  />
+			<SaveButton onPress={handleSave} />
 
 			<ContactPickerScreen
 				visible={isModalVisible}
