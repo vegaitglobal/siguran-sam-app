@@ -12,7 +12,6 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
 import { AppButton } from '@/shared/components';
 import useLocation from '@/shared/hooks/use-location';
-import useAppIsActive from '@/shared/hooks/use-app-is-active';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -29,8 +28,6 @@ const AlertScreen = () => {
 		country,
 		street,
 		streetNumber,
-		altitude,
-		accuracy,
 		setLocationProperties,
 	} = useLocation();
 
@@ -51,7 +48,6 @@ const AlertScreen = () => {
 				}
 
 				appState.current = nextAppState;
-				console.log('AppState', appState.current);
 			}
 		);
 
@@ -96,11 +92,9 @@ const AlertScreen = () => {
 					<Label type='pItalic'>
 						{location?.coords.latitude}° N, {location?.coords.longitude}° E
 					</Label>
-					<Label type='pItalic'>Preciznost: {Math.round(accuracy)}m</Label>
-					<Label type='pItalic'>
-						Nadmorska visina: {altitude !== null ? Math.round(altitude) : 0}m
+					<Label type='pItalic' style={{ marginTop: 12 }}>
+						Vaša poslednja poznata lokacija
 					</Label>
-					<Label type='p2'>Vaša poslednja poznata lokacija</Label>
 				</Fragment>
 			)}
 		</View>

@@ -1,18 +1,24 @@
 import * as SMS from 'expo-sms';
-import * as Location from 'expo-location';
+import { Platform } from 'react-native';
+import getLocation from './location-service';
 
 const sendSMS = async () => {
 	const isAvailable = await SMS.isAvailableAsync();
 	if (isAvailable) {
 		try {
-			const location = await Location.getCurrentPositionAsync({
-				accuracy: Location.Accuracy.Highest,
-			});
-			const androidContacts = '+381693367282, +381612855223';
-			const iOSContacts = ['+381612855223', '+381693367282'];
+			const location = await getLocation();
+
+			// contacts = getContacts(Platform.OS)
+			let contacts;
+			if (Platform.OS === 'ios') {
+				contacts = ['123456', '555666'];
+			} else {
+				contacts = '123456, 555666';
+			}
+			// const message = getMessage()
 			const message = `Hello, I am in danger. My current location is: https://maps.google.com/?q=${location?.coords.latitude},${location?.coords.longitude}`;
 
-			const { result } = await SMS.sendSMSAsync(androidContacts, message);
+			const { result } = await SMS.sendSMSAsync(contacts, message);
 
 			switch (result) {
 				case 'cancelled':
