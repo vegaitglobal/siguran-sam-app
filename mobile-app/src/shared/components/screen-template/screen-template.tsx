@@ -11,8 +11,8 @@ interface Props extends WithChildren {
 
 export const ScreenTemplate = ({
 	children,
-	safeAreaTop,
-	safeAreaBottom,
+	safeAreaTop = true,
+	safeAreaBottom = true,
 }: Props) => {
 	const { top, bottom } = useSafeAreaInsets();
 
