@@ -24,10 +24,21 @@ export const contactStore = create<ContactStoreState>()(
 
 export const getContacts = () => contactStore.getState();
 
-export const addContact = (contact: Contact) =>
+export const addContact = (contact: Contact) => {
+	if (contactStore.getState().contacts.includes(contact)) {
+		throw new Error(
+			'Contact with number: ' +
+				contact.phoneNumber +
+				' and name ' +
+				contact.name +
+				' already exists.'
+		);
+	}
+
 	contactStore.setState((state) => ({
 		contacts: [...state.contacts, contact],
 	}));
+};
 
 export const deleteContact = (contact: Contact) =>
 	contactStore.setState((state) => ({
