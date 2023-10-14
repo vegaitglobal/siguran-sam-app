@@ -10,6 +10,7 @@ import { useCallback, useMemo, useState } from 'react';
 import Label from '@/shared/components/label';
 import StepIndicator from '../../components/step-indicator';
 import MainOnboardingComponent from '../../components/main-onboarding-component/main-onboarding-component';
+import { useUserInfoStore } from '@/shared/store/useUserInfoStore';
 
 const MAX_STEP = 8;
 
@@ -18,6 +19,7 @@ export interface Props
 
 const OnboardingScreen = () => {
 	const [step, setStep] = useState(1);
+	const [name, setName] = useState(useUserInfoStore.getState().name);
 
 	const nextStep = useCallback(() => {
 		setStep((previous) => {
@@ -44,8 +46,10 @@ const OnboardingScreen = () => {
 	const isNextDisabled = useMemo(() => {
 		if (step === MAX_STEP) return true;
 
+		if (step === 7 && !name) return true;
+
 		return false;
-	}, [step]);
+	}, [step, name]);
 	return (
 		<ScreenTemplate>
 			<StatusBar style='light' />
@@ -53,7 +57,11 @@ const OnboardingScreen = () => {
 				<StepIndicator step={step} />
 			</View>
 			<View style={styles.mainContentContainer}>
-				<MainOnboardingComponent step={step} />
+				<MainOnboardingComponent
+					step={step}
+					name={name}
+					onChangeName={setName}
+				/>
 			</View>
 			<View style={styles.buttonsContainer}>
 				<BackButton disabled={isBackDisabled} onPress={previousStep} />
