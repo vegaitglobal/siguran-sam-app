@@ -7,7 +7,8 @@ import { CompositeScreenProps } from '@react-navigation/native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { View, Text } from 'react-native';
+import { Button, View } from 'react-native';
+import Label from '@/shared/components/label';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -24,23 +25,31 @@ const AlertScreen = () => {
 		country,
 		street,
 		streetNumber,
+		altitude,
+		missRadiusInMeters,
 		setLocationProperties,
 		resetState,
 	} = useLocation();
 	return (
 		<View style={styles.container}>
 			<CircleButton text='SIGURAN SAM' onPress={setLocationProperties} />
-			<Text>
+			<Label type='pItalic'>
 				{city}, {country}
-			</Text>
-			<Text>
+			</Label>
+			<Label type='pItalic'>
 				{street}, {streetNumber}
-			</Text>
-			<Text>
+			</Label>
+			<Label type='pItalic'>
 				{location?.coords.latitude}° N, {location?.coords.longitude}° E
-			</Text>
-			<Text>Vaša poslednja poznata lokacija</Text>
-			<CircleButton text='RESET' onPress={resetState} />
+			</Label>
+			<Label type='pItalic'>
+				Preciznost: {Math.round(missRadiusInMeters)}m
+			</Label>
+			<Label type='pItalic'>
+				Nadmorska visina: {altitude !== null ? Math.round(altitude) : 0}m
+			</Label>
+			<Label type='pItalic'>Vaša poslednja poznata lokacija</Label>
+			<Button title='RESET' onPress={resetState} />
 		</View>
 	);
 };
