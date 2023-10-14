@@ -2,9 +2,16 @@ import { View } from 'react-native';
 import { AppButton } from '../buttons';
 import { styles } from './contact-list-widget.style';
 import { ContactList } from '../contacts-list';
-import { ContactInput } from '../contact-input';
+import { ContactInput, PhoneNumber } from '../contact-input';
 import { Contact } from '@/shared/types';
 import React, { useState, useMemo } from 'react';
+import {
+	ContactsFullError,
+	DuplicateContactError,
+	addContact,
+	contactStore,
+	deleteContact,
+} from '@/shared/store/contactStore';
 
 const dummyContacts: Contact[] = [
 	{
@@ -27,17 +34,39 @@ const dummyContacts: Contact[] = [
 	},
 ];
 
-const MAX_CONTACTS_NUMBER = 5;
-
-const PHONE_NUMBER_REGEXP = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+const PHONE_NUMBER_REGEXP =
+	/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 
 export const ContactListWidget = () => {
-	const [contacts, setContacts] = useState(dummyContacts);
-	const [newContact, setNewContact] = useState('');
+	const contacts = contactStore().contacts;
+
+	const [newPhoneNumber, setNewPhoneNumber] = useState<PhoneNumber>({
+		mainNumberPart: '',
+		callingNumber: '',
+	});
+
+	const handleNewContactChange = (number: PhoneNumber) => {
+		setNewPhoneNumber(number);
+	};
+
+	const fullNumber = useMemo(
+		() => `${newPhoneNumber.callingNumber}${newPhoneNumber.mainNumberPart}`,
+		[newPhoneNumber]
+	);
 
 	const handleAddContact = () => {
-		setContacts((prev) => [...prev, { number: newContact }]);
-		// TODO persist
+		try {
+			addContact({ number: fullNumber });
+			setNewPhoneNumber({ mainNumberPart: '', callingNumber: '' });
+		} catch (err) {
+			if (err instanceof DuplicateContactError) {
+				alert('Već postoji kontakt sa unetim brojem');
+			} else if (err instanceof ContactsFullError) {
+				alert('Uneli ste maksimalan broj kontakata');
+			} else {
+				alert('¯\\_(ツ)_/¯');
+			}
+		}
 	};
 
 	const handleImportContacts = () => {
@@ -45,19 +74,18 @@ export const ContactListWidget = () => {
 	};
 
 	const handleDeleteListItem = (number: string) => {
-		setContacts((prev) => prev.filter((c) => c.number != number));
-		// TODO persist
+		deleteContact(number);
 	};
 
 	const isNumberValid = useMemo(
-		() => newContact.match(PHONE_NUMBER_REGEXP),
-		[newContact]
+		() => fullNumber.match(PHONE_NUMBER_REGEXP),
+		[fullNumber]
 	);
 
 	return (
 		<View>
 			<ContactList contacts={contacts} onDeleteItem={handleDeleteListItem} />
-			<ContactInput onChange={setNewContact} />
+			<ContactInput onChange={handleNewContactChange} number={newPhoneNumber} />
 			<View style={styles.addButton}>
 				<AppButton onPress={handleAddContact} disabled={!isNumberValid}>
 					+ DODAJ

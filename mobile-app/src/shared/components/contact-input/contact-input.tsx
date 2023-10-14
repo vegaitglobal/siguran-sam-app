@@ -4,22 +4,35 @@ import { TextInput, View } from 'react-native';
 import { styles } from './contact-input.style';
 import { CountryPicker, countries } from './country-picker/country-picker';
 
-interface Props {
-	onChange?: (number: string) => void;
+export interface PhoneNumber {
+	callingNumber: string;
+	mainNumberPart: string;
 }
 
-export const ContactInput = ({ onChange }: Props) => {
-	const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0]);
-	const [phoneNumber, setPhoneNumber] = useState<string>();
+interface Props {
+	onChange?: (number: PhoneNumber) => void;
+	number: PhoneNumber;
+}
+
+export const ContactInput = ({ onChange, number }: Props) => {
+	const [selectedCountry, setSelectedCountry] = useState<Country>(
+		countries.find((c) => c.callingNumber === number.callingNumber) ||
+			countries[0]
+	);
 
 	const onNumberChange = (value: string) => {
-		setPhoneNumber(value);
-		onChange?.(`${selectedCountry.callingNumber}${value}`);
+		onChange?.({
+			callingNumber: selectedCountry.callingNumber,
+			mainNumberPart: value,
+		});
 	};
 
 	const onCountryChange = (country: Country) => {
 		setSelectedCountry(country);
-		onChange?.(`${country.callingNumber}${phoneNumber}`);
+		onChange?.({
+			callingNumber: country.callingNumber,
+			mainNumberPart: number.mainNumberPart,
+		});
 	};
 
 	return (
@@ -34,7 +47,7 @@ export const ContactInput = ({ onChange }: Props) => {
 					keyboardType='number-pad'
 					placeholder='123 456'
 					onChangeText={onNumberChange}
-					value={phoneNumber}
+					value={number.mainNumberPart}
 				/>
 			</View>
 		</View>
