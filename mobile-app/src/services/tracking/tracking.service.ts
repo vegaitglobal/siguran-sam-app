@@ -1,15 +1,15 @@
-import contentful from 'contentful-management';
-
+// @ts-nocheck
+import { createClient, ClientAPI } from 'contentful-management';
 import { ApplicationEvent, TrackingService } from './tracking.interfaces';
 
 class ContentfulTrackingService implements TrackingService {
-	private client: contentful.ClientAPI;
+	private client: ClientAPI;
 
 	constructor(
 		accessToken: string,
 		private space: string
 	) {
-		this.client = contentful.createClient({
+		this.client = createClient({
 			accessToken,
 			space,
 		});
@@ -23,7 +23,12 @@ class ContentfulTrackingService implements TrackingService {
 			.then((space) => space.getEnvironment('master'));
 
 		return environment.createEntry(name, {
-			fields,
+			fields: Object.keys(fields).reduce(
+				(acc: { [key: string]: any }, key: string) => {
+					return (acc[key] = { 'en-US': fields[key] });
+				},
+				{}
+			),
 		});
 	}
 }
