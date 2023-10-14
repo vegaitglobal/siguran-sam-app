@@ -4,6 +4,7 @@ import EducationHat from '@/shared/assets/icons/education-hat.svg';
 import Hamburger from '@/shared/assets/icons/hamburger.svg';
 import ArrowBack from '@/shared/assets/icons/arrow-back.svg';
 import TrashCan from '@/shared/assets/icons/trash-can.svg';
+import AddUser from '@/shared/assets/icons/add-user.svg';
 
 export const iconComponents = {
 	home: Home,
@@ -12,6 +13,7 @@ export const iconComponents = {
 	hamburger: Hamburger,
 	'arrow-back': ArrowBack,
 	'trash-can': TrashCan,
+	'add-user': AddUser,
 };
 
 export type IconName = keyof typeof iconComponents;
