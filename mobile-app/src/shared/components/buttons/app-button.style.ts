@@ -29,4 +29,8 @@ export const styles = StyleSheet.create({
 		backgroundColor: Colors.GRAY.PRIMARY,
 		color: 'white',
 	},
+	disabled: {
+		backgroundColor: Colors.GRAY.DISABLED,
+		color: 'white',
+	},
 });
