@@ -6,7 +6,12 @@ class TwilioSMSService implements ISMSProvider<string[]> {
 
   constructor() { 
     this.recipientLimit = parseInt(process.env.REACT_APP_RECIPIENT_LIMIT ?? '10', 10);
-    this.twilioFunctionUrl = process.env.REACT_APP_TWILIO_SERVERLESS_FUNCTION_URL ?? '';
+
+    if(!process.env.REACT_APP_TWILIO_SERVERLESS_FUNCTION_URL) {
+      throw new Error("Twilio serverless function url not set");
+    }
+    
+    this.twilioFunctionUrl = process.env.REACT_APP_TWILIO_SERVERLESS_FUNCTION_URL;
   }
 
   async sendSMS(to: string[], body: string): Promise<string[]> {
