@@ -22,6 +22,7 @@ const BackButton = ({ disabled, style, ...otherProps }: Props) => {
 
 	return (
 		<TouchableOpacity
+			disabled={disabled}
 			style={[dynamicStyles, styles.buttonContainer, style]}
 			{...otherProps}
 		>

@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 import AppInput from '@/shared/components/app-input';
 import Label from '@/shared/components/label';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { ContactListWidget } from '@/shared/components';
 
 interface Props {
 	step: number;
@@ -29,6 +30,20 @@ const MainOnboardingComponent = ({ step, name, onChangeName }: Props) => {
 					onChangeText={onChangeName}
 					placeholder='Unesite Vaše ime i prezime'
 				/>
+			</Animated.View>
+		);
+
+	if (step === 8)
+		return (
+			<Animated.View
+				entering={FadeIn}
+				exiting={FadeOut}
+				style={styles.container}
+			>
+				<Label type='h1' style={styles.labelStyle}>
+					Dodaj kontakte
+				</Label>
+				<ContactListWidget />
 			</Animated.View>
 		);
 	return null;
