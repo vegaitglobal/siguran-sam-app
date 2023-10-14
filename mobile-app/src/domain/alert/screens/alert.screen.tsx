@@ -7,8 +7,12 @@ import { CompositeScreenProps } from '@react-navigation/native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { Button, View } from 'react-native';
+import { Button, Linking, Platform, View } from 'react-native';
 import Label from '@/shared/components/label';
+import sendSMS from '../services/sms-service';
+import { Fragment, useState } from 'react';
+import * as Location from 'expo-location';
+import getLocation from '../services/location-service';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -17,6 +21,7 @@ export interface Props
 	> {}
 
 const AlertScreen = () => {
+	const [userDidPressButton, setUserDidPressButton] = useState(false);
 	const {
 		location,
 		isLoading,
@@ -32,22 +37,48 @@ const AlertScreen = () => {
 	} = useLocation();
 	return (
 		<View style={styles.container}>
-			<CircleButton text='SIGURAN SAM' onPress={setLocationProperties} />
-			<Label type='pItalic'>
-				{city}, {country}
-			</Label>
-			<Label type='pItalic'>
-				{street}, {streetNumber}
-			</Label>
-			<Label type='pItalic'>
-				{location?.coords.latitude}° N, {location?.coords.longitude}° E
-			</Label>
-			<Label type='pItalic'>Preciznost: {Math.round(accuracy)}m</Label>
-			<Label type='pItalic'>
-				Nadmorska visina: {altitude !== null ? Math.round(altitude) : 0}m
-			</Label>
-			<Label type='pItalic'>Vaša poslednja poznata lokacija</Label>
-			<Button title='RESET' onPress={resetState} />
+			{!isAllowed ? (
+				<Fragment>
+					<View>
+						<Label style={{ marginBottom: 16 }}>
+							Molim Vas prihvatite permisije za lokaciju.
+						</Label>
+						<Button
+							title='Settings'
+							onPress={() => Linking.openSettings()}
+						></Button>
+					</View>
+				</Fragment>
+			) : (
+				<Fragment>
+					{userDidPressButton && <Label>Držite dugme duže od 2 sekunde</Label>}
+					<CircleButton
+						text='SIGURAN SAM'
+						onPress={() => {
+							setUserDidPressButton(true);
+						}}
+						onLongPress={() => {
+							sendSMS();
+							setUserDidPressButton(false);
+						}}
+					/>
+					<Label>
+						{city}, {country}
+					</Label>
+					<Label type='pItalic'>
+						{street}, {streetNumber}
+					</Label>
+					<Label type='pItalic'>
+						{location?.coords.latitude}° N, {location?.coords.longitude}° E
+					</Label>
+					<Label type='pItalic'>Preciznost: {Math.round(accuracy)}m</Label>
+					<Label type='pItalic'>
+						Nadmorska visina: {altitude !== null ? Math.round(altitude) : 0}m
+					</Label>
+					<Label type='p2'>Vaša poslednja poznata lokacija</Label>
+					<Button title='RESET' onPress={resetState} />
+				</Fragment>
+			)}
 		</View>
 	);
 };

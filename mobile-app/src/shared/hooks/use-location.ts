@@ -27,9 +27,7 @@ const useLocation = () => {
 		}
 		setIsAllowed(true);
 
-		let location = await Location.getCurrentPositionAsync({
-			accuracy: Location.Accuracy.Highest,
-		});
+		let location = await Location.getLastKnownPositionAsync();
 
 		let accuracy = location?.coords.accuracy;
 		let altitude = location?.coords.altitude;
@@ -47,7 +45,7 @@ const useLocation = () => {
 		setCountry(country);
 		setStreet(street);
 		setStreetNumber(streetNumber);
-		setAltitude(altitude);
+		setAltitude(altitude as number);
 		setAccuracy(accuracy as number);
 		setLocation(location);
 		setIsLoading(false);
