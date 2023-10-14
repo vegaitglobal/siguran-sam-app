@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import NextButton from '../../components/next-button';
 import BackButton from '../../components/back-button';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Label from '@/shared/components/label';
 
 const MAX_STEP = 8;
@@ -34,6 +34,17 @@ const OnboardingScreen = () => {
 		});
 	}, []);
 
+	const isBackDisabled = useMemo(() => {
+		if (step === 1) return true;
+
+		return false;
+	}, [step]);
+
+	const isNextDisabled = useMemo(() => {
+		if (step === MAX_STEP) return true;
+
+		return false;
+	}, [step]);
 	return (
 		<ScreenTemplate>
 			<StatusBar style='light' />
@@ -41,8 +52,8 @@ const OnboardingScreen = () => {
 				<Label>{step}</Label>
 			</View>
 			<View style={styles.buttonsContainer}>
-				<BackButton onPress={previousStep} />
-				<NextButton onPress={nextStep} />
+				<BackButton disabled={isBackDisabled} onPress={previousStep} />
+				<NextButton disabled={isNextDisabled} onPress={nextStep} />
 			</View>
 		</ScreenTemplate>
 	);
