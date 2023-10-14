@@ -7,7 +7,7 @@ type DeviceContext = {
 type LocationContext = {
 	longitude: number;
 	latitude: number;
-	altitude:number;
+	altitude: number;
 	//altitude!!
 	//slanje linka za google maps?
 	timestamp: string;
@@ -33,28 +33,27 @@ export enum EventType {
 
 type BaseEventData = {
 	deviceId: string;
-	//vreme: Timestamp;
+	timestamp: Timestamp;
 };
 
 type TrackApplicationOpen = BaseEventData & {
-	event: EventType.ApplicationOpened;
+	name: EventType.ApplicationOpened;
 };
 
 type TrackOnboardingFinished = BaseEventData & {
-	event: EventType.OnboardingFinished;    //treba li nam broj kontakata
+	name: EventType.OnboardingFinished;
 };
 
 type TrackContactChanged = BaseEventData & {
-	event: EventType.ContactAdded | EventType.ContactRemoved;
+	name: EventType.ContactAdded | EventType.ContactRemoved;
 	totalContacts: number;
-	// TODO: Contact info -> country | number | etc?
 };
 
 type TrackEmergencyRequest = BaseEventData & {
-	event: EventType.EmergencyRequested;
-	totalContacts: number;
+	name: EventType.EmergencyRequested;
+	recipients: string[];
+	delayedFrom?: string;
 	context: EmergencyContext;
-	delayedFrom?:string;
 };
 
 export type ApplicationEvent =
@@ -64,9 +63,5 @@ export type ApplicationEvent =
 	| TrackEmergencyRequest;
 
 export interface TrackingService {
-	track: (event: ApplicationEvent) => Promise<void>;
+	track: (event: ApplicationEvent) => void;
 }
-
-
-
-
