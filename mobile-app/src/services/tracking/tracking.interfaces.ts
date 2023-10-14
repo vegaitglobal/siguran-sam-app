@@ -1,4 +1,4 @@
-enum EventType {
+export enum EventType {
 	OnboardingFinished = 'onboardingFinished',
 	EmergencyRequested = 'emergencyRequested',
 }
