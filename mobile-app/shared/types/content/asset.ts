@@ -1,8 +1,8 @@
-export enum AssetType {
+enum AssetType {
     IMAGE = "image",
     VIDEO = "video"
 }
-export interface Asset {
+interface Asset {
     assetURL: string,
     assetType: AssetType
 }

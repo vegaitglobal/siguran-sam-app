@@ -1,6 +1,4 @@
-import {BlogPostContent} from "./blog-post-content";
-
-export interface BlogPost {
+interface BlogPost {
     id: string;
     title: string;
     categoryID: string;
