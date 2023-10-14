@@ -1,5 +1,6 @@
 import * as Contentful from 'contentful';
 import { ContentService } from './content.interfaces';
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
 type CategoryEntrySkeleton = {
 	contentTypeId: 'category';
@@ -64,6 +65,7 @@ class ContentfulContentService implements ContentService {
 				category: category.fields.title as string,
 				heroImageURL: image.fields.file?.url as string,
 				thumbnailURL: image.fields.file?.url as string,
+				content: documentToReactComponents(item.fields.content),
 			};
 		});
 	}
