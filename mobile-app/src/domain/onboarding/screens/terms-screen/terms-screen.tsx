@@ -4,8 +4,9 @@ import { AppScreen } from '@/shared/constants';
 import { RootStackParamList } from '@/shared/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import LogoWithText from '@/shared/assets/images/logo-with-text.svg';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 export interface Props
 	extends NativeStackScreenProps<RootStackParamList, AppScreen.TERMS> {}
@@ -18,8 +19,13 @@ const TermsScreen = ({ navigation }: Props) => {
 	return (
 		<ScreenTemplate>
 			<StatusBar style='light' />
-			<LogoWithText style={styles.logo} />
-			<View style={styles.screenContainer}>
+			<Animated.View entering={FadeIn.delay(500)}>
+				<LogoWithText style={styles.logo} />
+			</Animated.View>
+			<Animated.View
+				entering={FadeIn.delay(500)}
+				style={styles.screenContainer}
+			>
 				<Label type='h1' style={styles.title}>
 					Uslovi korišćenja
 				</Label>
@@ -34,10 +40,12 @@ const TermsScreen = ({ navigation }: Props) => {
 					more recently with desktop publishing software like Aldus PageMaker
 					including versions of Lorem Ipsum.
 				</Label>
-			</View>
-			<AppButton onPress={acceptOnPressHandler}>
-				PRIHVATI USLOVE KORIŠĆENJA
-			</AppButton>
+			</Animated.View>
+			<Animated.View entering={FadeIn.delay(500)}>
+				<AppButton onPress={acceptOnPressHandler}>
+					PRIHVATI USLOVE KORIŠĆENJA
+				</AppButton>
+			</Animated.View>
 		</ScreenTemplate>
 	);
 };
