@@ -18,6 +18,7 @@ const BottomTabs = () => {
 				tabBarActiveTintColor: Colors.RED.SECONDARY,
 				tabBarInactiveTintColor: Colors.WHITE.SECONDARY,
 				tabBarStyle: styles.tabBarStyle,
+				tabBarLabelStyle: styles.labelStyle,
 				tabBarIcon: ({ color }) => (
 					<TabBarIcon routeName={route.name} color={color} />
 				),

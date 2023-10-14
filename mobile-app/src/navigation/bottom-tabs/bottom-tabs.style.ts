@@ -8,4 +8,9 @@ export const styles = StyleSheet.create({
 		borderTopLeftRadius: 10,
 		borderTopRightRadius: 10,
 	},
+	labelStyle: {
+		fontSize: 10,
+		fontFamily: 'Roboto_400Regular',
+		marginBottom: 4,
+	},
 });
