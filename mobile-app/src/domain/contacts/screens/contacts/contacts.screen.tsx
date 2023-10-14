@@ -13,7 +13,10 @@ import { Modal, Pressable, PressableProps, Text, View } from 'react-native';
 import { styles } from './contacts.screen.style';
 import { TabView } from './tab-view';
 import * as Contacts from 'expo-contacts';
-import { addContact, deleteAllContacts } from '@/shared/store/contactStore';
+import {
+	addContact,
+	deleteAllContacts,
+} from '@/shared/store/use-contact-store';
 import { useEffect, useState } from 'react';
 import ContactPickerScreen from '@/domain/contacts/screens/contacts/contact.picker.screen';
 
