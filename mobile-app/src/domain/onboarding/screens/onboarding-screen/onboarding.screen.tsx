@@ -9,6 +9,7 @@ import BackButton from '../../components/back-button';
 import { useCallback, useMemo, useState } from 'react';
 import Label from '@/shared/components/label';
 import StepIndicator from '../../components/step-indicator';
+import MainOnboardingComponent from '../../components/main-onboarding-component/main-onboarding-component';
 
 const MAX_STEP = 8;
 
@@ -51,9 +52,8 @@ const OnboardingScreen = () => {
 			<View style={{ alignItems: 'center', marginTop: 30 }}>
 				<StepIndicator step={step} />
 			</View>
-
 			<View style={styles.mainContentContainer}>
-				<Label>{step}</Label>
+				<MainOnboardingComponent step={step} />
 			</View>
 			<View style={styles.buttonsContainer}>
 				<BackButton disabled={isBackDisabled} onPress={previousStep} />
