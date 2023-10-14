@@ -1,4 +1,4 @@
-import { ContentWidth } from '@/shared/styles';
+import { Colors, ContentWidth } from '@/shared/styles';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -9,9 +9,11 @@ export const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 8,
 		height: 47,
-    flexDirection: 'row',
-    marginTop: 10,
-    marginBottom: 26,
+		flexDirection: 'row',
+		marginTop: 10,
+		marginBottom: 26,
+		zIndex: 10,
+		backgroundColor: Colors.BLACK.SECONDARY,
 	},
 	inputContainer: {
 		flex: 1,

@@ -31,7 +31,7 @@
     "react-native-safe-area-context": "^4.6.3",
     "react-native-screens": "~3.22.0",
     "react-native-svg": "13.9.0",
-    "react-native-web": "~0.19.6",
+    "react-native-reanimated": "~3.3.0", 
     "rnpm": "^1.9.0",
     "zustand": "^4.4.3",
     "expo-sms": "~11.4.0",

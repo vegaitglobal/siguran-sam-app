@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useOnboardingStore } from '../store';
-import { contactStore } from '@/shared/store/contactStore';
+import { useContactStore } from '@/shared/store/use-contact-store';
 
 export const useHydrateStore = () => {
 	const [onboardingHydrated, setOnboardingHydrated] = useState(
 		useOnboardingStore.persist.hasHydrated
 	);
 	const [contactsHydrated, setContactsHydrated] = useState(
-		contactStore.persist.hasHydrated
+		useContactStore.persist.hasHydrated
 	);
 
 	const hydrated = useMemo(() => {
@@ -19,12 +19,13 @@ export const useHydrateStore = () => {
 			useOnboardingStore.persist.onFinishHydration(() =>
 				setOnboardingHydrated(true)
 			);
-		const unsubFinishContactsHydration = contactStore.persist.onFinishHydration(
-			() => setOnboardingHydrated(true)
-		);
+		const unsubFinishContactsHydration =
+			useContactStore.persist.onFinishHydration(() =>
+				setOnboardingHydrated(true)
+			);
 
 		setOnboardingHydrated(useOnboardingStore.persist.hasHydrated());
-		setContactsHydrated(contactStore.persist.hasHydrated());
+		setContactsHydrated(useContactStore.persist.hasHydrated());
 
 		return () => {
 			unsubFinishOnboardingHydration();
