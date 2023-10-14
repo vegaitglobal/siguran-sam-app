@@ -1,13 +1,14 @@
 import CircleButton from '@/domain/alert/components/circle-button';
 import { AppScreen } from '@/shared/constants';
-import useLocation from '@/shared/hooks/useLocation';
+import useLocation from '@/shared/hooks/use-location';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { View, StyleSheet, Text } from 'react-native';
+import { Button, View } from 'react-native';
+import Label from '@/shared/components/label';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -16,18 +17,37 @@ export interface Props
 	> {}
 
 const AlertScreen = () => {
-	const { location, isLoading, isAllowed, getLocation, setGetLocation } =
-		useLocation();
+	const {
+		location,
+		isLoading,
+		isAllowed,
+		city,
+		country,
+		street,
+		streetNumber,
+		altitude,
+		accuracy,
+		setLocationProperties,
+		resetState,
+	} = useLocation();
 	return (
 		<View style={styles.container}>
-			<CircleButton
-				text='SIGURAN SAM'
-				onPress={() => setGetLocation(!getLocation)}
-			/>
-			<Text>Grad, Država</Text>
-			<Text>Lat: {location?.coords.latitude}</Text>
-			<Text>Long: {location?.coords.longitude}</Text>
-			<Text>Vaša poslednja poznata lokacija</Text>
+			<CircleButton text='SIGURAN SAM' onPress={setLocationProperties} />
+			<Label type='pItalic'>
+				{city}, {country}
+			</Label>
+			<Label type='pItalic'>
+				{street}, {streetNumber}
+			</Label>
+			<Label type='pItalic'>
+				{location?.coords.latitude}° N, {location?.coords.longitude}° E
+			</Label>
+			<Label type='pItalic'>Preciznost: {Math.round(accuracy)}m</Label>
+			<Label type='pItalic'>
+				Nadmorska visina: {altitude !== null ? Math.round(altitude) : 0}m
+			</Label>
+			<Label type='pItalic'>Vaša poslednja poznata lokacija</Label>
+			<Button title='RESET' onPress={resetState} />
 		</View>
 	);
 };
