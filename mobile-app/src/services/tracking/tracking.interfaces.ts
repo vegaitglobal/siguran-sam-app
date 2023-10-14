@@ -7,14 +7,12 @@ type TrackOnboardingFinished = {
 	name: EventType.OnboardingFinished;
 	deviceId: string;
 	totalContacts: number;
-	timestamp: string;
 };
 
 type TrackEmergencyRequest = {
 	name: EventType.EmergencyRequested;
 	deviceId: string;
-	location: { longitude: number; latitude: number };
-	timestamp: string;
+	location: { lon: number; lat: number };
 	hasSignal: boolean;
 	internetConnection: 'wifi' | 'mobilni-podaci' | 'nema-interneta';
 	batteryPercentage: number;
