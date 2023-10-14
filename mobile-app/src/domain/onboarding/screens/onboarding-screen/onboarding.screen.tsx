@@ -5,6 +5,7 @@ import { RootStackParamList } from '@/shared/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
+import NextButton from '../../components/next-button';
 
 export interface Props
 	extends NativeStackScreenProps<RootStackParamList, AppScreen.ONBOARDING> {}
@@ -14,7 +15,7 @@ const OnboardingScreen = () => {
 		<ScreenTemplate>
 			<StatusBar style='light' />
 			<View style={styles.screenContainer}></View>
-			<Label>Onboarding</Label>
+			<NextButton />
 		</ScreenTemplate>
 	);
 };
