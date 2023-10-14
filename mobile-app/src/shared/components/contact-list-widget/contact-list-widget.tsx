@@ -16,7 +16,7 @@ const PHONE_NUMBER_REGEXP =
 	/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 
 export const ContactListWidget = () => {
-	const contacts = useContactStore().contacts;
+	const { contacts } = useContactStore();
 
 	const [newPhoneNumber, setNewPhoneNumber] = useState<PhoneNumber>({
 		mainNumberPart: '',
@@ -47,10 +47,6 @@ export const ContactListWidget = () => {
 		}
 	};
 
-	const handleImportContacts = () => {
-		alert('Under construction');
-	};
-
 	const handleDeleteListItem = (number: string) => {
 		deleteContact(number);
 	};
@@ -69,11 +65,11 @@ export const ContactListWidget = () => {
 					+ DODAJ
 				</AppButton>
 			</View>
-			<View style={styles.importButton}>
+			{/* <View style={styles.importButton}>
 				<AppButton type='white' icon='add-user' onPress={handleImportContacts}>
 					UVEZI IZ KONTAKATA
 				</AppButton>
-			</View>
+			</View> */}
 		</View>
 	);
 };
