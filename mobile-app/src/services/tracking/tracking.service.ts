@@ -1,15 +1,15 @@
 // @ts-nocheck
-import contentful from 'contentful-management';
+import { createClient, ClientAPI } from 'contentful-management';
 import { ApplicationEvent, TrackingService } from './tracking.interfaces';
 
 class ContentfulTrackingService implements TrackingService {
-	private client: contentful.ClientAPI;
+	private client: ClientAPI;
 
 	constructor(
 		accessToken: string,
 		private space: string
 	) {
-		this.client = contentful.createClient({
+		this.client = createClient({
 			accessToken,
 			space,
 		});
