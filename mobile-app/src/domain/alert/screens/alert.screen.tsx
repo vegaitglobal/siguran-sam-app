@@ -1,19 +1,18 @@
 import CircleButton from '@/domain/alert/components/circle-button';
 import { AppScreen } from '@/shared/constants';
-import useLocation from '@/shared/hooks/use-location';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
-
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { Button, Linking, Platform, View } from 'react-native';
+import { Linking, AppState, View } from 'react-native';
 import Label from '@/shared/components/label';
 import sendSMS from '../services/sms-service';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
-import getLocation from '../services/location-service';
 import { AppButton } from '@/shared/components';
+import useLocation from '@/shared/hooks/use-location';
+import useAppIsActive from '@/shared/hooks/use-app-is-active';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -22,11 +21,10 @@ export interface Props
 	> {}
 
 const AlertScreen = () => {
-	const [userDidPressButton, setUserDidPressButton] = useState(false);
 	const {
 		location,
-		isLoading,
 		isAllowed,
+		setIsAllowed,
 		city,
 		country,
 		street,
@@ -34,32 +32,59 @@ const AlertScreen = () => {
 		altitude,
 		accuracy,
 		setLocationProperties,
-		resetState,
 	} = useLocation();
+
+	const [showHint, setShowHint] = useState(false);
+	const appState = useRef(AppState.currentState);
+
+	useEffect(() => {
+		const subscription = AppState.addEventListener(
+			'change',
+			async (nextAppState) => {
+				if (
+					appState.current.match(/inactive|background/) &&
+					nextAppState === 'active'
+				) {
+					let { status } = await Location.getForegroundPermissionsAsync();
+					setIsAllowed(status === 'granted');
+					setLocationProperties();
+				}
+
+				appState.current = nextAppState;
+				console.log('AppState', appState.current);
+			}
+		);
+
+		return () => {
+			subscription.remove();
+		};
+	}, [isAllowed, setLocationProperties]);
+
 	return (
 		<View style={styles.container}>
 			{!isAllowed ? (
 				<Fragment>
-					<View>
-						<Label style={{ marginBottom: 16 }}>
-							Molim Vas prihvatite permisije za lokaciju.
-						</Label>
-						<AppButton onPress={() => Linking.openSettings()}>
-							PODEŠAVANJA
-						</AppButton>
-					</View>
+					<Label style={{ marginBottom: 16, textAlign: 'center' }}>
+						Molim Vas, dozvolite pristup Vašoj lokaciji prilikom korišćenja
+						aplikacije u podešavanjima. Bez dozvole pristupa, nećete moći
+						precizno deliti svoje koordinate sa svojim kontaktima u slučaju
+						opasnosti.
+					</Label>
+					<AppButton onPress={() => Linking.openSettings()}>
+						PODEŠAVANJA
+					</AppButton>
 				</Fragment>
 			) : (
 				<Fragment>
-					{userDidPressButton && <Label>Držite dugme duže od 2 sekunde</Label>}
+					{showHint && <Label>Držite dugme duže od 2 sekunde</Label>}
 					<CircleButton
 						text='SIGURAN SAM'
 						onPress={() => {
-							setUserDidPressButton(true);
+							setShowHint(true);
 						}}
 						onLongPress={() => {
 							sendSMS();
-							setUserDidPressButton(false);
+							setShowHint(false);
 						}}
 					/>
 					<Label>
@@ -76,7 +101,6 @@ const AlertScreen = () => {
 						Nadmorska visina: {altitude !== null ? Math.round(altitude) : 0}m
 					</Label>
 					<Label type='p2'>Vaša poslednja poznata lokacija</Label>
-					<Button title='RESET' onPress={resetState} />
 				</Fragment>
 			)}
 		</View>

@@ -18,10 +18,10 @@ export default function CircleButton({ text, onPress, onLongPress }: Props) {
 	return (
 		<TouchableOpacity
 			style={styles.circleButtonContainer}
-			onPressIn={() => console.log('pressIn')}
-			onPressOut={() => console.log('pressOut')}
-			// onLongPress={onLongPress}
-			// onPress={onPress}
+			// onPressIn={() => console.log('pressIn')}
+			// onPressOut={() => console.log('pressOut')}
+			onLongPress={onLongPress}
+			onPress={onPress}
 		>
 			<View style={styles.circleButton}>
 				<Label type='h3Black'>{text}</Label>

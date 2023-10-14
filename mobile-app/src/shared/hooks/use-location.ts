@@ -5,7 +5,6 @@ const useLocation = () => {
 	const [location, setLocation] = useState<Location.LocationObject | null>(
 		null
 	);
-	const [isLoading, setIsLoading] = useState(false);
 	const [isAllowed, setIsAllowed] = useState(false);
 	const [city, setCity] = useState<string | null>('');
 	const [country, setCountry] = useState<string | null>('');
@@ -19,7 +18,6 @@ const useLocation = () => {
 	}, []);
 
 	const setLocationProperties = async () => {
-		setIsLoading(true);
 		let { status } = await Location.requestForegroundPermissionsAsync();
 		if (status !== 'granted') {
 			setIsAllowed(false);
@@ -48,23 +46,12 @@ const useLocation = () => {
 		setAltitude(altitude as number);
 		setAccuracy(accuracy as number);
 		setLocation(location);
-		setIsLoading(false);
-	};
-
-	const resetState = () => {
-		setCity(null);
-		setCountry(null);
-		setStreet(null);
-		setStreetNumber(null);
-		setAccuracy(0);
-		setLocation(null);
-		setIsLoading(false);
 	};
 
 	return {
 		location,
-		isLoading,
 		isAllowed,
+		setIsAllowed,
 		city,
 		country,
 		street,
@@ -72,7 +59,6 @@ const useLocation = () => {
 		altitude,
 		accuracy,
 		setLocationProperties,
-		resetState,
 	};
 };
 
