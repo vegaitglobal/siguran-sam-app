@@ -7,13 +7,15 @@ import {
 } from './tracking.interfaces';
 
 class NewRelicTrackingService implements TrackingService {
-	constructor(appToken: string) {
-		NewRelic.startAgent(appToken, {});
+	constructor(appKey: string) {
+		// TODO: Check if we need to run agent to send custom events?
+		NewRelic.startAgent(appKey, {});
 	}
 
 	public track(event: ApplicationEvent) {
 		switch (event.name) {
-			case (EventType.ApplicationOpened, EventType.OnboardingFinished): {
+			case EventType.ApplicationOpened:
+			case EventType.OnboardingFinished: {
 				const attributes = new Map().set('deviceId', event.deviceId);
 
 				return NewRelic.recordCustomEvent(
@@ -22,8 +24,8 @@ class NewRelicTrackingService implements TrackingService {
 					attributes
 				);
 			}
-
-			case (EventType.ContactAdded, EventType.ContactRemoved): {
+			case EventType.ContactAdded:
+			case EventType.ContactRemoved: {
 				const attributes = new Map()
 					.set('deviceId', event.deviceId)
 					.set('totalContacts', event.totalContacts);
@@ -34,7 +36,6 @@ class NewRelicTrackingService implements TrackingService {
 					attributes
 				);
 			}
-
 			case EventType.EmergencyRequested: {
 				const attributes = new Map()
 					.set('deviceId', event.deviceId)
@@ -57,4 +58,11 @@ class NewRelicTrackingService implements TrackingService {
 	}
 }
 
-export default (appToken: string) => new NewRelicTrackingService(appToken);
+const iOSAppKey = process.env.EXPO_PUBLIC_NEW_RELIC_IOS_KEY;
+if (!iOSAppKey) throw Error('Newrelic iOS key is not configured');
+
+const androidAppKey = process.env.EXPO_PUBLIC_NEW_RELIC_ANDROID_KEY;
+if (!androidAppKey) throw Error('Newrelic Android key is not configured');
+
+export default (platform: 'ios' | 'android') =>
+	new NewRelicTrackingService(platform === 'ios' ? iOSAppKey : androidAppKey);
