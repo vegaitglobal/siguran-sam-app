@@ -54,7 +54,7 @@ const AlertScreen = () => {
 		return () => {
 			subscription.remove();
 		};
-	}, [isAllowed, setLocationProperties]);
+	}, [setLocationProperties]);
 
 	return (
 		<View style={styles.container}>

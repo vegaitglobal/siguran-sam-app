@@ -34,7 +34,8 @@
     "rnpm": "^1.9.0",
     "zustand": "^4.4.3",
     "expo-sms": "~11.4.0",
-    "expo-contacts": "~12.2.0"
+    "expo-contacts": "~12.2.0",
+    "expo-network": "~5.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

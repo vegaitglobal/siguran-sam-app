@@ -1,10 +1,4 @@
-import {
-	View,
-	Pressable,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-} from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { styles } from './circle-button.style';
 import Label from '@/shared/components/label';
 
@@ -18,8 +12,6 @@ export default function CircleButton({ text, onPress, onLongPress }: Props) {
 	return (
 		<TouchableOpacity
 			style={styles.circleButtonContainer}
-			// onPressIn={() => console.log('pressIn')}
-			// onPressOut={() => console.log('pressOut')}
 			onLongPress={onLongPress}
 			onPress={onPress}
 		>

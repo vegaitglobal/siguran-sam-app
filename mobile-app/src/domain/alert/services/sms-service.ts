@@ -1,38 +1,26 @@
-import * as SMS from 'expo-sms';
 import { Platform } from 'react-native';
 import getLocation from './location-service';
+import * as Network from 'expo-network';
+import messageService from './message.service';
 
 const sendSMS = async () => {
-	const isAvailable = await SMS.isAvailableAsync();
-	if (isAvailable) {
-		try {
-			const location = await getLocation();
+	const location = await getLocation();
+	let { type, isConnected, isInternetReachable } =
+		await Network.getNetworkStateAsync();
 
-			// contacts = getContacts(Platform.OS)
-			let contacts;
-			if (Platform.OS === 'ios') {
-				contacts = ['123456', '555666'];
-			} else {
-				contacts = '123456, 555666';
-			}
-			// const message = getMessage()
-			const message = `Hello, I am in danger. My current location is: https://maps.google.com/?q=${location?.coords.latitude},${location?.coords.longitude}`;
+	isInternetReachable = false;
 
-			const { result } = await SMS.sendSMSAsync(contacts, message);
+	let recipients = ['123456', '555666'];
 
-			switch (result) {
-				case 'cancelled':
-					console.log('SMS not sent');
-				case 'sent':
-					console.log('SMS sent');
-				case 'unknown':
-					console.log("I'm an Android device and I don't send any feedback.");
-			}
-		} catch (e) {
-			console.log(e);
-		}
+	let message = `Hello, I am in danger. My current location is: https://maps.google.com/?q=${location?.coords.latitude},${location?.coords.longitude}`;
+
+	if (isInternetReachable) {
+		messageService.sendOnlineSMS(recipients, message);
 	} else {
-		console.log("There's no SMS available on this device.");
+		messageService.sendNativeSMS(
+			Platform.OS === 'ios' ? recipients : recipients.join(', '),
+			message
+		);
 	}
 };
 
