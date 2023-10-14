@@ -1,27 +1,26 @@
-import { Twilio } from 'twilio';
+import axios from 'axios';
 
 class TwilioMessageService implements MessageService {
-	private client: Twilio;
-	constructor(accountSid: string, authToken: string) {
-		this.client = new Twilio(accountSid, authToken);
+	private serverlessFunctionUrl: string;
+
+	constructor(serverlessFunctionUrl: string) {
+		this.serverlessFunctionUrl = serverlessFunctionUrl;
 	}
 
-	async sendSMS(recipients: string[], body: string): Promise<void> {
-		await Promise.all(
-			recipients.map(async (to) => {
-				this.client.messages.create({
-					to,
-					body,
-				});
-			})
-		);
+	async sendSMS(to: string[], body: string): Promise<void> {
+		try {
+		  await axios.post(this.serverlessFunctionUrl, {
+			to: to,
+			body: body,
+		  });
+		} catch (error) {
+		  console.error('Error sending messages via Twilio: ', error);
+		  throw error;
+		}
 	}
 }
 
-const accountSid = process.env.EXPO_PUBLIC_TWILIO_ACCOUNT_SID;
-if (!accountSid) throw Error('Twilio Account SID is not configured');
+const serverlessFunctionUrl = process.env.REACT_APP_TWILIO_SERVERLESS_FUNCTION_URL;
+if (!serverlessFunctionUrl) throw Error('Twilio Auth Token is not configured');
 
-const authToken = process.env.EXPO_PUBLIC_TWILIO_AUTH_TOKEN;
-if (!authToken) throw Error('Twilio Auth Token is not configured');
-
-export default new TwilioMessageService(accountSid, authToken);
+export default new TwilioMessageService(serverlessFunctionUrl);
