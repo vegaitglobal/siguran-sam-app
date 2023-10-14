@@ -9,7 +9,7 @@ import BackButton from '../../components/back-button';
 import { useCallback, useMemo, useState } from 'react';
 import StepIndicator from '../../components/step-indicator';
 import MainOnboardingComponent from '../../components/main-onboarding-component/main-onboarding-component';
-import { useUserInfoStore } from '@/shared/store/useUserInfoStore';
+import { useUserInfoStore } from '@/shared/store';
 
 const MAX_STEP = 8;
 

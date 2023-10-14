@@ -3,42 +3,20 @@ import { AppButton } from '../buttons';
 import { styles } from './contact-list-widget.style';
 import { ContactList } from '../contacts-list';
 import { ContactInput, PhoneNumber } from '../contact-input';
-import { Contact } from '@/shared/types';
 import React, { useState, useMemo } from 'react';
 import {
 	ContactsFullError,
 	DuplicateContactError,
 	addContact,
-	contactStore,
+	useContactStore,
 	deleteContact,
-} from '@/shared/store/contactStore';
-
-const dummyContacts: Contact[] = [
-	{
-		name: 'Pera',
-		number: '+381 64 123 4561',
-	},
-	{
-		number: '+381 64 123 4562',
-	},
-	{
-		name: 'Žika',
-		number: '+381 64 123 4563',
-	},
-	{
-		number: '+381 64 123 4564',
-	},
-	{
-		name: 'Vlada',
-		number: '+381 64 123 4565',
-	},
-];
+} from '@/shared/store/use-contact-store';
 
 const PHONE_NUMBER_REGEXP =
 	/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 
 export const ContactListWidget = () => {
-	const contacts = contactStore().contacts;
+	const contacts = useContactStore().contacts;
 
 	const [newPhoneNumber, setNewPhoneNumber] = useState<PhoneNumber>({
 		mainNumberPart: '',

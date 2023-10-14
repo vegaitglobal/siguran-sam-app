@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Button, Text, Modal, ScrollView, FlatList } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import { Contact } from '@/shared/store/contactStore';
+import { Contact } from '@/shared/store/use-contact-store';
 
 interface ContactPickerProps {
 	visible: boolean;
