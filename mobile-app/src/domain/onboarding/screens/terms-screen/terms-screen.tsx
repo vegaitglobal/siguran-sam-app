@@ -1,4 +1,4 @@
-import { ScreenTemplate } from '@/shared/components';
+import { AppButton, ScreenTemplate } from '@/shared/components';
 import Label from '@/shared/components/label';
 import { AppScreen } from '@/shared/constants';
 import { RootStackParamList } from '@/shared/types';
@@ -35,6 +35,9 @@ const TermsScreen = ({ navigation }: Props) => {
 					including versions of Lorem Ipsum.
 				</Label>
 			</View>
+			<AppButton onPress={acceptOnPressHandler}>
+				PRIHVATI USLOVE KORIŠĆENJA
+			</AppButton>
 		</ScreenTemplate>
 	);
 };
