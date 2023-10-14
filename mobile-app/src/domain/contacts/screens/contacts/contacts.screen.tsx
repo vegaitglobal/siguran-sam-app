@@ -4,10 +4,11 @@ import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 
+import { AppButton, ScreenTemplate } from '@/shared/components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { View } from 'react-native';
+import { Pressable, PressableProps, Text, View } from 'react-native';
 import { styles } from './contacts.screen.style';
-import { ScreenTemplate } from '@/shared/components';
+import { TabView } from './tab-view';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -16,10 +17,39 @@ export interface Props
 	> {}
 
 const ContactsScreen = () => {
+	const handleAddContact = () => {
+		alert('Hi');
+	};
+
+	const handleImportContacts = () => {
+		alert('Hi');
+	};
+
+	const handleSave = () => {
+		alert('Hi');
+	};
+
 	return (
 		<ScreenTemplate>
-			<Label color='black'>Contacts</Label>
+			<TabView/>
+			<View style={styles.addButton}>
+				<AppButton onPress={handleAddContact}>+ DODAJ</AppButton>
+			</View>
+			<View style={styles.importButton}>
+				<AppButton type='white' icon='add-user' onPress={handleImportContacts}>
+					UVEZI IZ KONTAKATA
+				</AppButton>
+			</View>
+			<SaveButton onPress={handleSave}/>
 		</ScreenTemplate>
+	);
+};
+
+const SaveButton = (props: PressableProps) => {
+	return (
+		<Pressable style={styles.saveButton} {...props}>
+			<Text style={styles.saveButtonText}>SAČUVAJ</Text>
+		</Pressable>
 	);
 };
 
