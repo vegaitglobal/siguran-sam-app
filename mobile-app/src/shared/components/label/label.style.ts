@@ -29,6 +29,10 @@ export const styles = StyleSheet.create({
 		fontFamily: 'Roboto_400Regular',
 		fontSize: 16,
 	},
+	pItalic: {
+		fontFamily: 'Roboto_400Regular_Italic',
+		fontSize: 16,
+	},
 	p2: {
 		fontFamily: 'Roboto_400Regular',
 		fontSize: 13,

@@ -3,6 +3,7 @@ import {
 	Roboto_700Bold,
 	Roboto_900Black,
 	Roboto_400Regular,
+	Roboto_400Regular_Italic,
 } from '@expo-google-fonts/roboto';
 import { useMemo } from 'react';
 
@@ -15,6 +16,7 @@ export const useAppInit = () => {
 		Roboto_700Bold,
 		Roboto_900Black,
 		Roboto_400Regular,
+		Roboto_400Regular_Italic,
 	});
 
 	const appInitialized = useMemo(() => {
