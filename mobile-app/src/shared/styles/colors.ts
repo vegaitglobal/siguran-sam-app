@@ -15,4 +15,8 @@ export const Colors = {
 		PRIMARY: '#464646',
 		SECONDARY: '#363636',
 	},
+	GRAY_2: {
+		PRIMARY: '#292A31',
+		SECODNARY: '#938383',
+	},
 };
