@@ -23,12 +23,12 @@ class ContentfulTrackingService implements TrackingService {
 			.then((space) => space.getEnvironment('master'));
 
 		return environment.createEntry(name, {
-			fields: Object.keys(fields).reduce(
-				(acc: { [key: string]: any }, key: string) => {
-					return (acc[key] = { 'en-US': fields[key] });
-				},
-				{}
-			),
+			fields: {
+				...Object.keys(fields).reduce((acc, key) => {
+					return { ...acc, [key]: { 'en-US': fields[key] } };
+				}, {}),
+				timestamp: new Date().toISOString(),
+			},
 		});
 	}
 }
