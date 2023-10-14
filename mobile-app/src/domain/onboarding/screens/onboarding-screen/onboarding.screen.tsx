@@ -9,7 +9,8 @@ import BackButton from '../../components/back-button';
 import { useCallback, useMemo, useState } from 'react';
 import StepIndicator from '../../components/step-indicator';
 import MainOnboardingComponent from '../../components/main-onboarding-component/main-onboarding-component';
-import { useUserInfoStore } from '@/shared/store';
+import { setIsOnboardingDone, useUserInfoStore } from '@/shared/store';
+import { useContactStore } from '@/shared/store/use-contact-store';
 
 const MAX_STEP = 8;
 
@@ -19,6 +20,7 @@ export interface Props
 const OnboardingScreen = () => {
 	const [step, setStep] = useState(1);
 	const [name, setName] = useState(useUserInfoStore.getState().name);
+	const { contacts } = useContactStore();
 
 	const nextStep = useCallback(() => {
 		setStep((previous) => {
@@ -36,6 +38,15 @@ const OnboardingScreen = () => {
 		});
 	}, []);
 
+	const nextButtonOnPressHandler = useCallback(() => {
+		if (step === 8 && contacts.length > 0 && !!name) {
+			setName(name);
+			setIsOnboardingDone();
+		} else {
+			nextStep();
+		}
+	}, [name, step, contacts.length, nextStep]);
+
 	const isBackDisabled = useMemo(() => {
 		if (step === 1) return true;
 
@@ -43,12 +54,13 @@ const OnboardingScreen = () => {
 	}, [step]);
 
 	const isNextDisabled = useMemo(() => {
-		if (step === MAX_STEP) return true;
-
 		if (step === 7 && !name) return true;
 
+		if (step === 8 && contacts.length <= 0) return true;
+
 		return false;
-	}, [step, name]);
+	}, [step, name, contacts]);
+
 	return (
 		<ScreenTemplate>
 			<StatusBar style='light' />
@@ -69,7 +81,10 @@ const OnboardingScreen = () => {
 				</View>
 				<View style={styles.buttonsContainer}>
 					<BackButton disabled={isBackDisabled} onPress={previousStep} />
-					<NextButton disabled={isNextDisabled} onPress={nextStep} />
+					<NextButton
+						disabled={isNextDisabled}
+						onPress={nextButtonOnPressHandler}
+					/>
 				</View>
 			</KeyboardAvoidingView>
 		</ScreenTemplate>
