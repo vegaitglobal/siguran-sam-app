@@ -8,6 +8,7 @@ import NextButton from '../../components/next-button';
 import BackButton from '../../components/back-button';
 import { useCallback, useMemo, useState } from 'react';
 import Label from '@/shared/components/label';
+import StepIndicator from '../../components/step-indicator';
 
 const MAX_STEP = 8;
 
@@ -18,7 +19,6 @@ const OnboardingScreen = () => {
 	const [step, setStep] = useState(1);
 
 	const nextStep = useCallback(() => {
-		console.log('here');
 		setStep((previous) => {
 			if (previous >= MAX_STEP) return previous;
 
@@ -48,6 +48,10 @@ const OnboardingScreen = () => {
 	return (
 		<ScreenTemplate>
 			<StatusBar style='light' />
+			<View style={{ alignItems: 'center', marginTop: 30 }}>
+				<StepIndicator step={step} />
+			</View>
+
 			<View style={styles.mainContentContainer}>
 				<Label>{step}</Label>
 			</View>
