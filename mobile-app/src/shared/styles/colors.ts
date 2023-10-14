@@ -14,5 +14,6 @@ export const Colors = {
 	GRAY: {
 		PRIMARY: '#464646',
 		SECONDARY: '#363636',
+		DISABLED: '#938383',
 	},
 };

@@ -1,3 +1,5 @@
+import { Dimensions } from 'react-native';
+
 export const Sizes = {
 	XXL: 25,
 	XL: 22,
@@ -5,3 +7,5 @@ export const Sizes = {
 	M: 16,
 	S: 13,
 };
+
+export const ContentWidth = Dimensions.get('window').width * 0.8;
