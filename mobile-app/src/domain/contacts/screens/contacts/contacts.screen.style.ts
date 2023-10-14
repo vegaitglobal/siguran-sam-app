@@ -16,10 +16,10 @@ export const styles = StyleSheet.create({
 		flex: 1,
 	},
 	addButton: {
-		marginBottom: 26
+		marginBottom: 26,
 	},
 	importButton: {
-		marginBottom: 44
+		marginBottom: 44,
 	},
 	saveButton: {
 		backgroundColor: Colors.RED.PRIMARY,
@@ -33,5 +33,26 @@ export const styles = StyleSheet.create({
 		color: 'white',
 		fontWeight: '700',
 		fontSize: Sizes.S,
+	},
+	modalContainer: {
+		flex: 1,
+		backgroundColor: 'white', // Set the background color
+		padding: 16, // Adjust padding as needed
+	},
+	modalTitle: {
+		fontSize: 18,
+		fontWeight: 'bold',
+		marginBottom: 10,
+	},
+	scrollView: {
+		maxHeight: 200, // Set a maximum height for the ScrollView
+	},
+	contactItem: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 10,
+	},
+	contactName: {
+		marginLeft: 10,
 	},
 });
