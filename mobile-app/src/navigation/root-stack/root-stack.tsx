@@ -6,7 +6,8 @@ import { useAppInit } from '@/shared/hooks';
 import SplashScreen from '@/domain/splash/screens/splash-screen';
 import { styles } from './root-stack.style';
 import { useOnboardingStore } from '@/shared/store';
-import OnboardingScreen from '@/domain/onboarding/screens/onboarding.screen';
+import OnboardingScreen from '@/domain/onboarding/screens/onboarding-screen';
+import TermsScreen from '@/domain/onboarding/screens/terms-screen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -31,10 +32,13 @@ const RootStack = () => {
 					<Stack.Screen name={AppScreen.BOTTOM_TABS} component={BottomTabs} />
 				</Stack.Group>
 			) : (
-				<Stack.Screen
-					name={AppScreen.ONBOARDING}
-					component={OnboardingScreen}
-				/>
+				<Stack.Group>
+					<Stack.Screen name={AppScreen.TERMS} component={TermsScreen} />
+					<Stack.Screen
+						name={AppScreen.ONBOARDING}
+						component={OnboardingScreen}
+					/>
+				</Stack.Group>
 			)}
 		</Stack.Navigator>
 	);
