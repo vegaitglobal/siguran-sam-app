@@ -1,13 +1,13 @@
 import CircleButton from '@/domain/alert/components/circle-button';
 import { AppScreen } from '@/shared/constants';
-import useLocation from '@/shared/hooks/useLocation';
+import useLocation from '@/shared/hooks/use-location';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, Text } from 'react-native';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -20,19 +20,16 @@ const AlertScreen = () => {
 		location,
 		isLoading,
 		isAllowed,
-		getLocation,
-		setGetLocation,
 		city,
 		country,
 		street,
 		streetNumber,
+		setLocationProperties,
+		resetState,
 	} = useLocation();
 	return (
 		<View style={styles.container}>
-			<CircleButton
-				text='SIGURAN SAM'
-				onPress={() => setGetLocation(!getLocation)}
-			/>
+			<CircleButton text='SIGURAN SAM' onPress={setLocationProperties} />
 			<Text>
 				{city}, {country}
 			</Text>
@@ -43,6 +40,7 @@ const AlertScreen = () => {
 				{location?.coords.latitude}° N, {location?.coords.longitude}° E
 			</Text>
 			<Text>Vaša poslednja poznata lokacija</Text>
+			<CircleButton text='RESET' onPress={resetState} />
 		</View>
 	);
 };
