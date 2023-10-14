@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
 	},
 	pickerButton: {
 		width: 70,
-		height: 47,
+		height: 46,
 		borderRightColor: 'white',
 		borderRightStyle: 'solid',
 		borderRightWidth: 1,

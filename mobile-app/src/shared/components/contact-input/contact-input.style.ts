@@ -13,6 +13,7 @@ export const styles = StyleSheet.create({
 		marginTop: 10,
 		marginBottom: 26,
 		zIndex: 10,
+		backgroundColor: Colors.BLACK.SECONDARY,
 	},
 	inputContainer: {
 		flex: 1,
