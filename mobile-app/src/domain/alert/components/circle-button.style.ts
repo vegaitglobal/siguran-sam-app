@@ -1,20 +1,21 @@
+import { Colors } from '@/shared/styles';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
 	circleButtonContainer: {
-		width: 160,
-		height: 160,
+		width: 200,
+		height: 200,
 		marginHorizontal: 60,
-		borderWidth: 4,
-		borderColor: '#f00',
-		borderRadius: 80,
-		padding: 3,
+		marginVertical: 24,
+		borderWidth: 7,
+		borderColor: Colors.RED.PRIMARY,
+		borderRadius: 100,
 	},
 	circleButton: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 80,
-		backgroundColor: '#fff',
+		borderRadius: 100,
+		backgroundColor: Colors.RED.SECONDARY,
 	},
 });
