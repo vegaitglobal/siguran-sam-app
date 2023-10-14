@@ -1,12 +1,11 @@
-import Label from '@/shared/components/label';
 import { AppScreen } from '@/shared/constants';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 
-import { AppButton, ScreenTemplate } from '@/shared/components';
+import { ContactListWidget, ScreenTemplate } from '@/shared/components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Pressable, PressableProps, Text, View } from 'react-native';
+import { Pressable, PressableProps, Text } from 'react-native';
 import { styles } from './contacts.screen.style';
 import { TabView } from './tab-view';
 
@@ -31,16 +30,9 @@ const ContactsScreen = () => {
 
 	return (
 		<ScreenTemplate>
-			<TabView/>
-			<View style={styles.addButton}>
-				<AppButton onPress={handleAddContact}>+ DODAJ</AppButton>
-			</View>
-			<View style={styles.importButton}>
-				<AppButton type='white' icon='add-user' onPress={handleImportContacts}>
-					UVEZI IZ KONTAKATA
-				</AppButton>
-			</View>
-			<SaveButton onPress={handleSave}/>
+			<TabView />
+			<ContactListWidget />
+			<SaveButton onPress={handleSave} />
 		</ScreenTemplate>
 	);
 };
