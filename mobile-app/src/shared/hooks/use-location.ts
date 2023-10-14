@@ -12,7 +12,7 @@ const useLocation = () => {
 	const [street, setStreet] = useState<string | null>('');
 	const [streetNumber, setStreetNumber] = useState<string | null>('');
 	const [altitude, setAltitude] = useState<number | null>(null);
-	const [missRadiusInMeters, setMissRadiusInMeters] = useState<number>(0);
+	const [accuracy, setAccuracy] = useState<number>(0);
 
 	useEffect(() => {
 		setLocationProperties();
@@ -30,6 +30,10 @@ const useLocation = () => {
 		let location = await Location.getCurrentPositionAsync({
 			accuracy: Location.Accuracy.Highest,
 		});
+
+		let accuracy = location?.coords.accuracy;
+		let altitude = location?.coords.altitude;
+
 		const place = await Location.reverseGeocodeAsync({
 			latitude: location?.coords.latitude as number,
 			longitude: location?.coords.longitude as number,
@@ -39,14 +43,12 @@ const useLocation = () => {
 		let country = place[0]['country'];
 		let street = place[0]['street'];
 		let streetNumber = place[0]['streetNumber'];
-		let missRadiusInMeters = location?.coords.accuracy;
-		let altitude = location?.coords.altitude;
 		setCity(city);
 		setCountry(country);
 		setStreet(street);
 		setStreetNumber(streetNumber);
 		setAltitude(altitude);
-		setMissRadiusInMeters(missRadiusInMeters as number);
+		setAccuracy(accuracy as number);
 		setLocation(location);
 		setIsLoading(false);
 	};
@@ -56,7 +58,7 @@ const useLocation = () => {
 		setCountry(null);
 		setStreet(null);
 		setStreetNumber(null);
-		setMissRadiusInMeters(0);
+		setAccuracy(0);
 		setLocation(null);
 		setIsLoading(false);
 	};
@@ -70,7 +72,7 @@ const useLocation = () => {
 		street,
 		streetNumber,
 		altitude,
-		missRadiusInMeters,
+		accuracy,
 		setLocationProperties,
 		resetState,
 	};

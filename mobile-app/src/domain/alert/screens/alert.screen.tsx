@@ -26,7 +26,7 @@ const AlertScreen = () => {
 		street,
 		streetNumber,
 		altitude,
-		missRadiusInMeters,
+		accuracy,
 		setLocationProperties,
 		resetState,
 	} = useLocation();
@@ -42,9 +42,7 @@ const AlertScreen = () => {
 			<Label type='pItalic'>
 				{location?.coords.latitude}° N, {location?.coords.longitude}° E
 			</Label>
-			<Label type='pItalic'>
-				Preciznost: {Math.round(missRadiusInMeters)}m
-			</Label>
+			<Label type='pItalic'>Preciznost: {Math.round(accuracy)}m</Label>
 			<Label type='pItalic'>
 				Nadmorska visina: {altitude !== null ? Math.round(altitude) : 0}m
 			</Label>
