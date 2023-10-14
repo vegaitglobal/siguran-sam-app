@@ -10,7 +10,11 @@ import LogoWithText from '@/shared/assets/images/logo-with-text.svg';
 export interface Props
 	extends NativeStackScreenProps<RootStackParamList, AppScreen.TERMS> {}
 
-const TermsScreen = () => {
+const TermsScreen = ({ navigation }: Props) => {
+	const acceptOnPressHandler = () => {
+		navigation.replace(AppScreen.ONBOARDING);
+	};
+
 	return (
 		<ScreenTemplate>
 			<StatusBar style='light' />
