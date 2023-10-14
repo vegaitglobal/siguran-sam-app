@@ -3,6 +3,7 @@ import StarOutline from '@/shared/assets/icons/star-outline.svg';
 import EducationHat from '@/shared/assets/icons/education-hat.svg';
 import Hamburger from '@/shared/assets/icons/hamburger.svg';
 import ArrowBack from '@/shared/assets/icons/arrow-back.svg';
+import ArrowDown from '@/shared/assets/icons/arrow-down.svg';
 import TrashCan from '@/shared/assets/icons/trash-can.svg';
 import AddUser from '@/shared/assets/icons/add-user.svg';
 import ArrowBigLeft from '@/shared/assets/icons/arrow-big-left.svg';
@@ -13,6 +14,7 @@ export const iconComponents = {
 	'education-hat': EducationHat,
 	hamburger: Hamburger,
 	'arrow-back': ArrowBack,
+	'arrow-down': ArrowDown,
 	'trash-can': TrashCan,
 	'add-user': AddUser,
 	'arrow-big-left': ArrowBigLeft,

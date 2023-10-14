@@ -1,9 +1,9 @@
-import { Colors, Sizes } from '@/shared/styles';
+import { Colors, ContentWidth, Sizes } from '@/shared/styles';
 import { Dimensions, StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
 	button: {
-		width: Dimensions.get('window').width * 0.8,
+		width: ContentWidth,
 		borderRadius: 10,
 		height: 47,
 		alignItems: 'center',
@@ -27,6 +27,10 @@ export const styles = StyleSheet.create({
 	},
 	gray: {
 		backgroundColor: Colors.GRAY.PRIMARY,
+		color: 'white',
+	},
+	disabled: {
+		backgroundColor: Colors.GRAY.DISABLED,
 		color: 'white',
 	},
 });
