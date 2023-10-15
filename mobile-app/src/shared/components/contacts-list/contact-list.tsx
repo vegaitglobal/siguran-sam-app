@@ -21,7 +21,7 @@ export const ContactListItem = ({
 			</View>
 			<Icon
 				name='trash-can'
-				color={Colors.GRAY.PRIMARY}
+				color={Colors.WHITE.SECONDARY}
 				size={16}
 				onPress={onDelete}
 			/>
@@ -54,8 +54,7 @@ export const ContactList = ({ contacts, onDeleteItem }: Props) => {
 				)}
 				keyExtractor={({ number }) => number}
 				ItemSeparatorComponent={() => <ItemSeparator />}
-      />
-      
+			/>
 		</View>
 	);
 };
