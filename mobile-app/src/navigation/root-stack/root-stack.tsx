@@ -11,6 +11,7 @@ import TermsScreen from '@/domain/onboarding/screens/terms-screen';
 import WelcomeScreen from '@/domain/onboarding/screens/welcome-screen';
 import BlogPostListScreen from '@/domain/education/screens/blog-post-list';
 import BlogPostScreen from '@/domain/education/screens/blog-post';
+import { MoreOptionsScreen } from '@/domain/other';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -32,15 +33,19 @@ const RootStack = () => {
 			{!initialized ? (
 				<Stack.Screen name={AppScreen.SPLASH} component={SplashScreen} />
 			) : isOnboardingDone ? (
-        <Stack.Group>
-          <Stack.Screen name={AppScreen.BOTTOM_TABS} component={BottomTabs} />
-          <Stack.Screen name={AppScreen.BLOGPOSTLIST}>
-            {(props) => <BlogPostListScreen {...props} />}
-          </Stack.Screen>
-          <Stack.Screen name={AppScreen.BLOGPOST}>
-            {(props) => <BlogPostScreen {...props} />}
-          </Stack.Screen>
-        </Stack.Group>
+				<Stack.Group>
+					<Stack.Screen name={AppScreen.BOTTOM_TABS} component={BottomTabs} />
+					<Stack.Screen
+						name={AppScreen.MORE_OPTIONS}
+						component={MoreOptionsScreen}
+					/>
+					<Stack.Screen name={AppScreen.BLOGPOSTLIST}>
+						{(props) => <BlogPostListScreen {...props} />}
+					</Stack.Screen>
+					<Stack.Screen name={AppScreen.BLOGPOST}>
+						{(props) => <BlogPostScreen {...props} />}
+					</Stack.Screen>
+				</Stack.Group>
 			) : (
 				<Stack.Group>
 					<Stack.Screen name={AppScreen.TERMS} component={TermsScreen} />

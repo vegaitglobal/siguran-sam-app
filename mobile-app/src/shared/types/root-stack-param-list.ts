@@ -8,4 +8,5 @@ export type RootStackParamList = {
 	[AppScreen.WELCOME]: undefined;
 	[AppScreen.BLOGPOSTLIST]: undefined;
 	[AppScreen.BLOGPOST]: undefined;
+	[AppScreen.MORE_OPTIONS]: undefined;
 };
