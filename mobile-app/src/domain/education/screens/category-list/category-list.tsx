@@ -1,16 +1,16 @@
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { Category } from '../../../services/content/content.interfaces';
-import { styles } from '@/shared/components/category-list/category-list.style';
+import { Category } from '../../../../services/content/content.interfaces';
+import { styles } from '@/domain/education/screens/category-list/category-list.style';
 
 interface CategoryListItemProps {
 	category: Category;
-	onPress: (categoryName: string) => void;
+	onPress: (category: Category) => void;
 }
 
 export const CategoryListItem = (props: CategoryListItemProps) => {
 	return (
-		<TouchableOpacity onPress={() => props.onPress(props.category.title)}>
+		<TouchableOpacity onPress={() => props.onPress(props.category)}>
 			<View style={styles.item}>
 				<Text style={styles.title}>{props.category.title}</Text>
 				<Text style={styles.description}>{props.category.description}</Text>
@@ -24,7 +24,7 @@ const ItemSeparator = () => <View style={styles.itemSeparator} />;
 
 interface CategoryListProps {
 	categories: Category[];
-	onPress: (categoryName: string) => void;
+	onPress: (category: Category) => void;
 }
 
 export const CategoryList = (props: CategoryListProps) => {

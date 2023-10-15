@@ -5,4 +5,6 @@ export enum AppScreen {
 	EDUCATION = 'Edukacija',
 	SPLASH = 'Splash',
 	ONBOARDING = 'Onboarding',
+	BLOGPOSTLIST = 'BlogPostList',
+	BLOGPOST = 'BlogPost',
 }

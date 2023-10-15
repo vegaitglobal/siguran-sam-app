@@ -5,7 +5,7 @@ export interface Category {
 	iconURL: string;
 }
 
-interface BlogPost {
+export interface BlogPost {
 	id: string;
 	title: string;
 	category: string;
