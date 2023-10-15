@@ -8,11 +8,11 @@ import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { AppButton } from '@/shared/components';
-import { Colors } from '@/shared/styles';
 import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
 import Moment from 'react-moment';
 import sendSMS from '../services/sms-service';
+import moment from 'moment';
 import 'moment/locale/sr';
 
 export interface Props
@@ -26,7 +26,12 @@ const AlertScreen = () => {
 		location: {} as DeviceLocation,
 	});
 
-	const [hint, setHint] = useState('');
+	const [hint, setHint] = useState<string>();
+	const [commitment, setCommitment] = useState(false);
+	const [cooldown, setCooldown] = useState<moment.Moment>(
+		moment().subtract(1, 'minute')
+	);
+
 	const {
 		permissionsGranted: locationPermissionsGranted,
 		getHighPriorityLocation,
@@ -34,19 +39,36 @@ const AlertScreen = () => {
 	} = useLocation();
 
 	useEffect(() => {
-		getLowPriorityLocation().then((location) =>
-			setContext((current) => {
-				return { ...current, location };
-			})
-		);
-	}, []);
-
-	const onStart = async () => {
-		getHighPriorityLocation().then((location) => {
+		getLowPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
 			});
 		});
+	}, []);
+
+	const onStart = async () => {
+		setCommitment(false);
+		getHighPriorityLocation().then((location) => {
+			setContext((current) => {
+				return { ...current, location };
+			});
+			if (!commitment) return;
+
+			sendSMS(location).then(() => {
+				setHint('Sigurnosni kontakti su obavešteni');
+			});
+		});
+	};
+
+	const onCancel = async () => {
+		setCommitment(false);
+		setHint('Držite dugme 3 sekunde');
+	};
+
+	const onComplete = async () => {
+		setCommitment(true);
+		setCooldown(moment().add(5, 'minutes'));
+		setHint('Prikupljamo najažurnije informacije...');
 	};
 
 	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
@@ -58,50 +80,6 @@ const AlertScreen = () => {
 			country,
 		};
 	}, [context.location]);
-
-	const [shouldSendMessage, setShouldSendMessage] = useState(false);
-
-	useEffect(() => {
-		if (
-			shouldSendMessage &&
-			context !== null &&
-			context.location.latitude !== undefined &&
-			context.location.longitude !== undefined
-		) {
-			sendSMS(context.location);
-		}
-	}, [context, shouldSendMessage]);
-
-	const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-	const [countDown, setCountDown] = useState(0);
-	const [runTimer, setRunTimer] = useState(false);
-
-	useEffect(() => {
-		let timerId = setInterval(() => {}, 1000);
-
-		if (runTimer) {
-			setCountDown(60 * 5 - 1);
-			timerId = setInterval(() => {
-				setCountDown((countDown) => countDown - 1);
-			}, 1000);
-		} else {
-			clearInterval(timerId);
-		}
-
-		return () => clearInterval(timerId);
-	}, [runTimer]);
-
-	useEffect(() => {
-		if (countDown < 0 && runTimer) {
-			setRunTimer(false);
-			setCountDown(0);
-			setIsButtonDisabled(false);
-		}
-	}, [countDown, runTimer]);
-
-	const togglerTimer = () => setRunTimer((t) => !t);
-
-	const minutes = String(Math.floor(countDown / 60) + 1).padStart(2);
 
 	return (
 		<View style={styles.container}>
@@ -121,20 +99,10 @@ const AlertScreen = () => {
 				<Fragment>
 					<CircleButton
 						hint={hint}
-						onStart={async () => {
-							onStart();
-							setHint('Držite dugme 3 sekunde');
-							setShouldSendMessage(false);
-						}}
-						onCancel={() => {}}
-						onComplete={() => {
-							setHint('');
-							setShouldSendMessage(true);
-							setIsButtonDisabled(true);
-							togglerTimer();
-						}}
-						disabled={isButtonDisabled}
-						minutes={minutes}
+						onStart={onStart}
+						onCancel={onCancel}
+						onComplete={onComplete}
+						disabledUntil={cooldown}
 					/>
 					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
 					<Label>
