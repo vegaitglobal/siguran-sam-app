@@ -1,48 +1,17 @@
+import { useCountriesStore } from '@/shared/store/use-countries-store';
+import { Country } from '@/shared/types';
+import React, { useState } from 'react';
 import {
 	FlatList,
+	ImageBackground,
 	Pressable,
 	PressableProps,
 	Text,
-	TextInput,
 	View,
 } from 'react-native';
-import { Country } from '@/shared/types';
-import React, { useState } from 'react';
-import { styles } from './country-picker.style';
 import Icon from '../../icon';
-
-export const countries: Country[] = [
-	{
-		name: 'Srbija',
-		callingNumber: '+381',
-		flag: '',
-	},
-	{
-		name: 'Crna Gora',
-		callingNumber: '+382',
-		flag: '',
-	},
-	{
-		name: 'Hrvatska',
-		callingNumber: '+385',
-		flag: '',
-	},
-	{
-		name: 'Bosna i Hercegovina',
-		callingNumber: '+387',
-		flag: '',
-	},
-	{
-		name: 'Test drzava 1',
-		callingNumber: '+388',
-		flag: '',
-	},
-	{
-		name: 'Test drzava 2',
-		callingNumber: '+389',
-		flag: '',
-	},
-];
+import { styles } from './country-picker.style';
+import { Image } from 'react-native';
 
 interface Props {
 	onCountryChange: (country: Country) => void;
@@ -50,6 +19,8 @@ interface Props {
 }
 
 export const CountryPicker = ({ onCountryChange, selectedCountry }: Props) => {
+	const { countries } = useCountriesStore();
+
 	const [isPickerOpen, setIsPickerOpen] = useState(false);
 
 	const togglePicker = () => setIsPickerOpen((val) => !val);
@@ -91,8 +62,20 @@ const CountryItem = ({
 	country: { name, callingNumber: callingMunber, flag },
 	...props
 }: CountryItemProps) => {
+	const [flagLoaded, setFlagLoaded] = useState(true);
+
 	return (
 		<Pressable style={styles.countryItem} {...props}>
+			{flagLoaded && (
+				<View style={styles.flagContainer}>
+					<Image
+						source={{ uri: flag }}
+						style={styles.flag}
+						onError={() => setFlagLoaded(false)}
+						onLoad={() => setFlagLoaded(true)}
+					/>
+				</View>
+			)}
 			<Text style={styles.countryText}>
 				{name} ({callingMunber})
 			</Text>
