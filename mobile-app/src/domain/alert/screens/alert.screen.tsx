@@ -51,6 +51,13 @@ const AlertScreen = () => {
 
 	const onStart = async () => {
 		setHint('Prikupljamo najažurnije informacije...');
+	};
+
+	const onCancel = async () => {
+		setHint('Držite dugme 3 sekunde');
+	};
+
+	const onComplete = async () => {
 		getHighPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
@@ -62,12 +69,6 @@ const AlertScreen = () => {
 			});
 		});
 	};
-
-	const onCancel = async () => {
-		setHint('Držite dugme 3 sekunde');
-	};
-
-	const onComplete = async () => {};
 
 	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
 		const { accuracy, timestamp, city, country } = context.location;
