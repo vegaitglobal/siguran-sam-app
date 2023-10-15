@@ -15,7 +15,7 @@ interface Props {
 	onCancel?: () => void;
 	onStart?: () => void;
 	onComplete?: () => void;
-	infoLabel?: string;
+	hint?: string;
 }
 
 const radius = 110;

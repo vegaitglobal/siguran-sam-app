@@ -72,7 +72,6 @@ const AlertScreen = () => {
 				</Fragment>
 			) : (
 				<Fragment>
-					{showHint && <Label>Držite dugme duže od 2 sekunde</Label>}
 					<CircleButton
 					// onPress={() => {
 					// 	setShowHint(true);
