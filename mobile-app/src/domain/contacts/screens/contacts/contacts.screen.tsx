@@ -7,14 +7,14 @@ import {
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 
+import ContactPickerScreen from '@/domain/contacts/screens/contacts/contact.picker.screen';
 import { ContactListWidget, ScreenTemplate } from '@/shared/components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Pressable, PressableProps, Text } from 'react-native';
-import { styles } from './contacts.screen.style';
-import { TabView } from './tab-view';
 import * as Contacts from 'expo-contacts';
 import { useState } from 'react';
-import ContactPickerScreen from '@/domain/contacts/screens/contacts/contact.picker.screen';
+import { Pressable, PressableProps, Text } from 'react-native';
+import { styles } from './contacts.screen.style';
+import { ContactsScreenTabs } from './contacts-screen-tabs';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -26,6 +26,10 @@ const ContactsScreen = () => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [allContactsData, setAllContactsData] = useState<Contact[]>([]);
 	const [selectedContacts, setSelectedContacts] = useState<Contact[]>([]);
+
+	const handleAddContact = () => {
+		alert('Hi');
+	};
 
 	const handleImportContacts = () => {
 		(async () => {
@@ -69,12 +73,6 @@ const ContactsScreen = () => {
 		}, []);
 	}
 
-	const handleSave = () => {
-		console.log('Saving. Selected contacts:');
-		console.table(selectedContacts);
-		//contacts.forEach((contact: Contact) => addContact(contact));
-	};
-
 	const closeModal = () => {
 		setIsModalVisible(false);
 	};
@@ -88,10 +86,7 @@ const ContactsScreen = () => {
 
 	return (
 		<ScreenTemplate>
-			<TabView />
-			<ContactListWidget />
-			<SaveButton onPress={handleSave} />
-
+			<ContactsScreenTabs />
 			<ContactPickerScreen
 				visible={isModalVisible}
 				onClose={closeModal}
@@ -100,14 +95,6 @@ const ContactsScreen = () => {
 				setSelectedContacts={setSelectedContacts}
 			/>
 		</ScreenTemplate>
-	);
-};
-
-const SaveButton = (props: PressableProps) => {
-	return (
-		<Pressable style={styles.saveButton} {...props}>
-			<Text style={styles.saveButtonText}>SAČUVAJ</Text>
-		</Pressable>
 	);
 };
 

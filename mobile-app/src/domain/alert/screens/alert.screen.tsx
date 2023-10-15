@@ -1,14 +1,17 @@
-import CircleButton from '@/domain/alert/components/circle-button';
 import { AppScreen } from '@/shared/constants';
-import useLocation from '@/shared/hooks/use-location';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
-
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { Button, View } from 'react-native';
+import { Linking, AppState, View } from 'react-native';
 import Label from '@/shared/components/label';
+import sendSMS from '../services/sms-service';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import * as Location from 'expo-location';
+import { AppButton } from '@/shared/components';
+import useLocation from '@/shared/hooks/use-location';
+import CircleButton from '../components';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -19,35 +22,83 @@ export interface Props
 const AlertScreen = () => {
 	const {
 		location,
-		isLoading,
-		isAllowed,
+		isAllowed: isLocationAllowed,
+		setIsAllowed,
 		city,
 		country,
 		street,
 		streetNumber,
-		altitude,
-		accuracy,
 		setLocationProperties,
-		resetState,
 	} = useLocation();
+
+	const [showHint, setShowHint] = useState(false);
+	const appState = useRef(AppState.currentState);
+
+	useEffect(() => {
+		const subscription = AppState.addEventListener(
+			'change',
+			async (nextAppState) => {
+				if (
+					appState.current.match(/inactive|background/) &&
+					nextAppState === 'active'
+				) {
+					let { status } = await Location.getForegroundPermissionsAsync();
+					setIsAllowed(status === 'granted');
+					setLocationProperties();
+				}
+
+				appState.current = nextAppState;
+			}
+		);
+
+		return () => {
+			subscription.remove();
+		};
+	}, [setLocationProperties]);
+
 	return (
 		<View style={styles.container}>
-			<CircleButton text='SIGURAN SAM' onPress={setLocationProperties} />
-			<Label type='pItalic'>
-				{city}, {country}
-			</Label>
-			<Label type='pItalic'>
-				{street}, {streetNumber}
-			</Label>
-			<Label type='pItalic'>
-				{location?.coords.latitude}° N, {location?.coords.longitude}° E
-			</Label>
-			<Label type='pItalic'>Preciznost: {Math.round(accuracy)}m</Label>
-			<Label type='pItalic'>
-				Nadmorska visina: {altitude !== null ? Math.round(altitude) : 0}m
-			</Label>
-			<Label type='pItalic'>Vaša poslednja poznata lokacija</Label>
-			<Button title='RESET' onPress={resetState} />
+			{!isLocationAllowed ? (
+				<Fragment>
+					<Label style={{ marginBottom: 16, textAlign: 'center' }}>
+						Molim Vas, dozvolite pristup Vašoj lokaciji prilikom korišćenja
+						aplikacije u podešavanjima. Bez dozvole pristupa, nećete moći
+						precizno deliti svoje koordinate sa svojim kontaktima u slučaju
+						opasnosti.
+					</Label>
+					<AppButton onPress={() => Linking.openSettings()}>
+						PODEŠAVANJA
+					</AppButton>
+				</Fragment>
+			) : (
+				<Fragment>
+					<CircleButton
+						hint={''}
+						onCancel={() => {}}
+						onStart={() => {}}
+						onComplete={() => {}}
+						// onPress={() => {
+						// 	setShowHint(true);
+						// }}
+						// onLongPress={() => {
+						// 	sendSMS();
+						// 	setShowHint(false);
+						// }}
+					/>
+					<Label>
+						{city}, {country}
+					</Label>
+					<Label type='pItalic'>
+						{street}, {streetNumber}
+					</Label>
+					<Label type='pItalic'>
+						{location?.coords.latitude}° N, {location?.coords.longitude}° E
+					</Label>
+					<Label type='pItalic' style={{ marginTop: 12 }}>
+						Vaša poslednja poznata lokacija
+					</Label>
+				</Fragment>
+			)}
 		</View>
 	);
 };

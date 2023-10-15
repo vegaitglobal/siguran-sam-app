@@ -1,7 +1,7 @@
+import { Contact } from '@/shared/types';
 import React from 'react';
-import { View, Button, Text, Modal, ScrollView, FlatList } from 'react-native';
+import { Button, FlatList, Modal, Text, View } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import { Contact } from '../../../../shared/types/model';
 
 interface ContactPickerProps {
 	visible: boolean;
@@ -11,9 +11,6 @@ interface ContactPickerProps {
 	setSelectedContacts: (contacts: Contact[]) => void;
 }
 export default function ContactPickerScreen(props: ContactPickerProps) {
-	console.log('All contacts size:', props.contactsData.length);
-	console.table(props.contactsData);
-
 	const toggleContactSelection = (contact: Contact) => {
 		if (props.selectedContacts.includes(contact)) {
 			props.setSelectedContacts(
@@ -43,7 +40,7 @@ export default function ContactPickerScreen(props: ContactPickerProps) {
 				</Text>
 				<FlatList
 					data={props.contactsData}
-					//keyExtractor={(contact) => contact.phoneNumber}
+					keyExtractor={(contact) => contact.number}
 					renderItem={({ item: contact }) => (
 						<View
 							style={{
@@ -53,7 +50,6 @@ export default function ContactPickerScreen(props: ContactPickerProps) {
 							}}
 						>
 							<CheckBox
-								// checkedIcon={}
 								checked={props.selectedContacts.includes(contact)}
 								onPress={() => toggleContactSelection(contact)}
 							/>

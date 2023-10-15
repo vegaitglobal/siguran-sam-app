@@ -21,7 +21,7 @@ export class ContactsFullError extends Error {
 
 const maxContacts = 3;
 
-export const contactStore = create<ContactStoreState>()(
+export const useContactStore = create<ContactStoreState>()(
 	persist(
 		(_set) => ({
 			contacts: [],
@@ -33,7 +33,7 @@ export const contactStore = create<ContactStoreState>()(
 	)
 );
 
-export const getContacts = () => contactStore.getState().contacts;
+export const getContacts = () => useContactStore.getState().contacts;
 
 export const addContact = (contact: Contact): Contact[] => {
 	if (getContacts().length == maxContacts) {
@@ -42,7 +42,7 @@ export const addContact = (contact: Contact): Contact[] => {
 		);
 	}
 	if (
-		contactStore.getState().contacts.find((c) => c.number === contact.number)
+		useContactStore.getState().contacts.find((c) => c.number === contact.number)
 	) {
 		throw new DuplicateContactError(
 			'Contact with number: ' +
@@ -53,7 +53,7 @@ export const addContact = (contact: Contact): Contact[] => {
 		);
 	}
 
-	contactStore.setState((state) => ({
+	useContactStore.setState((state) => ({
 		contacts: [...state.contacts, contact],
 	}));
 
@@ -61,13 +61,13 @@ export const addContact = (contact: Contact): Contact[] => {
 };
 
 export const deleteContact = (number: string): Contact[] => {
-	contactStore.setState((state) => ({
+	useContactStore.setState((state) => ({
 		contacts: state.contacts.filter((c) => number !== c.number),
 	}));
 	return getContacts();
 };
 
 export const deleteAllContacts = (): Contact[] => {
-	contactStore.setState(() => ({ contacts: [] }));
+	useContactStore.setState(() => ({ contacts: [] }));
 	return getContacts();
 };
