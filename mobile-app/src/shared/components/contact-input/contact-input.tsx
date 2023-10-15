@@ -2,8 +2,9 @@ import { Country } from '@/shared/types';
 import React, { useState } from 'react';
 import { TextInput, View } from 'react-native';
 import { styles } from './contact-input.style';
-import { CountryPicker, countries } from './country-picker/country-picker';
+import { CountryPicker } from './country-picker/country-picker';
 import { Colors } from '@/shared/styles';
+import { useCountriesStore } from '@/shared/store/use-countries-store';
 
 export interface PhoneNumber {
 	callingNumber: string;
@@ -15,10 +16,18 @@ interface Props {
 	number: PhoneNumber;
 }
 
+const SERBIA: Country = {
+	name: 'Srbija',
+	callingNumber: '+381',
+	flag: 'https://flagsapi.com/RS/flat/64.png',
+	code: 'RS',
+};
+
 export const ContactInput = ({ onChange, number }: Props) => {
+	const { countries } = useCountriesStore();
+
 	const [selectedCountry, setSelectedCountry] = useState<Country>(
-		countries.find((c) => c.callingNumber === number.callingNumber) ||
-			countries[0]
+		countries.find((c) => c.callingNumber === number.callingNumber) || SERBIA
 	);
 
 	const onNumberChange = (value: string) => {

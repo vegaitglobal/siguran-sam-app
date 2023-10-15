@@ -8,4 +8,5 @@ export interface Country {
 	name: string;
 	callingNumber: string;
 	flag: string;
+	code: string;
 }
