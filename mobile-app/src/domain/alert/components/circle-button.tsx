@@ -44,7 +44,7 @@ const CircleButton = ({
 	const timerRef = useRef<NodeJS.Timeout>();
 
 	useEffect(() => {
-		if (!hint) return;
+		if (!hint || disabled) return;
 
 		hintOpacity.value = withTiming(1);
 
@@ -55,7 +55,7 @@ const CircleButton = ({
 		return () => {
 			clearTimeout(timeout);
 		};
-	}, [hint, hintOpacity]);
+	}, [hint, hintOpacity, disabled]);
 
 	const startTimer = useCallback(() => {
 		timerRef.current = setTimeout(() => {
