@@ -22,7 +22,8 @@ const ContactsRoute = () => (
 const MessageRoute = () => (
 	<View style={styles.routeWrapper}>
 		<Label style={styles.routeLabel}>Vaša sigurnosna poruka</Label>
-		<MessageWidget />
+		{/* TODO check from env inf MessageWidget should be disabled */}
+		<MessageWidget disabled />
 	</View>
 );
 
@@ -44,6 +45,7 @@ export const ContactsScreenTabs = () => {
 				})}
 				onIndexChange={setIndex}
 				renderTabBar={(props) => <TabBar onTabChange={setIndex} {...props} />}
+				lazy
 			/>
 		</View>
 	);

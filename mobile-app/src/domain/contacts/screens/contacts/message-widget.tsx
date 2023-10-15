@@ -1,5 +1,13 @@
 import { AppButton } from '@/shared/components';
-import React, { useState } from 'react';
+import { AppScreen } from '@/shared/constants';
+import {
+	setPersistedMessage,
+	useMessageStore,
+} from '@/shared/store/use-message-store';
+import { BottomTabsParamList } from '@/shared/types';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useState, useEffect } from 'react';
 import { Text, TextInput, TextInputProps, View } from 'react-native';
 import { styles } from './message-widget.style';
 
@@ -8,7 +16,16 @@ interface Props {
 }
 
 export const MessageWidget = ({ disabled }: Props) => {
-	const [message, setMessage] = useState<string>('Hey there!');
+	const { message: persistedMessage } = useMessageStore();
+	const [message, setMessage] = useState(persistedMessage);
+	const { navigate } =
+		useNavigation<NativeStackNavigationProp<BottomTabsParamList>>();
+
+	const handleSave = () => {
+		setPersistedMessage(message);
+		alert('Promene sačuvane');
+		navigate(AppScreen.ALERT);
+	};
 
 	return (
 		<View>
@@ -21,7 +38,7 @@ export const MessageWidget = ({ disabled }: Props) => {
 				<>
 					<EditableIndicator />
 					<View style={styles.saveButtonWrapper}>
-						<AppButton>SAČUVAJ</AppButton>
+						<AppButton onPress={handleSave}>SAČUVAJ</AppButton>
 					</View>
 				</>
 			)}
@@ -40,7 +57,6 @@ const MessageInput = ({ disabled, ...props }: MessageInputProps) => {
 				multiline
 				textAlignVertical='top'
 				editable={!disabled}
-				selectTextOnFocus={!disabled}
 				style={[styles.messageInput, disabled && styles.disabled]}
 				{...props}
 			/>

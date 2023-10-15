@@ -8,7 +8,7 @@ import BackButton from '../../components/back-button';
 import { useCallback, useMemo, useState } from 'react';
 import StepIndicator from '../../components/step-indicator';
 import MainOnboardingComponent from '../../components/main-onboarding-component/main-onboarding-component';
-import { useUserInfoStore } from '@/shared/store';
+import { setFullName, useUserInfoStore } from '@/shared/store';
 import { useContactStore } from '@/shared/store/use-contact-store';
 
 const MAX_STEP = 8;
@@ -18,7 +18,7 @@ export interface Props
 
 const OnboardingScreen = ({ navigation }: Props) => {
 	const [step, setStep] = useState(1);
-	const [name, setName] = useState(useUserInfoStore.getState().name);
+	const { fullName } = useUserInfoStore();
 	const { contacts } = useContactStore();
 
 	const nextStep = useCallback(() => {
@@ -38,8 +38,7 @@ const OnboardingScreen = ({ navigation }: Props) => {
 	}, []);
 
 	const nextButtonOnPressHandler = useCallback(() => {
-		if (step === 8 && contacts.length > 0 && !!name) {
-			setName(name);
+		if (step === 8 && contacts.length > 0 && !!fullName) {
 			navigation.replace(AppScreen.WELCOME);
 		} else {
 			nextStep();
@@ -53,7 +52,7 @@ const OnboardingScreen = ({ navigation }: Props) => {
 	}, [step]);
 
 	const isNextDisabled = useMemo(() => {
-		if (step === 7 && !name) return true;
+		if (step === 7 && !fullName) return true;
 
 		if (step === 8 && contacts.length <= 0) return true;
 
@@ -73,8 +72,8 @@ const OnboardingScreen = ({ navigation }: Props) => {
 				<View style={styles.flex}>
 					<MainOnboardingComponent
 						step={step}
-						name={name}
-						onChangeName={setName}
+						name={fullName}
+						onChangeName={setFullName}
 					/>
 				</View>
 				<View style={styles.buttonsContainer}>

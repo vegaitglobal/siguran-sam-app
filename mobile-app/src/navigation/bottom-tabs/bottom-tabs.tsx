@@ -22,6 +22,7 @@ const BottomTabs = () => {
 				tabBarIcon: ({ color }) => (
 					<TabBarIcon routeName={route.name} color={color} />
 				),
+				unmountOnBlur: true,
 			})}
 		>
 			<Tab.Screen name={AppScreen.ALERT} component={AlertScreen} />
