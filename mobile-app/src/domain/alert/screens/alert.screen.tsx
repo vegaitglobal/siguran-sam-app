@@ -90,7 +90,7 @@ const AlertScreen = () => {
 		return () => clearInterval(interval);
 	}, [cooldown]);
 
-	const disabled = useMemo(() => minutes > 0, []);
+	const disabled = useMemo(() => minutes > 0, [minutes]);
 
 	return (
 		<View style={styles.container}>
