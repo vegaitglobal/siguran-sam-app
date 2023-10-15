@@ -6,7 +6,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
 import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { AppButton } from '@/shared/components';
 import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
@@ -24,15 +24,25 @@ const AlertScreen = () => {
 		location: {} as DeviceLocation,
 	});
 
-	const { permissionsGranted: locationPermissionsGranted, getLocation } =
-		useLocation();
+	const {
+		permissionsGranted: locationPermissionsGranted,
+		getHighPriorityLocation,
+		getLowPriorityLocation,
+	} = useLocation();
+
+	useEffect(() => {
+		getLowPriorityLocation().then((location) =>
+			setContext((current) => {
+				return { ...current, location };
+			})
+		);
+	}, []);
 
 	const onStart = async () => {
-		getLocation().then((location) => {
+		getHighPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
 			});
-			console.log('location', location);
 		});
 	};
 
@@ -68,8 +78,9 @@ const AlertScreen = () => {
 						onStart={onStart}
 						onComplete={() => {}}
 					/>
-					<Label type='pItalic'>Poslednja zabeležena lokacija je od</Label>
+					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
 					<Label>
+						je od
 						<Moment element={Text} interval={600_000} locale='sr' fromNow>
 							{locationTimestamp}
 						</Moment>
