@@ -26,6 +26,7 @@ const AlertScreen = () => {
 		location: {} as DeviceLocation,
 	});
 
+	const [minutes, setMinutes] = useState(0);
 	const [hint, setHint] = useState<string>();
 	const [commitment, setCommitment] = useState(false);
 	const [cooldown, setCooldown] = useState<moment.Moment>(
@@ -81,6 +82,16 @@ const AlertScreen = () => {
 		};
 	}, [context.location]);
 
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setMinutes(cooldown.diff(moment(), 'minutes'));
+		}, 60_000);
+
+		return () => clearInterval(interval);
+	}, [cooldown]);
+
+	const disabled = useMemo(() => minutes > 0, []);
+
 	return (
 		<View style={styles.container}>
 			{!locationPermissionsGranted ? (
@@ -102,7 +113,8 @@ const AlertScreen = () => {
 						onStart={onStart}
 						onCancel={onCancel}
 						onComplete={onComplete}
-						disabledUntil={cooldown}
+						disabled={disabled}
+						minutes={minutes}
 					/>
 					<Label style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>
 						{city}, {country}
