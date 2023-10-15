@@ -13,6 +13,8 @@ import CircleButton from '../components';
 import Moment from 'react-moment';
 import sendSMS from '../services/sms-service';
 import 'moment/locale/sr';
+import { useUserInfoStore } from '@/shared/store';
+import { useContactStore } from '@/shared/store/use-contact-store';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -24,6 +26,9 @@ const AlertScreen = () => {
 	const [context, setContext] = useState<{ location: DeviceLocation }>({
 		location: {} as DeviceLocation,
 	});
+
+	const { fullName } = useUserInfoStore();
+	const { contacts } = useContactStore();
 
 	const [minutes, setMinutes] = useState(0);
 	const [hint, setHint] = useState<string>();
@@ -64,7 +69,11 @@ const AlertScreen = () => {
 				return { ...current, location };
 			});
 
-			sendSMS(location).then(() => {
+			sendSMS(
+				fullName,
+				contacts.map((c) => c.number),
+				location
+			).then(() => {
 				setHint('Sigurnosni kontakti su obavešteni');
 			});
 		});

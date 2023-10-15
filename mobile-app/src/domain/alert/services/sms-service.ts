@@ -1,19 +1,22 @@
 import { Platform } from 'react-native';
-import getLocation from './location-service';
 import * as Network from 'expo-network';
 import messageService from './message.service';
-import { LocationObject } from 'expo-location';
+
 import { DeviceLocation } from '@/shared/hooks/use-location';
 
-const sendSMS = async (location: DeviceLocation) => {
+const sendSMS = async (
+	username: string,
+	recipients: string[],
+	location: DeviceLocation
+) => {
 	let { type, isConnected, isInternetReachable } =
 		await Network.getNetworkStateAsync();
 
 	isInternetReachable = false;
 
-	let recipients = ['123456', '555666'];
-
-	let message = `Hello, I am in danger. My current location is: https://maps.google.com/?q=${location.latitude},${location.longitude}`;
+	let message = `${username}: "Siguran Sam"
+	Lokacija: https://maps.google.com/?q=${location.latitude},${location.longitude}
+	Pozovite O.T.I.S: +3816102306685`;
 
 	if (isInternetReachable) {
 		messageService.sendOnlineSMS(recipients, message);
