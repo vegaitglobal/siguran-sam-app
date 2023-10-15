@@ -1,14 +1,13 @@
-import { ContentWidth } from '@/shared/styles';
+import { Colors, ContentWidth } from '@/shared/styles';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
 	wrapper: {
 		position: 'relative',
-		zIndex: 999,
 	},
 	pickerButton: {
 		width: 70,
-		height: 47,
+		height: 46,
 		borderRightColor: 'white',
 		borderRightStyle: 'solid',
 		borderRightWidth: 1,
@@ -30,13 +29,12 @@ export const styles = StyleSheet.create({
 		borderStyle: 'solid',
 		borderWidth: 1,
 		borderRadius: 8,
-		zIndex: 999,
-		elevation: 999,
+		backgroundColor: Colors.BLACK.SECONDARY,
 	},
 	countryItem: {
 		height: 47,
-    paddingHorizontal: 15,
-    justifyContent: 'center'
+		paddingHorizontal: 15,
+		justifyContent: 'center',
 	},
 	countryText: {
 		color: 'white',

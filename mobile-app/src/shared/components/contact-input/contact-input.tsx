@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { TextInput, View } from 'react-native';
 import { styles } from './contact-input.style';
 import { CountryPicker, countries } from './country-picker/country-picker';
+import { Colors } from '@/shared/styles';
 
 export interface PhoneNumber {
 	callingNumber: string;
@@ -45,6 +46,7 @@ export const ContactInput = ({ onChange, number }: Props) => {
 				<TextInput
 					style={styles.input}
 					keyboardType='number-pad'
+					placeholderTextColor={Colors.GRAY_2.SECODNARY}
 					placeholder='123 456'
 					onChangeText={onNumberChange}
 					value={number.mainNumberPart}
