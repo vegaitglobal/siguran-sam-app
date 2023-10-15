@@ -9,27 +9,27 @@ export const styles = StyleSheet.create({
 		maxHeight: '100%',
 	},
 	item: {
-		backgroundColor: 'rgb(114.95, 0.48, 0.48)',
+		backgroundColor: Colors.RED.SECONDARY,
 		borderRadius: 13,
-		width: 315,
-		height: 115,
-		paddingHorizontal: 10,
-		flexWrap: 'wrap',
+		justifyContent: 'center',
+		minHeight: 120,
+		paddingHorizontal: 12,
 		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
+	},
+	textContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		paddingRight: 8,
+	},
+	iconContainer: {
+		justifyContent: 'center',
+	},
+	icon: {
+		width: 60,
+		height: 60,
+		borderRadius: 8,
 	},
 	itemSeparator: {
 		height: 10,
-	},
-	title: {
-		fontSize: 16,
-		color: Colors.WHITE.PRIMARY,
-		fontWeight: '700',
-	},
-	description: {
-		fontSize: 13,
-		color: Colors.WHITE.SECONDARY,
-		fontWeight: '500',
 	},
 });
