@@ -2,7 +2,6 @@ import { ScreenTemplate } from '@/shared/components';
 import { AppScreen } from '@/shared/constants';
 import { RootStackParamList } from '@/shared/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StatusBar } from 'expo-status-bar';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import NextButton from '../../components/next-button';
 import BackButton from '../../components/back-button';
@@ -63,7 +62,6 @@ const OnboardingScreen = ({ navigation }: Props) => {
 
 	return (
 		<ScreenTemplate>
-			<StatusBar style='light' />
 			<View style={{ alignItems: 'center', marginTop: 30 }}>
 				<StepIndicator step={step} />
 			</View>

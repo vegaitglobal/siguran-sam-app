@@ -3,7 +3,6 @@ import Label from '@/shared/components/label';
 import { AppScreen } from '@/shared/constants';
 import { RootStackParamList } from '@/shared/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 import LogoWithText from '@/shared/assets/images/logo-with-text.svg';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -18,7 +17,6 @@ const TermsScreen = ({ navigation }: Props) => {
 
 	return (
 		<ScreenTemplate>
-			<StatusBar style='light' />
 			<Animated.View entering={FadeIn.delay(500)}>
 				<LogoWithText style={styles.logo} />
 			</Animated.View>

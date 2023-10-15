@@ -2,7 +2,6 @@ import { ScreenTemplate } from '@/shared/components';
 import { AppScreen } from '@/shared/constants';
 import { RootStackParamList } from '@/shared/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import Logo from '@/shared/assets/images/logo.svg';
 import LogoText from '@/shared/assets/images/logo-text.svg';
@@ -25,7 +24,6 @@ const WelcomeScreen = () => {
 
 	return (
 		<ScreenTemplate>
-			<StatusBar style='light' />
 			<View style={styles.screenContainer}>
 				<View style={styles.logoContainer}>
 					<Animated.View entering={FadeInRight.delay(500).duration(750)}>
