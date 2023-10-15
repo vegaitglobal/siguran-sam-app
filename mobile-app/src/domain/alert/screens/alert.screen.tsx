@@ -58,6 +58,7 @@ const AlertScreen = () => {
 	};
 
 	const onComplete = async () => {
+		setMinutes(5);
 		getHighPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
@@ -65,7 +66,6 @@ const AlertScreen = () => {
 
 			sendSMS(location).then(() => {
 				setHint('Sigurnosni kontakti su obavešteni');
-				setMinutes(5);
 			});
 		});
 	};
