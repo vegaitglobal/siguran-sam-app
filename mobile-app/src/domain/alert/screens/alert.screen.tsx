@@ -12,7 +12,6 @@ import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
 import Moment from 'react-moment';
 import sendSMS from '../services/sms-service';
-import moment from 'moment';
 import 'moment/locale/sr';
 
 export interface Props
@@ -28,7 +27,6 @@ const AlertScreen = () => {
 
 	const [minutes, setMinutes] = useState(0);
 	const [hint, setHint] = useState<string>();
-	const commitment = useRef(false);
 
 	const {
 		permissionsGranted: locationPermissionsGranted,
@@ -52,14 +50,11 @@ const AlertScreen = () => {
 	}, []);
 
 	const onStart = async () => {
-		commitment.current = false;
 		setHint('Prikupljamo najažurnije informacije...');
 		getHighPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
 			});
-
-			if (!commitment.current) return;
 
 			sendSMS(location).then(() => {
 				setHint('Sigurnosni kontakti su obavešteni');
@@ -69,13 +64,10 @@ const AlertScreen = () => {
 	};
 
 	const onCancel = async () => {
-		commitment.current = false;
 		setHint('Držite dugme 3 sekunde');
 	};
 
-	const onComplete = async () => {
-		commitment.current = true;
-	};
+	const onComplete = async () => {};
 
 	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
 		const { accuracy, timestamp, city, country } = context.location;
