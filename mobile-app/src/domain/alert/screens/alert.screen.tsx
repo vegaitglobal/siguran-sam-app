@@ -12,6 +12,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
 import { AppButton } from '@/shared/components';
 import useLocation from '@/shared/hooks/use-location';
+import getLocation from '../services/location-service';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -56,6 +57,25 @@ const AlertScreen = () => {
 		};
 	}, [setLocationProperties]);
 
+	const [latestLocation, setLatestLocation] =
+		useState<Location.LocationObject | null>(null);
+	const [shouldSendMessage, setShouldSendMessage] = useState(false);
+
+	useEffect(() => {
+		console.log(shouldSendMessage);
+		console.log(latestLocation);
+		if (
+			shouldSendMessage &&
+			latestLocation !== null &&
+			latestLocation.coords?.latitude !== null &&
+			latestLocation.coords?.longitude !== null &&
+			latestLocation.coords?.latitude !== undefined &&
+			latestLocation.coords?.longitude !== undefined
+		) {
+			sendSMS(latestLocation);
+		}
+	}, [latestLocation, shouldSendMessage]);
+
 	return (
 		<View style={styles.container}>
 			{!isAllowed ? (
@@ -72,15 +92,17 @@ const AlertScreen = () => {
 				</Fragment>
 			) : (
 				<Fragment>
-					{showHint && <Label>Držite dugme duže od 2 sekunde</Label>}
+					{showHint && <Label>Držite dugme 3 sekunde</Label>}
 					<CircleButton
 						text='SIGURAN SAM'
-						onPress={() => {
+						onPress={async () => {
+							setShouldSendMessage(false);
 							setShowHint(true);
+							setLatestLocation(await getLocation());
 						}}
 						onLongPress={() => {
-							sendSMS();
 							setShowHint(false);
+							setShouldSendMessage(true);
 						}}
 					/>
 					<Label>

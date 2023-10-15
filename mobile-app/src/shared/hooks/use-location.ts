@@ -17,6 +17,10 @@ const useLocation = () => {
 		setLocationProperties();
 	}, []);
 
+	// useEffect(() => {
+
+	// }, [location, city, country, street, streetNumber, altitude, accuracy])
+
 	const setLocationProperties = async () => {
 		let { status } = await Location.requestForegroundPermissionsAsync();
 		if (status !== 'granted') {
@@ -50,6 +54,7 @@ const useLocation = () => {
 
 	return {
 		location,
+		setLocation,
 		isAllowed,
 		setIsAllowed,
 		city,

@@ -18,4 +18,10 @@ export const styles = StyleSheet.create({
 		borderRadius: 100,
 		backgroundColor: Colors.RED.SECONDARY,
 	},
+	circleButtonContainerDisabled: {
+		borderColor: Colors.GRAY.PRIMARY,
+	},
+	circleButtonDisabled: {
+		backgroundColor: Colors.GRAY.DISABLED,
+	},
 });

@@ -2,9 +2,9 @@ import { Platform } from 'react-native';
 import getLocation from './location-service';
 import * as Network from 'expo-network';
 import messageService from './message.service';
+import { LocationObject } from 'expo-location';
 
-const sendSMS = async () => {
-	const location = await getLocation();
+const sendSMS = async (location: LocationObject | null) => {
 	let { type, isConnected, isInternetReachable } =
 		await Network.getNetworkStateAsync();
 
