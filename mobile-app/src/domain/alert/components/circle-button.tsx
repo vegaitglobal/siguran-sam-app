@@ -5,11 +5,13 @@ import Svg, { Circle } from 'react-native-svg';
 import Animated, {
 	Easing,
 	useAnimatedProps,
+	useAnimatedStyle,
 	useSharedValue,
 	withSpring,
 	withTiming,
 } from 'react-native-reanimated';
 import { Colors } from '@/shared/styles';
+import { memo, useCallback, useEffect } from 'react';
 
 interface Props {
 	onCancel?: () => void;
@@ -18,36 +20,66 @@ interface Props {
 	hint?: string;
 }
 
-const radius = 110;
-const length = 2 * radius * Math.PI;
+const RADIUS = 110;
+const LENGTH = 2 * RADIUS * Math.PI;
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-export default function CircleButton({}: Props) {
+const CircleButton = ({ onCancel, onStart, onComplete, hint }: Props) => {
 	const offset = useSharedValue(1);
+	const hintOpacity = useSharedValue(0);
+
+	useEffect(() => {
+		if (!hint) return;
+
+		hintOpacity.value = withTiming(1);
+
+		const timeout = setTimeout(() => {
+			hintOpacity.value = withTiming(0);
+		}, 5000);
+
+		return () => {
+			clearTimeout(timeout);
+		};
+	}, [hint, hintOpacity]);
 
 	const animatedProps = useAnimatedProps(() => ({
-		strokeDashoffset: -length * offset.value,
+		strokeDashoffset: -LENGTH * offset.value,
 	}));
-	const onPressInHandler = () => {
-		offset.value = withTiming(0, { duration: 3000, easing: Easing.linear });
-	};
 
-	const onPressOutHandler = () => {
+	const onPressInHandler = useCallback(() => {
+		offset.value = withTiming(0, { duration: 3000, easing: Easing.linear });
+		onStart?.();
+	}, [offset, onStart]);
+
+	const onPressOutHandler = useCallback(() => {
 		offset.value = withSpring(1, { overshootClamping: true });
-	};
+		onCancel?.();
+	}, [offset, onCancel]);
+
+	const animatedHintStyle = useAnimatedStyle(() => {
+		return {
+			opacity: hintOpacity.value,
+		};
+	});
 
 	return (
 		<View style={styles.container}>
+			<Animated.View style={animatedHintStyle}>
+				<Label numberOfLines={3} style={styles.hint}>
+					{hint}
+				</Label>
+			</Animated.View>
+
 			<Svg width={240} height={240} style={styles.svgProgress}>
 				<AnimatedCircle
 					cx={120}
 					cy={120}
-					r={radius}
+					r={RADIUS}
 					stroke={Colors.RED.SECONDARY}
 					fill={'transparent'}
 					strokeWidth={5}
-					strokeDasharray={length}
+					strokeDasharray={LENGTH}
 					animatedProps={animatedProps}
 				/>
 			</Svg>
@@ -56,8 +88,7 @@ export default function CircleButton({}: Props) {
 				onPressIn={onPressInHandler}
 				onPressOut={onPressOutHandler}
 				style={styles.outerCircle}
-				// onLongPress={onLongPress}
-				// onPress={onPress}
+				onLongPress={onComplete}
 			>
 				<View style={styles.circleButton}>
 					<Label type='h3Black'>SIGURAN SAM</Label>
@@ -65,4 +96,6 @@ export default function CircleButton({}: Props) {
 			</TouchableOpacity>
 		</View>
 	);
-}
+};
+
+export default memo(CircleButton);
