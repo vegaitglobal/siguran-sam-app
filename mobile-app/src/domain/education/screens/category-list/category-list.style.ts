@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { Colors, ContentWidth } from '@/shared/styles';
+import { Colors } from '@/shared/styles';
 
 export const styles = StyleSheet.create({
 	wrapper: {
-		width: ContentWidth,
+		paddingHorizontal: 20,
+		flex: 1,
 	},
 	list: {
 		maxHeight: '100%',
@@ -31,5 +32,8 @@ export const styles = StyleSheet.create({
 	},
 	itemSeparator: {
 		height: 10,
+	},
+	listHeader: {
+		height: 32,
 	},
 });
