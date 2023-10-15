@@ -1,11 +1,11 @@
-interface Category {
+export interface Category {
 	id: string;
 	title: string;
 	description: string;
 	iconURL: string;
 }
 
-interface BlogPost {
+export interface BlogPost {
 	id: string;
 	title: string;
 	category: string;
