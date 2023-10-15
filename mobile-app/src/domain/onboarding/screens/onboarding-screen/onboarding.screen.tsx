@@ -93,6 +93,7 @@ export default OnboardingScreen;
 const styles = StyleSheet.create({
 	flex: {
 		flex: 1,
+		paddingHorizontal: 20,
 	},
 	buttonsContainer: {
 		flexDirection: 'row',

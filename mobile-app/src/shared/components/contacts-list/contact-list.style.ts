@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
 		fontWeight: '700',
 	},
 	number: {
-		color: Colors.GRAY.PRIMARY,
+		color: Colors.WHITE.SECONDARY,
 	},
 	delete: {
 		color: Colors.GRAY.PRIMARY,
