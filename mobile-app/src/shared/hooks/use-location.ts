@@ -17,34 +17,35 @@ export interface DeviceLocation {
 const useLocation = () => {
 	const [previousAppState, setPreviousAppState] =
 		useState<AppStateStatus>('unknown');
-	const [permissionStatus, setPermissionStatus] =
-		useState<Location.PermissionStatus>(Location.PermissionStatus.UNDETERMINED);
+
+	const [permissionResponse, requestPermission] =
+		Location.useForegroundPermissions();
 
 	useEffect(() => {
 		const subscription = AppState.addEventListener(
 			'change',
 			async (nextAppState) => {
+				if (permissionResponse?.granted) return;
+
 				if (nextAppState === previousAppState) return;
 				setPreviousAppState(nextAppState);
-
 				if (nextAppState !== 'active') return;
 
-				Location.requestForegroundPermissionsAsync().then(({ status }) => {
-					setPermissionStatus(status);
-				});
+				requestPermission();
 			}
 		);
 
 		return () => subscription.remove();
-	}, [setPermissionStatus]);
+	}, []);
 
 	const permissionsGranted = useMemo(() => {
-		return permissionStatus === Location.PermissionStatus.GRANTED;
-	}, [permissionStatus]);
+		return permissionResponse?.granted ? true : false;
+	}, [permissionResponse]);
 
-	const getLocation = async (): Promise<DeviceLocation> => {
-		const location = await Location.getCurrentPositionAsync()
-			.catch(Location.getLastKnownPositionAsync);
+	const getLocation = async (
+		resolveLocation: () => Promise<Location.LocationObject | null>
+	): Promise<DeviceLocation> => {
+		const location = await resolveLocation();
 
 		const { longitude, latitude, altitude, accuracy } = location!.coords;
 
@@ -65,7 +66,14 @@ const useLocation = () => {
 	};
 
 	return {
-		getLocation,
+		getHighPriorityLocation: () =>
+			getLocation(() =>
+				Location.getCurrentPositionAsync().catch(
+					Location.getLastKnownPositionAsync
+				)
+			),
+		getLowPriorityLocation: () =>
+			getLocation(() => Location.getLastKnownPositionAsync()),
 		permissionsGranted,
 	};
 };

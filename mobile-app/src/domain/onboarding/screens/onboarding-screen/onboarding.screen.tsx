@@ -43,7 +43,7 @@ const OnboardingScreen = ({ navigation }: Props) => {
 		} else {
 			nextStep();
 		}
-	}, [name, step, contacts.length, nextStep]);
+	}, [fullName, step, contacts.length, nextStep]);
 
 	const isBackDisabled = useMemo(() => {
 		if (step === 1) return true;
@@ -57,7 +57,7 @@ const OnboardingScreen = ({ navigation }: Props) => {
 		if (step === 8 && contacts.length <= 0) return true;
 
 		return false;
-	}, [step, name, contacts]);
+	}, [fullName, step, contacts]);
 
 	return (
 		<ScreenTemplate>

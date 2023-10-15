@@ -6,11 +6,14 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
 import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { AppButton } from '@/shared/components';
+import { Colors } from '@/shared/styles';
 import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
 import Moment from 'react-moment';
+import sendSMS from '../services/sms-service';
+import 'moment/locale/sr';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -23,25 +26,82 @@ const AlertScreen = () => {
 		location: {} as DeviceLocation,
 	});
 
-	const { permissionsGranted: locationPermissionsGranted, getLocation } =
-		useLocation();
+	const [hint, setHint] = useState('');
+	const {
+		permissionsGranted: locationPermissionsGranted,
+		getHighPriorityLocation,
+		getLowPriorityLocation,
+	} = useLocation();
+
+	useEffect(() => {
+		getLowPriorityLocation().then((location) =>
+			setContext((current) => {
+				return { ...current, location };
+			})
+		);
+	}, []);
 
 	const onStart = async () => {
-		getLocation().then((location) => {
+		getHighPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
 			});
-			console.log('location', location);
 		});
 	};
 
-	const { locationTimestamp, accuracy } = useMemo(() => {
-		const { accuracy, timestamp } = context.location;
+	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
+		const { accuracy, timestamp, city, country } = context.location;
 		return {
 			accuracy,
 			locationTimestamp: timestamp,
+			city,
+			country,
 		};
 	}, [context.location]);
+
+	const [shouldSendMessage, setShouldSendMessage] = useState(false);
+
+	useEffect(() => {
+		if (
+			shouldSendMessage &&
+			context !== null &&
+			context.location.latitude !== undefined &&
+			context.location.longitude !== undefined
+		) {
+			sendSMS(context.location);
+		}
+	}, [context, shouldSendMessage]);
+
+	const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+	const [countDown, setCountDown] = useState(0);
+	const [runTimer, setRunTimer] = useState(false);
+
+	useEffect(() => {
+		let timerId = setInterval(() => {}, 1000);
+
+		if (runTimer) {
+			setCountDown(60 * 5 - 1);
+			timerId = setInterval(() => {
+				setCountDown((countDown) => countDown - 1);
+			}, 1000);
+		} else {
+			clearInterval(timerId);
+		}
+
+		return () => clearInterval(timerId);
+	}, [runTimer]);
+
+	useEffect(() => {
+		if (countDown < 0 && runTimer) {
+			setRunTimer(false);
+			setCountDown(0);
+			setIsButtonDisabled(false);
+		}
+	}, [countDown, runTimer]);
+
+	const togglerTimer = () => setRunTimer((t) => !t);
+
+	const minutes = String(Math.floor(countDown / 60) + 1).padStart(2);
 
 	return (
 		<View style={styles.container}>
@@ -60,17 +120,32 @@ const AlertScreen = () => {
 			) : (
 				<Fragment>
 					<CircleButton
-						hint={''}
+						hint={hint}
+						onStart={async () => {
+							onStart();
+							setHint('Držite dugme 3 sekunde');
+							setShouldSendMessage(false);
+						}}
 						onCancel={() => {}}
-						onStart={onStart}
-						onComplete={() => {}}
+						onComplete={() => {
+							setHint('');
+							setShouldSendMessage(true);
+							setIsButtonDisabled(true);
+							togglerTimer();
+						}}
+						disabled={isButtonDisabled}
+						minutes={minutes}
 					/>
+					<Label style={{ marginBottom: 12, fontSize:20, fontWeight:'bold' }}>
+						{city}, {country}
+					</Label>
+					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
 					<Label type='pItalic'>
-						Poslednja zabeležena lokacija je od pre{' '}
-						<Moment element={Text} interval={600_000} ago>
+						je od{' '}
+						<Moment element={Text} interval={600_000} locale='sr' fromNow>
 							{locationTimestamp}
 						</Moment>
-					</Label>
+					</Label >
 					{accuracy && (
 						<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
 					)}
