@@ -8,17 +8,13 @@ export const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	outerCircle: {
+	innerCircle: {
 		width: 200,
 		height: 200,
-		borderWidth: 7,
 		borderRadius: 100,
-	},
-	innerCircle: {
-		flex: 1,
+		borderWidth: 7,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 100,
 	},
 	svgProgress: { position: 'absolute', transform: [{ rotateZ: '-90deg' }] },
 	hint: { textAlign: 'center' },

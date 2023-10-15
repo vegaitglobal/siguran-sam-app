@@ -1,4 +1,4 @@
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
 import { styles } from './circle-button.style';
 import Label from '@/shared/components/label';
 import Svg, { Circle } from 'react-native-svg';
@@ -7,21 +7,21 @@ import Animated, {
 	useAnimatedProps,
 	useAnimatedStyle,
 	useSharedValue,
+	withSequence,
 	withSpring,
 	withTiming,
 } from 'react-native-reanimated';
 import { Colors } from '@/shared/styles';
-import { Fragment, memo, useCallback, useEffect } from 'react';
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import * as Haptics from 'expo-haptics';
 
 interface Props {
 	onCancel?: () => void;
 	onStart?: () => void;
 	onComplete?: () => void;
 	hint?: string;
-	innerStyle: {};
-	outerStyle: {};
-	disabled: boolean;
-	minutes: string;
+	minutes?: string;
+	disabled?: boolean;
 }
 
 const RADIUS = 110;
@@ -34,13 +34,14 @@ const CircleButton = ({
 	onStart,
 	onComplete,
 	hint,
-	innerStyle,
-	outerStyle,
-	disabled,
 	minutes,
+	disabled,
 }: Props) => {
 	const offset = useSharedValue(1);
 	const hintOpacity = useSharedValue(0);
+	const circleScale = useSharedValue(1);
+
+	const timerRef = useRef<NodeJS.Timeout>();
 
 	useEffect(() => {
 		if (!hint) return;
@@ -56,6 +57,25 @@ const CircleButton = ({
 		};
 	}, [hint, hintOpacity]);
 
+	const startTimer = useCallback(() => {
+		timerRef.current = setTimeout(() => {
+			onComplete?.();
+			circleScale.value = withSequence(
+				withTiming(1.04, { duration: 100 }),
+				withTiming(1, { duration: 100 })
+			);
+			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+		}, 3000);
+	}, [onComplete, circleScale]);
+
+	const clearTimer = useCallback(() => {
+		clearTimeout(timerRef.current);
+	}, []);
+
+	useEffect(() => {
+		return clearTimer;
+	}, [clearTimer]);
+
 	const animatedProps = useAnimatedProps(() => ({
 		strokeDashoffset: -LENGTH * offset.value,
 	}));
@@ -63,18 +83,42 @@ const CircleButton = ({
 	const onPressInHandler = useCallback(() => {
 		offset.value = withTiming(0, { duration: 3000, easing: Easing.linear });
 		onStart?.();
-	}, [offset, onStart]);
+		startTimer();
+	}, [offset, onStart, startTimer]);
 
 	const onPressOutHandler = useCallback(() => {
-		offset.value = withSpring(1, { overshootClamping: true });
+		offset.value = withSpring(1, { overshootClamping: true, mass: 0.25 });
 		onCancel?.();
-	}, [offset, onCancel]);
+		clearTimer();
+	}, [offset, onCancel, clearTimer]);
 
 	const animatedHintStyle = useAnimatedStyle(() => {
 		return {
 			opacity: hintOpacity.value,
 		};
 	});
+
+	const animatedCircleStyle = useAnimatedStyle(() => {
+		return {
+			transform: [{ scale: circleScale.value }],
+		};
+	});
+
+	const dynamicCircleColorStyle: ViewStyle = useMemo(() => {
+		return {
+			backgroundColor: disabled
+				? Colors.DISABLED.PRIMARY
+				: Colors.RED.SECONDARY,
+			borderColor: disabled ? Colors.DISABLED.SECONDARY : Colors.RED.PRIMARY,
+		};
+	}, [disabled]);
+
+	const dynamicTextColorStyle: TextStyle = useMemo(() => {
+		return {
+			textAlign: 'center',
+			color: disabled ? Colors.DISABLED.SECONDARY : Colors.WHITE.PRIMARY,
+		};
+	}, [disabled]);
 
 	return (
 		<View style={styles.container}>
@@ -96,26 +140,21 @@ const CircleButton = ({
 					animatedProps={animatedProps}
 				/>
 			</Svg>
-			<TouchableOpacity
-				activeOpacity={0.8}
-				onPressIn={onPressInHandler}
-				onPressOut={onPressOutHandler}
-				style={[styles.outerCircle, outerStyle]}
-				onLongPress={onComplete}
-				delayLongPress={3000}
-				disabled={disabled}
-			>
-				<View style={[styles.innerCircle, innerStyle]}>
-					{disabled ? (
-						<Fragment>
-							<Label type='p2'>Dugme ponovo dostupno za:</Label>
-							<Label>{minutes}min</Label>
-						</Fragment>
-					) : (
-						<Label type='h3Black'>SIGURAN SAM</Label>
-					)}
-				</View>
-			</TouchableOpacity>
+			<Animated.View style={animatedCircleStyle}>
+				<TouchableOpacity
+					activeOpacity={0.8}
+					onPressIn={onPressInHandler}
+					onPressOut={onPressOutHandler}
+					style={[styles.innerCircle, dynamicCircleColorStyle]}
+					onLongPress={onComplete}
+					delayLongPress={3000}
+					disabled={disabled}
+				>
+					<Label type='h3Black' style={dynamicTextColorStyle}>
+						{disabled ? `Dostupno za\n${minutes} minuta` : 'SIGURAN SAM'}
+					</Label>
+				</TouchableOpacity>
+			</Animated.View>
 		</View>
 	);
 };

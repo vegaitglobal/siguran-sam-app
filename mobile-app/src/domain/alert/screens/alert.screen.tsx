@@ -13,6 +13,7 @@ import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
 import Moment from 'react-moment';
 import sendSMS from '../services/sms-service';
+import 'moment/locale/sr';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -26,23 +27,35 @@ const AlertScreen = () => {
 	});
 
 	const [hint, setHint] = useState('');
-	const { permissionsGranted: locationPermissionsGranted, getLocation } =
-		useLocation();
+	const {
+		permissionsGranted: locationPermissionsGranted,
+		getHighPriorityLocation,
+		getLowPriorityLocation,
+	} = useLocation();
+
+	useEffect(() => {
+		getLowPriorityLocation().then((location) =>
+			setContext((current) => {
+				return { ...current, location };
+			})
+		);
+	}, []);
 
 	const onStart = async () => {
-		getLocation().then((location) => {
+		getHighPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
 			});
-			console.log('location', location);
 		});
 	};
 
-	const { locationTimestamp, accuracy } = useMemo(() => {
-		const { accuracy, timestamp } = context.location;
+	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
+		const { accuracy, timestamp, city, country } = context.location;
 		return {
 			accuracy,
 			locationTimestamp: timestamp,
+			city,
+			country,
 		};
 	}, [context.location]);
 
@@ -59,37 +72,7 @@ const AlertScreen = () => {
 		}
 	}, [context, shouldSendMessage]);
 
-	const [innerColor, setInnerColor] = useState({
-		backgroundColor: Colors.RED.SECONDARY,
-		color: Colors.WHITE.PRIMARY,
-	});
-
-	const [outerColor, setOuterColor] = useState({
-		borderColor: Colors.RED.PRIMARY,
-	});
-
 	const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-	useEffect(() => {
-		if (isButtonDisabled) {
-			setInnerColor({
-				backgroundColor: Colors.DISABLED.PRIMARY,
-				color: Colors.DISABLED.SECONDARY,
-			});
-			setOuterColor({
-				borderColor: Colors.DISABLED.SECONDARY,
-			});
-		} else {
-			setInnerColor({
-				backgroundColor: Colors.RED.SECONDARY,
-				color: Colors.WHITE.PRIMARY,
-			});
-			setOuterColor({
-				borderColor: Colors.RED.PRIMARY,
-			});
-		}
-	}, [isButtonDisabled]);
-
 	const [countDown, setCountDown] = useState(0);
 	const [runTimer, setRunTimer] = useState(false);
 
@@ -150,20 +133,22 @@ const AlertScreen = () => {
 							setIsButtonDisabled(true);
 							togglerTimer();
 						}}
-						innerStyle={innerColor}
-						outerStyle={outerColor}
 						disabled={isButtonDisabled}
 						minutes={minutes}
 					/>
-					<Label type='pItalic'>
-						Poslednja zabeležena lokacija je od pre{' '}
-						<Moment element={Text} interval={600_000} ago>
+					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
+					<Label>
+						je od{' '}
+						<Moment element={Text} interval={600_000} locale='sr' fromNow>
 							{locationTimestamp}
 						</Moment>
 					</Label>
 					{accuracy && (
 						<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
 					)}
+					<Label style={{ marginTop: 12 }}>
+						{city}, {country}
+					</Label>
 				</Fragment>
 			)}
 		</View>

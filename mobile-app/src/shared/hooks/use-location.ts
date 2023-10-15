@@ -41,10 +41,10 @@ const useLocation = () => {
 		return permissionStatus === Location.PermissionStatus.GRANTED;
 	}, [permissionStatus]);
 
-	const getLocation = async (): Promise<DeviceLocation> => {
-		const location = await Location.getCurrentPositionAsync().catch(
-			Location.getLastKnownPositionAsync
-		);
+	const getLocation = async (
+		resolveLocation: () => Promise<Location.LocationObject | null>
+	): Promise<DeviceLocation> => {
+		const location = await resolveLocation();
 
 		const { longitude, latitude, altitude, accuracy } = location!.coords;
 
@@ -65,7 +65,14 @@ const useLocation = () => {
 	};
 
 	return {
-		getLocation,
+		getHighPriorityLocation: () =>
+			getLocation(() =>
+				Location.getCurrentPositionAsync().catch(
+					Location.getLastKnownPositionAsync
+				)
+			),
+		getLowPriorityLocation: () =>
+			getLocation(() => Location.getLastKnownPositionAsync()),
 		permissionsGranted,
 	};
 };

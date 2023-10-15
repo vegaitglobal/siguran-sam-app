@@ -34,7 +34,8 @@ export const styles = StyleSheet.create({
 	countryItem: {
 		height: 47,
 		paddingHorizontal: 15,
-		justifyContent: 'center',
+		alignItems: 'center',
+		flexDirection: 'row',
 	},
 	countryText: {
 		color: 'white',
@@ -42,5 +43,23 @@ export const styles = StyleSheet.create({
 	itemSeparator: {
 		height: 1,
 		backgroundColor: 'white',
+	},
+	flag: {
+		height: '100%',
+		width: '160%',
+    borderRadius: 200,
+    resizeMode: 'cover',
+    objectFit: 'cover',
+    position: 'absolute',
+    left: -9,
+    top: 0
+	},
+	flagContainer: {
+		height: 30,
+		width: 30,
+    borderRadius: 200,
+    overflow: 'hidden',
+    position: 'relative',
+    marginRight: 10
 	},
 });
