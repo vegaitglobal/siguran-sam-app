@@ -104,6 +104,7 @@ const CircleButton = ({
 	});
 
 	const minutes = disabledUntil.diff(moment(), 'minutes');
+	console.log(minutes);
 
 	const disabled = useMemo(() => {
 		return minutes > 0;

@@ -48,6 +48,7 @@ const AlertScreen = () => {
 
 	const onStart = async () => {
 		setCommitment(false);
+		setHint('Prikupljamo najažurnije informacije...');
 		getHighPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
@@ -67,8 +68,7 @@ const AlertScreen = () => {
 
 	const onComplete = async () => {
 		setCommitment(true);
-		setCooldown(moment().add(5, 'minutes'));
-		setHint('Prikupljamo najažurnije informacije...');
+		setCooldown(moment().add(6, 'minutes'));
 	};
 
 	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
@@ -104,16 +104,16 @@ const AlertScreen = () => {
 						onComplete={onComplete}
 						disabledUntil={cooldown}
 					/>
-					<Label style={{ marginBottom: 12, fontSize:20, fontWeight:'bold' }}>
+					<Label style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>
 						{city}, {country}
 					</Label>
 					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
 					<Label type='pItalic'>
 						je od{' '}
-						<Moment element={Text} interval={600_000} locale='sr' fromNow>
+						<Moment element={Text} locale='sr' fromNow>
 							{locationTimestamp}
 						</Moment>
-					</Label >
+					</Label>
 					{accuracy && (
 						<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
 					)}
