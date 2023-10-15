@@ -11,7 +11,7 @@ import Animated, {
 	withTiming,
 } from 'react-native-reanimated';
 import { Colors } from '@/shared/styles';
-import { memo, useCallback, useEffect } from 'react';
+import { Fragment, memo, useCallback, useEffect } from 'react';
 
 interface Props {
 	onCancel?: () => void;
@@ -21,6 +21,7 @@ interface Props {
 	innerStyle: {};
 	outerStyle: {};
 	disabled: boolean;
+	minutes: string;
 }
 
 const RADIUS = 110;
@@ -36,6 +37,7 @@ const CircleButton = ({
 	innerStyle,
 	outerStyle,
 	disabled,
+	minutes,
 }: Props) => {
 	const offset = useSharedValue(1);
 	const hintOpacity = useSharedValue(0);
@@ -104,7 +106,14 @@ const CircleButton = ({
 				disabled={disabled}
 			>
 				<View style={[styles.innerCircle, innerStyle]}>
-					<Label type='h3Black'>SIGURAN SAM</Label>
+					{disabled ? (
+						<Fragment>
+							<Label type='p2'>Dugme ponovo dostupno za:</Label>
+							<Label>{minutes}min</Label>
+						</Fragment>
+					) : (
+						<Label type='h3Black'>SIGURAN SAM</Label>
+					)}
 				</View>
 			</TouchableOpacity>
 		</View>

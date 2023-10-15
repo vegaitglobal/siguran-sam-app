@@ -106,9 +106,35 @@ const AlertScreen = () => {
 		}
 	}, [isButtonDisabled]);
 
-	const [timer, setTimer] = useState();
+	const [countDown, setCountDown] = useState(0);
+	const [runTimer, setRunTimer] = useState(false);
 
-	const startTimer = () => {};
+	useEffect(() => {
+		let timerId = setInterval(() => {}, 1000);
+
+		if (runTimer) {
+			setCountDown(60 * 5 - 1);
+			timerId = setInterval(() => {
+				setCountDown((countDown) => countDown - 1);
+			}, 1000);
+		} else {
+			clearInterval(timerId);
+		}
+
+		return () => clearInterval(timerId);
+	}, [runTimer]);
+
+	useEffect(() => {
+		if (countDown < 0 && runTimer) {
+			setRunTimer(false);
+			setCountDown(0);
+			setIsButtonDisabled(false);
+		}
+	}, [countDown, runTimer]);
+
+	const togglerTimer = () => setRunTimer((t) => !t);
+
+	const minutes = String(Math.floor(countDown / 60) + 1).padStart(2);
 
 	return (
 		<View style={styles.container}>
@@ -138,10 +164,12 @@ const AlertScreen = () => {
 							setHint('');
 							setShouldSendMessage(true);
 							setIsButtonDisabled(true);
+							togglerTimer();
 						}}
 						innerStyle={innerColor}
 						outerStyle={outerColor}
 						disabled={isButtonDisabled}
+						minutes={minutes}
 					/>
 					<Label>
 						{city}, {country}
