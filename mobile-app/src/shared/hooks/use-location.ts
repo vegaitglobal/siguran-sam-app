@@ -26,7 +26,6 @@ const useLocation = () => {
 			async (nextAppState) => {
 				if (nextAppState === previousAppState) return;
 				setPreviousAppState(nextAppState);
-
 				if (nextAppState !== 'active') return;
 
 				Location.requestForegroundPermissionsAsync().then(({ status }) => {
