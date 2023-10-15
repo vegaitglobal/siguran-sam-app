@@ -1,3 +1,4 @@
+import CircleButton from '@/domain/alert/components/circle-button';
 import { AppScreen } from '@/shared/constants';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -11,11 +12,8 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
 import { AppButton } from '@/shared/components';
 import useLocation from '@/shared/hooks/use-location';
-<<<<<<< HEAD
 import getLocation from '../services/location-service';
-=======
-import CircleButton from '../components';
->>>>>>> main
+import { Colors } from '@/shared/styles';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -35,7 +33,7 @@ const AlertScreen = () => {
 		setLocationProperties,
 	} = useLocation();
 
-	const [showHint, setShowHint] = useState(false);
+	const [hint, setHint] = useState('');
 	const appState = useRef(AppState.currentState);
 
 	useEffect(() => {
@@ -65,8 +63,6 @@ const AlertScreen = () => {
 	const [shouldSendMessage, setShouldSendMessage] = useState(false);
 
 	useEffect(() => {
-		console.log(shouldSendMessage);
-		console.log(latestLocation);
 		if (
 			shouldSendMessage &&
 			latestLocation !== null &&
@@ -78,6 +74,41 @@ const AlertScreen = () => {
 			sendSMS(latestLocation);
 		}
 	}, [latestLocation, shouldSendMessage]);
+
+	const [innerColor, setInnerColor] = useState({
+		backgroundColor: Colors.RED.SECONDARY,
+		color: Colors.WHITE.PRIMARY,
+	});
+
+	const [outerColor, setOuterColor] = useState({
+		borderColor: Colors.RED.PRIMARY,
+	});
+
+	const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+	useEffect(() => {
+		if (isButtonDisabled) {
+			setInnerColor({
+				backgroundColor: Colors.DISABLED.PRIMARY,
+				color: Colors.DISABLED.SECONDARY,
+			});
+			setOuterColor({
+				borderColor: Colors.DISABLED.SECONDARY,
+			});
+		} else {
+			setInnerColor({
+				backgroundColor: Colors.RED.SECONDARY,
+				color: Colors.WHITE.PRIMARY,
+			});
+			setOuterColor({
+				borderColor: Colors.RED.PRIMARY,
+			});
+		}
+	}, [isButtonDisabled]);
+
+	const [timer, setTimer] = useState();
+
+	const startTimer = () => {};
 
 	return (
 		<View style={styles.container}>
@@ -95,29 +126,22 @@ const AlertScreen = () => {
 				</Fragment>
 			) : (
 				<Fragment>
-<<<<<<< HEAD
-					{showHint && <Label>Držite dugme 3 sekunde</Label>}
 					<CircleButton
-						text='SIGURAN SAM'
-						onPress={async () => {
+						hint={hint}
+						onStart={async () => {
+							setHint('Držite dugme 3 sekunde');
 							setShouldSendMessage(false);
-							setShowHint(true);
 							setLatestLocation(await getLocation());
 						}}
-						onLongPress={() => {
-							setShowHint(false);
+						onCancel={() => {}}
+						onComplete={() => {
+							setHint('');
 							setShouldSendMessage(true);
+							setIsButtonDisabled(true);
 						}}
-=======
-					<CircleButton
-					// onPress={() => {
-					// 	setShowHint(true);
-					// }}
-					// onLongPress={() => {
-					// 	sendSMS();
-					// 	setShowHint(false);
-					// }}
->>>>>>> main
+						innerStyle={innerColor}
+						outerStyle={outerColor}
+						disabled={isButtonDisabled}
 					/>
 					<Label>
 						{city}, {country}

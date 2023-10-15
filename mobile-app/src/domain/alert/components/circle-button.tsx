@@ -18,6 +18,9 @@ interface Props {
 	onStart?: () => void;
 	onComplete?: () => void;
 	hint?: string;
+	innerStyle: {};
+	outerStyle: {};
+	disabled: boolean;
 }
 
 const RADIUS = 110;
@@ -25,7 +28,15 @@ const LENGTH = 2 * RADIUS * Math.PI;
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-const CircleButton = ({ onCancel, onStart, onComplete, hint }: Props) => {
+const CircleButton = ({
+	onCancel,
+	onStart,
+	onComplete,
+	hint,
+	innerStyle,
+	outerStyle,
+	disabled,
+}: Props) => {
 	const offset = useSharedValue(1);
 	const hintOpacity = useSharedValue(0);
 
@@ -87,10 +98,12 @@ const CircleButton = ({ onCancel, onStart, onComplete, hint }: Props) => {
 				activeOpacity={0.8}
 				onPressIn={onPressInHandler}
 				onPressOut={onPressOutHandler}
-				style={styles.outerCircle}
+				style={[styles.outerCircle, outerStyle]}
 				onLongPress={onComplete}
+				delayLongPress={3000}
+				disabled={disabled}
 			>
-				<View style={styles.circleButton}>
+				<View style={[styles.innerCircle, innerStyle]}>
 					<Label type='h3Black'>SIGURAN SAM</Label>
 				</View>
 			</TouchableOpacity>

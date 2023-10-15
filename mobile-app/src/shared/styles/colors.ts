@@ -20,4 +20,8 @@ export const Colors = {
 		PRIMARY: '#292A31',
 		SECODNARY: '#938383',
 	},
+	DISABLED: {
+		PRIMARY: '#DCDCDC',
+		SECONDARY: '#B1B1B1',
+	},
 };
