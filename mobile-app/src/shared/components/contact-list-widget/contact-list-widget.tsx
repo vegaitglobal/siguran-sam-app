@@ -10,6 +10,7 @@ import {
 	addContact,
 	useContactStore,
 	deleteContact,
+	LastContactDeletionError,
 } from '@/shared/store/use-contact-store';
 
 const PHONE_NUMBER_REGEXP =
@@ -48,7 +49,15 @@ export const ContactListWidget = () => {
 	};
 
 	const handleDeleteListItem = (number: string) => {
-		deleteContact(number);
+		try {
+			deleteContact(number);
+		} catch (err) {
+			if (err instanceof LastContactDeletionError) {
+				alert('Neophodno je da postoji bar jedan sigurnosni kontakt');
+			} else {
+				alert('¯\\_(ツ)_/¯');
+			}
+		}
 	};
 
 	const isNumberValid = useMemo(
