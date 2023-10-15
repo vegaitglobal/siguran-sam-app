@@ -17,30 +17,31 @@ export interface DeviceLocation {
 const useLocation = () => {
 	const [previousAppState, setPreviousAppState] =
 		useState<AppStateStatus>('unknown');
-	const [permissionStatus, setPermissionStatus] =
-		useState<Location.PermissionStatus>(Location.PermissionStatus.UNDETERMINED);
+
+	const [permissionResponse, requestPermission] =
+		Location.useForegroundPermissions();
 
 	useEffect(() => {
 		const subscription = AppState.addEventListener(
 			'change',
 			async (nextAppState) => {
+				if (permissionResponse?.granted) return;
+
 				if (nextAppState === previousAppState) return;
 				setPreviousAppState(nextAppState);
 
 				if (nextAppState !== 'active') return;
 
-				Location.requestForegroundPermissionsAsync().then(({ status }) => {
-					setPermissionStatus(status);
-				});
+				requestPermission();
 			}
 		);
 
 		return () => subscription.remove();
-	}, [setPermissionStatus]);
+	}, []);
 
 	const permissionsGranted = useMemo(() => {
-		return permissionStatus === Location.PermissionStatus.GRANTED;
-	}, [permissionStatus]);
+		return permissionResponse?.granted ? true : false;
+	}, [permissionResponse]);
 
 	const getLocation = async (
 		resolveLocation: () => Promise<Location.LocationObject | null>
