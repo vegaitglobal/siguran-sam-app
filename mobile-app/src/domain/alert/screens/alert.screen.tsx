@@ -6,7 +6,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
 import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { AppButton } from '@/shared/components';
 import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
@@ -29,9 +29,8 @@ const AlertScreen = () => {
 	const [minutes, setMinutes] = useState(0);
 	const [hint, setHint] = useState<string>();
 	const [commitment, setCommitment] = useState(false);
-	const [cooldown, setCooldown] = useState<moment.Moment>(
-		moment().subtract(1, 'minute')
-	);
+
+	const interval = useRef<any>(null);
 
 	const {
 		permissionsGranted: locationPermissionsGranted,
@@ -69,7 +68,6 @@ const AlertScreen = () => {
 
 	const onComplete = async () => {
 		setCommitment(true);
-		setCooldown(moment().add(6, 'minutes'));
 	};
 
 	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
@@ -83,12 +81,16 @@ const AlertScreen = () => {
 	}, [context.location]);
 
 	useEffect(() => {
-		const interval = setInterval(() => {
-			setMinutes(cooldown.diff(moment(), 'minutes'));
+		if (minutes === 0 && commitment === true) setMinutes(5);
+
+		if (interval.current) return;
+
+		interval.current = setInterval(() => {
+			setMinutes((old) => old - 1);
 		}, 60_000);
 
-		return () => clearInterval(interval);
-	}, [cooldown]);
+		return () => clearInterval(interval.current);
+	}, [minutes]);
 
 	const disabled = useMemo(() => minutes > 0, [minutes]);
 
