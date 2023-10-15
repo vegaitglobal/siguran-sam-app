@@ -4,7 +4,7 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { Linking, View } from 'react-native';
+import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
 import { Fragment, useMemo, useState } from 'react';
 import { AppButton } from '@/shared/components';
@@ -67,7 +67,7 @@ const AlertScreen = () => {
 					/>
 					<Label type='pItalic'>
 						Poslednja zabeležena lokacija je od pre{' '}
-						<Moment interval={600_000} ago>
+						<Moment element={Text} interval={600_000} ago>
 							{locationTimestamp}
 						</Moment>
 					</Label>
