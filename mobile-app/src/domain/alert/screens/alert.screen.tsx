@@ -81,16 +81,17 @@ const AlertScreen = () => {
 	}, [context.location]);
 
 	useEffect(() => {
-		if (minutes === 0 && commitment === true) setMinutes(5);
-
 		if (interval.current) return;
+		if (!commitment) {
+			setMinutes(5);
+		}
 
 		interval.current = setInterval(() => {
 			setMinutes((old) => old - 1);
 		}, 60_000);
 
 		return () => clearInterval(interval.current);
-	}, [minutes]);
+	}, [commitment, minutes]);
 
 	const disabled = useMemo(() => minutes > 0, [minutes]);
 
