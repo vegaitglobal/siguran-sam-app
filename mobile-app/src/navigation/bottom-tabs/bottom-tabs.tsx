@@ -14,7 +14,7 @@ const BottomTabs = () => {
 	return (
 		<Tab.Navigator
 			screenOptions={({ route }) => ({
-				headerShown: true,
+				headerShown: false,
 				tabBarActiveTintColor: Colors.RED.SECONDARY,
 				tabBarInactiveTintColor: Colors.WHITE.SECONDARY,
 				tabBarStyle: styles.tabBarStyle,
