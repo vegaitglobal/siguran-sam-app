@@ -6,7 +6,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
 import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { AppButton } from '@/shared/components';
 import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
@@ -28,16 +28,20 @@ const AlertScreen = () => {
 
 	const [minutes, setMinutes] = useState(0);
 	const [hint, setHint] = useState<string>();
-	const [commitment, setCommitment] = useState(false);
-	const [cooldown, setCooldown] = useState<moment.Moment>(
-		moment().subtract(1, 'minute')
-	);
+	const commitment = useRef(false);
 
 	const {
 		permissionsGranted: locationPermissionsGranted,
 		getHighPriorityLocation,
 		getLowPriorityLocation,
 	} = useLocation();
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setMinutes((old) => old - 1);
+		}, 60_000);
+		return () => clearInterval(interval);
+	}, []);
 
 	useEffect(() => {
 		getLowPriorityLocation().then((location) => {
@@ -48,28 +52,29 @@ const AlertScreen = () => {
 	}, []);
 
 	const onStart = async () => {
-		setCommitment(false);
+		commitment.current = false;
 		setHint('Prikupljamo najažurnije informacije...');
 		getHighPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
 			});
-			if (!commitment) return;
+
+			if (!commitment.current) return;
 
 			sendSMS(location).then(() => {
 				setHint('Sigurnosni kontakti su obavešteni');
+				setMinutes(5);
 			});
 		});
 	};
 
 	const onCancel = async () => {
-		setCommitment(false);
+		commitment.current = false;
 		setHint('Držite dugme 3 sekunde');
 	};
 
 	const onComplete = async () => {
-		setCommitment(true);
-		setCooldown(moment().add(6, 'minutes'));
+		commitment.current = true;
 	};
 
 	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
@@ -81,14 +86,6 @@ const AlertScreen = () => {
 			country,
 		};
 	}, [context.location]);
-
-	useEffect(() => {
-		const interval = setInterval(() => {
-			setMinutes(cooldown.diff(moment(), 'minutes'));
-		}, 60_000);
-
-		return () => clearInterval(interval);
-	}, [cooldown]);
 
 	const disabled = useMemo(() => minutes > 0, [minutes]);
 

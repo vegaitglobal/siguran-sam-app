@@ -1,15 +1,14 @@
-import Icon from '@/shared/components/icon';
-import Label from '@/shared/components/label';
 import { AppScreen } from '@/shared/constants';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { CompositeScreenProps, useNavigation } from '@react-navigation/native';
+import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ScreenTemplate } from '@/shared/components';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Category } from '../../../services/content/content.interfaces';
 import contentService from '../../../services/content/content.service';
 import { CategoryList } from 'src/domain/education/screens/category-list';
+import { Header } from '@/shared/components/header';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -21,9 +20,13 @@ export interface Props
 // @ts-ignore
 const EducationScreen = ({ navigation }) => {
 	const [categories, setCategories] = useState<Category[]>([]);
-	contentService.getCategories().then((result: Category[]) => {
-		setCategories(result);
-	});
+
+	useEffect(() => {
+		contentService.getCategories().then((result: Category[]) => {
+			console.log(result);
+			setCategories(result);
+		});
+	}, []);
 
 	const handleOpenCategory = (category: Category): void => {
 		console.log('Opening category: ' + category.title);
@@ -35,6 +38,7 @@ const EducationScreen = ({ navigation }) => {
 
 	return (
 		<ScreenTemplate>
+			<Header title='Edukacija' />
 			<CategoryList categories={categories} onPress={handleOpenCategory} />
 		</ScreenTemplate>
 	);
