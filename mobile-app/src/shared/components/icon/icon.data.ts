@@ -8,6 +8,13 @@ import TrashCan from '@/shared/assets/icons/trash-can.svg';
 import AddUser from '@/shared/assets/icons/add-user.svg';
 import ArrowBigLeft from '@/shared/assets/icons/arrow-big-left.svg';
 import ArrowBigRight from '@/shared/assets/icons/arrow-big-right.svg';
+import ArrowSmallRight from '@/shared/assets/icons/arrow-small-right.svg';
+import ContactUs from '@/shared/assets/icons/contact-us.svg';
+import EditData from '@/shared/assets/icons/edit-data.svg';
+import FollowUs from '@/shared/assets/icons/follow-us.svg';
+import Tutorial from '@/shared/assets/icons/tutorial.svg';
+import AboutUs from '@/shared/assets/icons/about-us.svg';
+import Terms from '@/shared/assets/icons/terms.svg';
 
 export const iconComponents = {
 	home: Home,
@@ -20,6 +27,13 @@ export const iconComponents = {
 	'add-user': AddUser,
 	'arrow-big-left': ArrowBigLeft,
 	'arrow-big-right': ArrowBigRight,
+	tutorial: Tutorial,
+	'arrow-small-right': ArrowSmallRight,
+	'contact-us': ContactUs,
+	'edit-data': EditData,
+	'follow-us': FollowUs,
+	'about-us': AboutUs,
+	terms: Terms,
 };
 
 export type IconName = keyof typeof iconComponents;
