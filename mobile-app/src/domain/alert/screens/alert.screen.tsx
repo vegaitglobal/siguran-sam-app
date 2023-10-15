@@ -8,9 +8,11 @@ import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { AppButton } from '@/shared/components';
+import { Colors } from '@/shared/styles';
 import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
 import Moment from 'react-moment';
+import sendSMS from '../services/sms-service';
 import 'moment/locale/sr';
 
 export interface Props
@@ -24,6 +26,7 @@ const AlertScreen = () => {
 		location: {} as DeviceLocation,
 	});
 
+	const [hint, setHint] = useState('');
 	const {
 		permissionsGranted: locationPermissionsGranted,
 		getHighPriorityLocation,
@@ -56,6 +59,50 @@ const AlertScreen = () => {
 		};
 	}, [context.location]);
 
+	const [shouldSendMessage, setShouldSendMessage] = useState(false);
+
+	useEffect(() => {
+		if (
+			shouldSendMessage &&
+			context !== null &&
+			context.location.latitude !== undefined &&
+			context.location.longitude !== undefined
+		) {
+			sendSMS(context.location);
+		}
+	}, [context, shouldSendMessage]);
+
+	const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+	const [countDown, setCountDown] = useState(0);
+	const [runTimer, setRunTimer] = useState(false);
+
+	useEffect(() => {
+		let timerId = setInterval(() => {}, 1000);
+
+		if (runTimer) {
+			setCountDown(60 * 5 - 1);
+			timerId = setInterval(() => {
+				setCountDown((countDown) => countDown - 1);
+			}, 1000);
+		} else {
+			clearInterval(timerId);
+		}
+
+		return () => clearInterval(timerId);
+	}, [runTimer]);
+
+	useEffect(() => {
+		if (countDown < 0 && runTimer) {
+			setRunTimer(false);
+			setCountDown(0);
+			setIsButtonDisabled(false);
+		}
+	}, [countDown, runTimer]);
+
+	const togglerTimer = () => setRunTimer((t) => !t);
+
+	const minutes = String(Math.floor(countDown / 60) + 1).padStart(2);
+
 	return (
 		<View style={styles.container}>
 			{!locationPermissionsGranted ? (
@@ -73,10 +120,21 @@ const AlertScreen = () => {
 			) : (
 				<Fragment>
 					<CircleButton
-						hint={''}
+						hint={hint}
+						onStart={async () => {
+							onStart();
+							setHint('Držite dugme 3 sekunde');
+							setShouldSendMessage(false);
+						}}
 						onCancel={() => {}}
-						onStart={onStart}
-						onComplete={() => {}}
+						onComplete={() => {
+							setHint('');
+							setShouldSendMessage(true);
+							setIsButtonDisabled(true);
+							togglerTimer();
+						}}
+						disabled={isButtonDisabled}
+						minutes={minutes}
 					/>
 					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
 					<Label>

@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, ViewStyle } from 'react-native';
+import { View, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
 import { styles } from './circle-button.style';
 import Label from '@/shared/components/label';
 import Svg, { Circle } from 'react-native-svg';
@@ -12,7 +12,7 @@ import Animated, {
 	withTiming,
 } from 'react-native-reanimated';
 import { Colors } from '@/shared/styles';
-import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 
 interface Props {
@@ -20,6 +20,7 @@ interface Props {
 	onStart?: () => void;
 	onComplete?: () => void;
 	hint?: string;
+	minutes?: string;
 	disabled?: boolean;
 }
 
@@ -33,6 +34,7 @@ const CircleButton = ({
 	onStart,
 	onComplete,
 	hint,
+	minutes,
 	disabled,
 }: Props) => {
 	const offset = useSharedValue(1);
@@ -104,8 +106,17 @@ const CircleButton = ({
 
 	const dynamicCircleColorStyle: ViewStyle = useMemo(() => {
 		return {
-			backgroundColor: disabled ? Colors.GRAY.PRIMARY : Colors.RED.SECONDARY,
-			borderColor: disabled ? Colors.GRAY.SECONDARY : Colors.RED.PRIMARY,
+			backgroundColor: disabled
+				? Colors.DISABLED.PRIMARY
+				: Colors.RED.SECONDARY,
+			borderColor: disabled ? Colors.DISABLED.SECONDARY : Colors.RED.PRIMARY,
+		};
+	}, [disabled]);
+
+	const dynamicTextColorStyle: TextStyle = useMemo(() => {
+		return {
+			textAlign: 'center',
+			color: disabled ? Colors.DISABLED.SECONDARY : Colors.WHITE.PRIMARY,
 		};
 	}, [disabled]);
 
@@ -131,13 +142,17 @@ const CircleButton = ({
 			</Svg>
 			<Animated.View style={animatedCircleStyle}>
 				<TouchableOpacity
-					disabled={disabled}
 					activeOpacity={0.8}
 					onPressIn={onPressInHandler}
 					onPressOut={onPressOutHandler}
 					style={[styles.innerCircle, dynamicCircleColorStyle]}
+					onLongPress={onComplete}
+					delayLongPress={3000}
+					disabled={disabled}
 				>
-					<Label type='h3Black'>SIGURAN SAM</Label>
+					<Label type='h3Black' style={dynamicTextColorStyle}>
+						{disabled ? `Dostupno za\n${minutes} minuta` : 'SIGURAN SAM'}
+					</Label>
 				</TouchableOpacity>
 			</Animated.View>
 		</View>
