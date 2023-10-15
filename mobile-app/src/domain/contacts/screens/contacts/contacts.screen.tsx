@@ -9,12 +9,11 @@ import { CompositeScreenProps } from '@react-navigation/native';
 
 import { ContactListWidget, ScreenTemplate } from '@/shared/components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Modal, Pressable, PressableProps, Text, View } from 'react-native';
+import { Pressable, PressableProps, Text } from 'react-native';
 import { styles } from './contacts.screen.style';
 import { TabView } from './tab-view';
 import * as Contacts from 'expo-contacts';
-import { addContact, deleteAllContacts } from '@/shared/store/contactStore';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ContactPickerScreen from '@/domain/contacts/screens/contacts/contact.picker.screen';
 
 export interface Props
@@ -27,10 +26,6 @@ const ContactsScreen = () => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [allContactsData, setAllContactsData] = useState<Contact[]>([]);
 	const [selectedContacts, setSelectedContacts] = useState<Contact[]>([]);
-
-	const handleAddContact = () => {
-		alert('Hi');
-	};
 
 	const handleImportContacts = () => {
 		(async () => {

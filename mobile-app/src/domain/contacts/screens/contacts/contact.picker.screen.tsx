@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Button, Text, Modal, ScrollView, FlatList } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import { Contact } from '@/shared/store/contactStore';
+import { Contact } from '../../../../shared/types/model';
 
 interface ContactPickerProps {
 	visible: boolean;
@@ -43,7 +43,7 @@ export default function ContactPickerScreen(props: ContactPickerProps) {
 				</Text>
 				<FlatList
 					data={props.contactsData}
-					keyExtractor={(contact) => contact.phoneNumber}
+					//keyExtractor={(contact) => contact.phoneNumber}
 					renderItem={({ item: contact }) => (
 						<View
 							style={{
