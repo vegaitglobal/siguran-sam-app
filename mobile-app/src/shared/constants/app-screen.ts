@@ -6,4 +6,5 @@ export enum AppScreen {
 	SPLASH = 'Splash',
 	ONBOARDING = 'Onboarding',
 	TERMS = 'Terms',
+	WELCOME = 'Welcome',
 }

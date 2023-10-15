@@ -8,6 +8,7 @@ import { styles } from './root-stack.style';
 import { useOnboardingStore } from '@/shared/store';
 import OnboardingScreen from '@/domain/onboarding/screens/onboarding-screen';
 import TermsScreen from '@/domain/onboarding/screens/terms-screen';
+import WelcomeScreen from '@/domain/onboarding/screens/welcome-screen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -38,6 +39,7 @@ const RootStack = () => {
 						name={AppScreen.ONBOARDING}
 						component={OnboardingScreen}
 					/>
+					<Stack.Screen name={AppScreen.WELCOME} component={WelcomeScreen} />
 				</Stack.Group>
 			)}
 		</Stack.Navigator>

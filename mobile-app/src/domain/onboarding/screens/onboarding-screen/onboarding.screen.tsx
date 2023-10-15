@@ -9,7 +9,7 @@ import BackButton from '../../components/back-button';
 import { useCallback, useMemo, useState } from 'react';
 import StepIndicator from '../../components/step-indicator';
 import MainOnboardingComponent from '../../components/main-onboarding-component/main-onboarding-component';
-import { setIsOnboardingDone, useUserInfoStore } from '@/shared/store';
+import { useUserInfoStore } from '@/shared/store';
 import { useContactStore } from '@/shared/store/use-contact-store';
 
 const MAX_STEP = 8;
@@ -17,7 +17,7 @@ const MAX_STEP = 8;
 export interface Props
 	extends NativeStackScreenProps<RootStackParamList, AppScreen.ONBOARDING> {}
 
-const OnboardingScreen = () => {
+const OnboardingScreen = ({ navigation }: Props) => {
 	const [step, setStep] = useState(1);
 	const [name, setName] = useState(useUserInfoStore.getState().name);
 	const { contacts } = useContactStore();
@@ -41,7 +41,7 @@ const OnboardingScreen = () => {
 	const nextButtonOnPressHandler = useCallback(() => {
 		if (step === 8 && contacts.length > 0 && !!name) {
 			setName(name);
-			setIsOnboardingDone();
+			navigation.replace(AppScreen.WELCOME);
 		} else {
 			nextStep();
 		}

@@ -5,4 +5,5 @@ export type RootStackParamList = {
 	[AppScreen.SPLASH]: undefined;
 	[AppScreen.ONBOARDING]: undefined;
 	[AppScreen.TERMS]: undefined;
+	[AppScreen.WELCOME]: undefined;
 };
