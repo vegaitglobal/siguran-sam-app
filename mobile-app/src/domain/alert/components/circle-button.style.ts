@@ -23,5 +23,9 @@ export const styles = StyleSheet.create({
 		backgroundColor: Colors.RED.SECONDARY,
 	},
 	svgProgress: { position: 'absolute', transform: [{ rotateZ: '-90deg' }] },
-	hint: { position: 'absolute', top: -90, textAlign: 'center' },
+	hint: { textAlign: 'center' },
+	hintContainer: {
+		position: 'absolute',
+		top: -90,
+	},
 });
