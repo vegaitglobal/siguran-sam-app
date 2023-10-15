@@ -39,7 +39,8 @@
 		"expo-sms": "~11.4.0",
 		"expo-contacts": "~12.2.0",
 		"expo-network": "~5.4.0",
-		"react-native-pager-view": "6.2.0"
+		"react-native-pager-view": "6.2.0",
+		"expo-haptics": "~12.4.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.20.0",
