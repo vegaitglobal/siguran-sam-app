@@ -74,14 +74,13 @@ const AlertScreen = () => {
 				<Fragment>
 					{showHint && <Label>Držite dugme duže od 2 sekunde</Label>}
 					<CircleButton
-						text='SIGURAN SAM'
-						onPress={() => {
-							setShowHint(true);
-						}}
-						onLongPress={() => {
-							sendSMS();
-							setShowHint(false);
-						}}
+					// onPress={() => {
+					// 	setShowHint(true);
+					// }}
+					// onLongPress={() => {
+					// 	sendSMS();
+					// 	setShowHint(false);
+					// }}
 					/>
 					<Label>
 						{city}, {country}

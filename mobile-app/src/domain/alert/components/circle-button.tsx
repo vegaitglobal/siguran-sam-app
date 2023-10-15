@@ -12,9 +12,10 @@ import Animated, {
 import { Colors } from '@/shared/styles';
 
 interface Props {
-	text: string;
-	onPress: () => void;
-	onLongPress: () => void;
+	onCancel?: () => void;
+	onStart?: () => void;
+	onComplete?: () => void;
+	infoLabel?: string;
 }
 
 const radius = 110;
@@ -22,7 +23,7 @@ const length = 2 * radius * Math.PI;
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-export default function CircleButton({ text, onPress, onLongPress }: Props) {
+export default function CircleButton({}: Props) {
 	const offset = useSharedValue(1);
 
 	const animatedProps = useAnimatedProps(() => ({
@@ -55,11 +56,11 @@ export default function CircleButton({ text, onPress, onLongPress }: Props) {
 				onPressIn={onPressInHandler}
 				onPressOut={onPressOutHandler}
 				style={styles.outerCircle}
-				onLongPress={onLongPress}
-				onPress={onPress}
+				// onLongPress={onLongPress}
+				// onPress={onPress}
 			>
 				<View style={styles.circleButton}>
-					<Label type='h3Black'>{text}</Label>
+					<Label type='h3Black'>SIGURAN SAM</Label>
 				</View>
 			</TouchableOpacity>
 		</View>
