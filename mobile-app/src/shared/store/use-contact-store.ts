@@ -12,6 +12,14 @@ export class DuplicateContactError extends Error {
 		this.name = 'Duplicate contact';
 	}
 }
+
+export class LastContactDeletionError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'Must have at least one contact';
+	}
+}
+
 export class ContactsFullError extends Error {
 	constructor(message: string) {
 		super(message);
@@ -61,6 +69,9 @@ export const addContact = (contact: Contact): Contact[] => {
 };
 
 export const deleteContact = (number: string): Contact[] => {
+	if (getContacts().length === 1) {
+		throw new LastContactDeletionError('Must have at least one contact');
+	}
 	useContactStore.setState((state) => ({
 		contacts: state.contacts.filter((c) => number !== c.number),
 	}));
