@@ -3,15 +3,14 @@ import { Country } from '@/shared/types';
 import React, { useState } from 'react';
 import {
 	FlatList,
-	ImageBackground,
+	Image,
 	Pressable,
 	PressableProps,
 	Text,
-	View,
+	View
 } from 'react-native';
 import Icon from '../../icon';
 import { styles } from './country-picker.style';
-import { Image } from 'react-native';
 
 interface Props {
 	onCountryChange: (country: Country) => void;

@@ -8,12 +8,12 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 
 import ContactPickerScreen from '@/domain/contacts/screens/contacts/contact.picker.screen';
-import { ContactListWidget, ScreenTemplate } from '@/shared/components';
+import { ScreenTemplate } from '@/shared/components';
+import { Header } from '@/shared/components/header';
+import { ScreenContent } from '@/shared/components/screen-content';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Contacts from 'expo-contacts';
 import { useState } from 'react';
-import { Pressable, PressableProps, Text } from 'react-native';
-import { styles } from './contacts.screen.style';
 import { ContactsScreenTabs } from './contacts-screen-tabs';
 
 export interface Props
@@ -86,14 +86,17 @@ const ContactsScreen = () => {
 
 	return (
 		<ScreenTemplate>
-			<ContactsScreenTabs />
-			<ContactPickerScreen
-				visible={isModalVisible}
-				onClose={closeModal}
-				contactsData={allContactsData}
-				selectedContacts={selectedContacts}
-				setSelectedContacts={setSelectedContacts}
-			/>
+			<Header title='Moji brojevi' />
+			<ScreenContent>
+				<ContactsScreenTabs />
+				<ContactPickerScreen
+					visible={isModalVisible}
+					onClose={closeModal}
+					contactsData={allContactsData}
+					selectedContacts={selectedContacts}
+					setSelectedContacts={setSelectedContacts}
+				/>
+			</ScreenContent>
 		</ScreenTemplate>
 	);
 };

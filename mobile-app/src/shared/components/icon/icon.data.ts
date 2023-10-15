@@ -8,6 +8,7 @@ import TrashCan from '@/shared/assets/icons/trash-can.svg';
 import AddUser from '@/shared/assets/icons/add-user.svg';
 import ArrowBigLeft from '@/shared/assets/icons/arrow-big-left.svg';
 import ArrowBigRight from '@/shared/assets/icons/arrow-big-right.svg';
+
 export const iconComponents = {
 	home: Home,
 	'star-outline': StarOutline,
