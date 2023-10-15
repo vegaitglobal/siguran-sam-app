@@ -2,6 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Pressable, PressableProps, Text, View } from 'react-native';
 import Icon from '../icon';
 import { styles } from './header.style';
+import { AppScreen } from '@/shared/constants';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 
 interface Props {
 	leftComponent?: JSX.Element;
@@ -22,8 +25,11 @@ const BackButton = (props: PressableProps) => {
 };
 
 const MoreOptions = (props: PressableProps) => {
+	const { navigate } =
+		useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
 	const handleMoreOptions = () => {
-		alert('¯\\_(ツ)_/¯');
+		navigate(AppScreen.MORE_OPTIONS);
 	};
 
 	return (
