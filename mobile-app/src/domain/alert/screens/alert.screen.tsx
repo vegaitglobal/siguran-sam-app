@@ -4,14 +4,14 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { Linking, AppState, View } from 'react-native';
+import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
-import sendSMS from '../services/sms-service';
-import { Fragment, useEffect, useRef, useState } from 'react';
-import * as Location from 'expo-location';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { AppButton } from '@/shared/components';
-import useLocation from '@/shared/hooks/use-location';
+import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
+import Moment from 'react-moment';
+import 'moment/locale/sr';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -20,45 +20,45 @@ export interface Props
 	> {}
 
 const AlertScreen = () => {
+	const [context, setContext] = useState<{ location: DeviceLocation }>({
+		location: {} as DeviceLocation,
+	});
+
 	const {
-		location,
-		isAllowed: isLocationAllowed,
-		setIsAllowed,
-		city,
-		country,
-		street,
-		streetNumber,
-		setLocationProperties,
+		permissionsGranted: locationPermissionsGranted,
+		getHighPriorityLocation,
+		getLowPriorityLocation,
 	} = useLocation();
 
-	const [showHint, setShowHint] = useState(false);
-	const appState = useRef(AppState.currentState);
-
 	useEffect(() => {
-		const subscription = AppState.addEventListener(
-			'change',
-			async (nextAppState) => {
-				if (
-					appState.current.match(/inactive|background/) &&
-					nextAppState === 'active'
-				) {
-					let { status } = await Location.getForegroundPermissionsAsync();
-					setIsAllowed(status === 'granted');
-					setLocationProperties();
-				}
-
-				appState.current = nextAppState;
-			}
+		getLowPriorityLocation().then((location) =>
+			setContext((current) => {
+				return { ...current, location };
+			})
 		);
+	}, []);
 
-		return () => {
-			subscription.remove();
+	const onStart = async () => {
+		getHighPriorityLocation().then((location) => {
+			setContext((current) => {
+				return { ...current, location };
+			});
+		});
+	};
+
+	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
+		const { accuracy, timestamp, city, country } = context.location;
+		return {
+			accuracy,
+			locationTimestamp: timestamp,
+			city,
+			country,
 		};
-	}, [setLocationProperties]);
+	}, [context.location]);
 
 	return (
 		<View style={styles.container}>
-			{!isLocationAllowed ? (
+			{!locationPermissionsGranted ? (
 				<Fragment>
 					<Label style={{ marginBottom: 16, textAlign: 'center' }}>
 						Molim Vas, dozvolite pristup Vašoj lokaciji prilikom korišćenja
@@ -75,27 +75,21 @@ const AlertScreen = () => {
 					<CircleButton
 						hint={''}
 						onCancel={() => {}}
-						onStart={() => {}}
+						onStart={onStart}
 						onComplete={() => {}}
-						// onPress={() => {
-						// 	setShowHint(true);
-						// }}
-						// onLongPress={() => {
-						// 	sendSMS();
-						// 	setShowHint(false);
-						// }}
 					/>
+					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
 					<Label>
+						je od{' '}
+						<Moment element={Text} interval={600_000} locale='sr' fromNow>
+							{locationTimestamp}
+						</Moment>
+					</Label>
+					{accuracy && (
+						<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
+					)}
+					<Label style={{ marginTop: 12 }}>
 						{city}, {country}
-					</Label>
-					<Label type='pItalic'>
-						{street}, {streetNumber}
-					</Label>
-					<Label type='pItalic'>
-						{location?.coords.latitude}° N, {location?.coords.longitude}° E
-					</Label>
-					<Label type='pItalic' style={{ marginTop: 12 }}>
-						Vaša poslednja poznata lokacija
 					</Label>
 				</Fragment>
 			)}

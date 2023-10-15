@@ -1,4 +1,4 @@
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, ViewStyle } from 'react-native';
 import { styles } from './circle-button.style';
 import Label from '@/shared/components/label';
 import Svg, { Circle } from 'react-native-svg';
@@ -7,17 +7,20 @@ import Animated, {
 	useAnimatedProps,
 	useAnimatedStyle,
 	useSharedValue,
+	withSequence,
 	withSpring,
 	withTiming,
 } from 'react-native-reanimated';
 import { Colors } from '@/shared/styles';
-import { memo, useCallback, useEffect } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import * as Haptics from 'expo-haptics';
 
 interface Props {
 	onCancel?: () => void;
 	onStart?: () => void;
 	onComplete?: () => void;
 	hint?: string;
+	disabled?: boolean;
 }
 
 const RADIUS = 110;
@@ -25,9 +28,18 @@ const LENGTH = 2 * RADIUS * Math.PI;
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-const CircleButton = ({ onCancel, onStart, onComplete, hint }: Props) => {
+const CircleButton = ({
+	onCancel,
+	onStart,
+	onComplete,
+	hint,
+	disabled,
+}: Props) => {
 	const offset = useSharedValue(1);
 	const hintOpacity = useSharedValue(0);
+	const circleScale = useSharedValue(1);
+
+	const timerRef = useRef<NodeJS.Timeout>();
 
 	useEffect(() => {
 		if (!hint) return;
@@ -43,6 +55,25 @@ const CircleButton = ({ onCancel, onStart, onComplete, hint }: Props) => {
 		};
 	}, [hint, hintOpacity]);
 
+	const startTimer = useCallback(() => {
+		timerRef.current = setTimeout(() => {
+			onComplete?.();
+			circleScale.value = withSequence(
+				withTiming(1.04, { duration: 100 }),
+				withTiming(1, { duration: 100 })
+			);
+			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+		}, 3000);
+	}, [onComplete, circleScale]);
+
+	const clearTimer = useCallback(() => {
+		clearTimeout(timerRef.current);
+	}, []);
+
+	useEffect(() => {
+		return clearTimer;
+	}, [clearTimer]);
+
 	const animatedProps = useAnimatedProps(() => ({
 		strokeDashoffset: -LENGTH * offset.value,
 	}));
@@ -50,18 +81,33 @@ const CircleButton = ({ onCancel, onStart, onComplete, hint }: Props) => {
 	const onPressInHandler = useCallback(() => {
 		offset.value = withTiming(0, { duration: 3000, easing: Easing.linear });
 		onStart?.();
-	}, [offset, onStart]);
+		startTimer();
+	}, [offset, onStart, startTimer]);
 
 	const onPressOutHandler = useCallback(() => {
-		offset.value = withSpring(1, { overshootClamping: true });
+		offset.value = withSpring(1, { overshootClamping: true, mass: 0.25 });
 		onCancel?.();
-	}, [offset, onCancel]);
+		clearTimer();
+	}, [offset, onCancel, clearTimer]);
 
 	const animatedHintStyle = useAnimatedStyle(() => {
 		return {
 			opacity: hintOpacity.value,
 		};
 	});
+
+	const animatedCircleStyle = useAnimatedStyle(() => {
+		return {
+			transform: [{ scale: circleScale.value }],
+		};
+	});
+
+	const dynamicCircleColorStyle: ViewStyle = useMemo(() => {
+		return {
+			backgroundColor: disabled ? Colors.GRAY.PRIMARY : Colors.RED.SECONDARY,
+			borderColor: disabled ? Colors.GRAY.SECONDARY : Colors.RED.PRIMARY,
+		};
+	}, [disabled]);
 
 	return (
 		<View style={styles.container}>
@@ -83,17 +129,17 @@ const CircleButton = ({ onCancel, onStart, onComplete, hint }: Props) => {
 					animatedProps={animatedProps}
 				/>
 			</Svg>
-			<TouchableOpacity
-				activeOpacity={0.8}
-				onPressIn={onPressInHandler}
-				onPressOut={onPressOutHandler}
-				style={styles.outerCircle}
-				onLongPress={onComplete}
-			>
-				<View style={styles.circleButton}>
+			<Animated.View style={animatedCircleStyle}>
+				<TouchableOpacity
+					disabled={disabled}
+					activeOpacity={0.8}
+					onPressIn={onPressInHandler}
+					onPressOut={onPressOutHandler}
+					style={[styles.innerCircle, dynamicCircleColorStyle]}
+				>
 					<Label type='h3Black'>SIGURAN SAM</Label>
-				</View>
-			</TouchableOpacity>
+				</TouchableOpacity>
+			</Animated.View>
 		</View>
 	);
 };
