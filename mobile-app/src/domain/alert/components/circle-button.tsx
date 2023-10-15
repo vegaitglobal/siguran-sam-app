@@ -11,7 +11,6 @@ import Animated, {
 	withSpring,
 	withTiming,
 } from 'react-native-reanimated';
-import moment from 'moment';
 import { Colors } from '@/shared/styles';
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
@@ -21,7 +20,8 @@ interface Props {
 	onStart?: () => void;
 	onComplete?: () => void;
 	hint?: string;
-	disabledUntil: moment.Moment;
+	disabled?: boolean;
+	minutes: number;
 }
 
 const RADIUS = 110;
@@ -34,7 +34,8 @@ const CircleButton = ({
 	onStart,
 	onComplete,
 	hint,
-	disabledUntil,
+	disabled,
+	minutes,
 }: Props) => {
 	const offset = useSharedValue(1);
 	const hintOpacity = useSharedValue(0);
@@ -43,7 +44,7 @@ const CircleButton = ({
 	const timerRef = useRef<NodeJS.Timeout>();
 
 	useEffect(() => {
-		if (!hint) return;
+		if (!hint || disabled) return;
 
 		hintOpacity.value = withTiming(1);
 
@@ -54,7 +55,7 @@ const CircleButton = ({
 		return () => {
 			clearTimeout(timeout);
 		};
-	}, [hint, hintOpacity]);
+	}, [hint, hintOpacity, disabled]);
 
 	const startTimer = useCallback(() => {
 		timerRef.current = setTimeout(() => {
@@ -102,13 +103,6 @@ const CircleButton = ({
 			transform: [{ scale: circleScale.value }],
 		};
 	});
-
-	const minutes = disabledUntil.diff(moment(), 'minutes');
-	console.log(minutes);
-
-	const disabled = useMemo(() => {
-		return minutes > 0;
-	}, [minutes]);
 
 	const dynamicCircleColorStyle: ViewStyle = useMemo(() => {
 		return {

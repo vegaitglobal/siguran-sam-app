@@ -1,7 +1,8 @@
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { Category } from '../../../../services/content/content.interfaces';
 import { styles } from '@/domain/education/screens/category-list/category-list.style';
+import Label from '@/shared/components/label';
 
 interface CategoryListItemProps {
 	category: Category;
@@ -9,19 +10,31 @@ interface CategoryListItemProps {
 }
 
 export const CategoryListItem = (props: CategoryListItemProps) => {
+	const imageUri = 'http:' + props.category.iconURL;
+	console.log(imageUri);
 	return (
-		<TouchableOpacity onPress={() => props.onPress(props.category)}>
-			<View style={styles.item}>
-				<Text style={styles.title}>{props.category.title}</Text>
-				<Text style={styles.description}>{props.category.description}</Text>
-				<Text style={styles.description}>{props.category.iconURL}</Text>
+		<TouchableOpacity
+			style={styles.item}
+			onPress={() => props.onPress(props.category)}
+		>
+			<View style={styles.textContainer}>
+				<Label numberOfLines={2} type='h3Black'>
+					{props.category.title}
+				</Label>
+				<ItemSeparator />
+				<Label numberOfLines={3} type='p2'>
+					{props.category.description}
+				</Label>
+			</View>
+			<View style={styles.iconContainer}>
+				<Image style={styles.icon} source={{ uri: imageUri }} />
 			</View>
 		</TouchableOpacity>
 	);
 };
 
 const ItemSeparator = () => <View style={styles.itemSeparator} />;
-
+const ListHeader = () => <View style={styles.listHeader} />;
 interface CategoryListProps {
 	categories: Category[];
 	onPress: (category: Category) => void;
@@ -36,7 +49,9 @@ export const CategoryList = (props: CategoryListProps) => {
 				renderItem={({ item }) => (
 					<CategoryListItem category={item} onPress={props.onPress} />
 				)}
-				keyExtractor={({ title }) => title}
+				keyExtractor={({ id }) => id}
+				ListHeaderComponent={ListHeader}
+				showsVerticalScrollIndicator={false}
 				ItemSeparatorComponent={() => <ItemSeparator />}
 			/>
 		</View>

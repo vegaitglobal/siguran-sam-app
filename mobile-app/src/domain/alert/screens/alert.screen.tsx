@@ -6,13 +6,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
 import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { AppButton } from '@/shared/components';
 import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
 import Moment from 'react-moment';
 import sendSMS from '../services/sms-service';
-import moment from 'moment';
 import 'moment/locale/sr';
 
 export interface Props
@@ -26,17 +25,21 @@ const AlertScreen = () => {
 		location: {} as DeviceLocation,
 	});
 
+	const [minutes, setMinutes] = useState(0);
 	const [hint, setHint] = useState<string>();
-	const [commitment, setCommitment] = useState(false);
-	const [cooldown, setCooldown] = useState<moment.Moment>(
-		moment().subtract(1, 'minute')
-	);
 
 	const {
 		permissionsGranted: locationPermissionsGranted,
 		getHighPriorityLocation,
 		getLowPriorityLocation,
 	} = useLocation();
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setMinutes((old) => old - 1);
+		}, 60_000);
+		return () => clearInterval(interval);
+	}, []);
 
 	useEffect(() => {
 		getLowPriorityLocation().then((location) => {
@@ -47,28 +50,24 @@ const AlertScreen = () => {
 	}, []);
 
 	const onStart = async () => {
-		setCommitment(false);
 		setHint('Prikupljamo najažurnije informacije...');
+	};
+
+	const onCancel = async () => {
+		if (minutes <= 0) setHint('Držite dugme 3 sekunde');
+	};
+
+	const onComplete = async () => {
+		setMinutes(5);
 		getHighPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
 			});
-			if (!commitment) return;
 
 			sendSMS(location).then(() => {
 				setHint('Sigurnosni kontakti su obavešteni');
 			});
 		});
-	};
-
-	const onCancel = async () => {
-		setCommitment(false);
-		setHint('Držite dugme 3 sekunde');
-	};
-
-	const onComplete = async () => {
-		setCommitment(true);
-		setCooldown(moment().add(6, 'minutes'));
 	};
 
 	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
@@ -80,6 +79,8 @@ const AlertScreen = () => {
 			country,
 		};
 	}, [context.location]);
+
+	const disabled = useMemo(() => minutes > 0, [minutes]);
 
 	return (
 		<View style={styles.container}>
@@ -102,7 +103,8 @@ const AlertScreen = () => {
 						onStart={onStart}
 						onCancel={onCancel}
 						onComplete={onComplete}
-						disabledUntil={cooldown}
+						disabled={disabled}
+						minutes={minutes}
 					/>
 					<Label style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>
 						{city}, {country}
