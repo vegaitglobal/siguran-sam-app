@@ -34,7 +34,7 @@ export const CategoryListItem = (props: CategoryListItemProps) => {
 };
 
 const ItemSeparator = () => <View style={styles.itemSeparator} />;
-
+const ListHeader = () => <View style={styles.listHeader} />;
 interface CategoryListProps {
 	categories: Category[];
 	onPress: (category: Category) => void;
@@ -50,6 +50,7 @@ export const CategoryList = (props: CategoryListProps) => {
 					<CategoryListItem category={item} onPress={props.onPress} />
 				)}
 				keyExtractor={({ id }) => id}
+				ListHeaderComponent={ListHeader}
 				showsVerticalScrollIndicator={false}
 				ItemSeparatorComponent={() => <ItemSeparator />}
 			/>
