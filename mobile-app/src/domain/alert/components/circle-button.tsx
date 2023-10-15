@@ -12,7 +12,7 @@ import Animated, {
 	withTiming,
 } from 'react-native-reanimated';
 import { Colors } from '@/shared/styles';
-import { Fragment, memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 
 interface Props {
