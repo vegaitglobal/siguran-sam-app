@@ -15,6 +15,8 @@ import sendSMS from '../services/sms-service';
 import 'moment/locale/sr';
 import { useUserInfoStore } from '@/shared/store';
 import { useContactStore } from '@/shared/store/use-contact-store';
+import trackingService from 'src/services/tracking/tracking.service';
+import { EventType } from 'src/services/tracking/tracking.interfaces';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -69,11 +71,23 @@ const AlertScreen = () => {
 				return { ...current, location };
 			});
 
-			sendSMS(
-				fullName,
-				contacts.map((c) => c.number),
-				location
-			).then(() => {
+			const recipients = contacts.map((c) => c.number);
+
+			sendSMS(fullName, recipients, location).then(() => {
+				trackingService.track({
+					name: EventType.EmergencyRequested,
+					batteryPercentage: 0.65,
+					deviceId: fullName,
+					hasSignal: true,
+					internetConnection: 'wifi',
+					locationPrecision: context.location.accuracy || 'nepoznato',
+					locationTimestamp: context.location.timestamp,
+					location: {
+						lon: context.location.longitude,
+						lat: context.location.latitude,
+					},
+					recipients,
+				});
 				setHint('Sigurnosni kontakti su obavešteni');
 			});
 		});
