@@ -36,11 +36,13 @@ const AlertScreen = () => {
 		});
 	};
 
-	const { locationTimestamp, accuracy } = useMemo(() => {
-		const { accuracy, timestamp } = context.location;
+	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
+		const { accuracy, timestamp, city, country } = context.location;
 		return {
 			accuracy,
 			locationTimestamp: timestamp,
+			city,
+			country,
 		};
 	}, [context.location]);
 
@@ -66,9 +68,7 @@ const AlertScreen = () => {
 						onStart={onStart}
 						onComplete={() => {}}
 					/>
-					<Label type='pItalic'>
-						Poslednja zabeležena lokacija je od
-					</Label>
+					<Label type='pItalic'>Poslednja zabeležena lokacija je od</Label>
 					<Label>
 						<Moment element={Text} interval={600_000} locale='sr' fromNow>
 							{locationTimestamp}
@@ -77,6 +77,9 @@ const AlertScreen = () => {
 					{accuracy && (
 						<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
 					)}
+					<Label style={{ marginTop: 12 }}>
+						{city}, {country}
+					</Label>
 				</Fragment>
 			)}
 		</View>
