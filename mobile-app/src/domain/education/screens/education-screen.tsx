@@ -17,6 +17,8 @@ export interface Props
 		NativeStackScreenProps<RootStackParamList>
 	> {}
 
+// TODO: Find type of navigation
+// @ts-ignore
 const EducationScreen = ({ navigation }) => {
 	const [categories, setCategories] = useState<Category[]>([]);
 	contentService.getCategories().then((result: Category[]) => {

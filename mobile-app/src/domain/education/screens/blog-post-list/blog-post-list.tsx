@@ -34,6 +34,8 @@ export const BlogPostListItem = (props: BlogPostListItemProps) => {
 
 const ItemSeparator = () => <View style={styles.itemSeparator} />;
 
+// TODO: Find type of route, navigation
+// @ts-ignore
 const BlogPostListScreen = ({ route, navigation }) => {
 	const { category } = route.params;
 	const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
