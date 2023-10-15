@@ -4,9 +4,10 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ScreenTemplate } from '@/shared/components';
-import { TabView } from 'react-native-elements';
-import { CategoryListWidget } from '@/shared/components/category-list-widget';
-import React from 'react';
+import React, { useState } from 'react';
+import { Category } from '../../../services/content/content.interfaces';
+import contentService from '../../../services/content/content.service';
+import { CategoryList } from '@/shared/components/category-list';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -15,10 +16,18 @@ export interface Props
 	> {}
 
 const EducationScreen = () => {
+	const [categories, setCategories] = useState<Category[]>([]);
+	contentService.getCategories().then((result: Category[]) => {
+		setCategories(result);
+	});
+
+	const handleOpenCategory = (categoryName: string): void => {
+		console.log('opening category screen with name: ' + categoryName);
+	};
+
 	return (
 		<ScreenTemplate>
-			{/*<TabView />*/}
-			<CategoryListWidget />
+			<CategoryList categories={categories} onPress={handleOpenCategory} />
 		</ScreenTemplate>
 	);
 };
