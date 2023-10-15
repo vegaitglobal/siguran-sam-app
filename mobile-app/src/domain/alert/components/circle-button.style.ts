@@ -21,5 +21,9 @@ export const styles = StyleSheet.create({
 		borderRadius: 100,
 	},
 	svgProgress: { position: 'absolute', transform: [{ rotateZ: '-90deg' }] },
-	hint: { position: 'absolute', top: -90, textAlign: 'center' },
+	hint: { textAlign: 'center' },
+	hintContainer: {
+		position: 'absolute',
+		top: -90,
+	},
 });

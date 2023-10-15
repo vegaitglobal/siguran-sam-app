@@ -3,8 +3,9 @@ import getLocation from './location-service';
 import * as Network from 'expo-network';
 import messageService from './message.service';
 import { LocationObject } from 'expo-location';
+import { DeviceLocation } from '@/shared/hooks/use-location';
 
-const sendSMS = async (location: LocationObject | null) => {
+const sendSMS = async (location: DeviceLocation) => {
 	let { type, isConnected, isInternetReachable } =
 		await Network.getNetworkStateAsync();
 
@@ -12,7 +13,7 @@ const sendSMS = async (location: LocationObject | null) => {
 
 	let recipients = ['123456', '555666'];
 
-	let message = `Hello, I am in danger. My current location is: https://maps.google.com/?q=${location?.coords.latitude},${location?.coords.longitude}`;
+	let message = `Hello, I am in danger. My current location is: https://maps.google.com/?q=${location.latitude},${location.longitude}`;
 
 	if (isInternetReachable) {
 		messageService.sendOnlineSMS(recipients, message);

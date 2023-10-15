@@ -3,13 +3,13 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface UserInfoStoreState {
-	name: string;
+	fullName: string;
 }
 
 export const useUserInfoStore = create<UserInfoStoreState>()(
 	persist(
 		(_set) => ({
-			name: '',
+			fullName: '',
 		}),
 		{
 			name: 'user-info-storage',
@@ -18,5 +18,5 @@ export const useUserInfoStore = create<UserInfoStoreState>()(
 	)
 );
 
-export const setName = () =>
-	useUserInfoStore.setState((name: string) => ({ name }));
+export const setFullName = (fullName: string) =>
+	useUserInfoStore.setState({ fullName });

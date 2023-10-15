@@ -78,7 +78,7 @@ const CircleButton = ({
 
 	return (
 		<View style={styles.container}>
-			<Animated.View style={animatedHintStyle}>
+			<Animated.View style={[styles.hintContainer, animatedHintStyle]}>
 				<Label numberOfLines={3} style={styles.hint}>
 					{hint}
 				</Label>

@@ -6,4 +6,6 @@ export type RootStackParamList = {
 	[AppScreen.ONBOARDING]: undefined;
 	[AppScreen.TERMS]: undefined;
 	[AppScreen.WELCOME]: undefined;
+	[AppScreen.BLOGPOSTLIST]: undefined;
+	[AppScreen.BLOGPOST]: undefined;
 };
