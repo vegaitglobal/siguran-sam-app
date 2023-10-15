@@ -28,15 +28,20 @@ const AlertScreen = () => {
 
 	const [minutes, setMinutes] = useState(0);
 	const [hint, setHint] = useState<string>();
-	const [commitment, setCommitment] = useState(false);
-
-	const interval = useRef<any>(null);
+	const commitment = useRef(false);
 
 	const {
 		permissionsGranted: locationPermissionsGranted,
 		getHighPriorityLocation,
 		getLowPriorityLocation,
 	} = useLocation();
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setMinutes((old) => old - 1);
+		}, 60_000);
+		return () => clearInterval(interval);
+	}, []);
 
 	useEffect(() => {
 		getLowPriorityLocation().then((location) => {
@@ -47,27 +52,29 @@ const AlertScreen = () => {
 	}, []);
 
 	const onStart = async () => {
-		setCommitment(false);
+		commitment.current = false;
 		setHint('Prikupljamo najažurnije informacije...');
 		getHighPriorityLocation().then((location) => {
 			setContext((current) => {
 				return { ...current, location };
 			});
-			if (!commitment) return;
+
+			if (!commitment.current) return;
 
 			sendSMS(location).then(() => {
 				setHint('Sigurnosni kontakti su obavešteni');
+				setMinutes(5);
 			});
 		});
 	};
 
 	const onCancel = async () => {
-		setCommitment(false);
+		commitment.current = false;
 		setHint('Držite dugme 3 sekunde');
 	};
 
 	const onComplete = async () => {
-		setCommitment(true);
+		commitment.current = true;
 	};
 
 	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
@@ -79,19 +86,6 @@ const AlertScreen = () => {
 			country,
 		};
 	}, [context.location]);
-
-	useEffect(() => {
-		if (interval.current) return;
-		if (!commitment) {
-			setMinutes(5);
-		}
-
-		interval.current = setInterval(() => {
-			setMinutes((old) => old - 1);
-		}, 60_000);
-
-		return () => clearInterval(interval.current);
-	}, [commitment, minutes]);
 
 	const disabled = useMemo(() => minutes > 0, [minutes]);
 
