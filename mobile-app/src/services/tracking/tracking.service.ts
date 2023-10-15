@@ -27,7 +27,7 @@ class ContentfulTrackingService implements TrackingService {
 				...Object.keys(fields).reduce((acc, key) => {
 					return { ...acc, [key]: { 'en-US': fields[key] } };
 				}, {}),
-				timestamp: new Date().toISOString(),
+				timestamp: { 'en-US': new Date().toISOString() },
 			},
 		});
 	}
