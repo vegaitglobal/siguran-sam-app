@@ -1,4 +1,3 @@
-import CircleButton from '@/domain/alert/components/circle-button';
 import { AppScreen } from '@/shared/constants';
 import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -12,6 +11,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
 import { AppButton } from '@/shared/components';
 import useLocation from '@/shared/hooks/use-location';
+import CircleButton from '../components';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -72,16 +72,14 @@ const AlertScreen = () => {
 				</Fragment>
 			) : (
 				<Fragment>
-					{showHint && <Label>Držite dugme duže od 2 sekunde</Label>}
 					<CircleButton
-						text='SIGURAN SAM'
-						onPress={() => {
-							setShowHint(true);
-						}}
-						onLongPress={() => {
-							sendSMS();
-							setShowHint(false);
-						}}
+					// onPress={() => {
+					// 	setShowHint(true);
+					// }}
+					// onLongPress={() => {
+					// 	sendSMS();
+					// 	setShowHint(false);
+					// }}
 					/>
 					<Label>
 						{city}, {country}
