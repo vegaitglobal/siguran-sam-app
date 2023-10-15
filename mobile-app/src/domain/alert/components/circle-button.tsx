@@ -14,9 +14,9 @@ import { Colors } from '@/shared/styles';
 import { memo, useCallback, useEffect } from 'react';
 
 interface Props {
-	onCancel?: () => void;
-	onStart?: () => void;
-	onComplete?: () => void;
+	onCancel: () => void;
+	onStart: () => void;
+	onComplete: () => void;
 	hint?: string;
 }
 
@@ -49,12 +49,12 @@ const CircleButton = ({ onCancel, onStart, onComplete, hint }: Props) => {
 
 	const onPressInHandler = useCallback(() => {
 		offset.value = withTiming(0, { duration: 3000, easing: Easing.linear });
-		onStart?.();
+		onStart();
 	}, [offset, onStart]);
 
 	const onPressOutHandler = useCallback(() => {
 		offset.value = withSpring(1, { overshootClamping: true });
-		onCancel?.();
+		onCancel();
 	}, [offset, onCancel]);
 
 	const animatedHintStyle = useAnimatedStyle(() => {

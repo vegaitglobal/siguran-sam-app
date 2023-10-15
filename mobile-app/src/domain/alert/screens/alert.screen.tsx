@@ -22,7 +22,7 @@ export interface Props
 const AlertScreen = () => {
 	const {
 		location,
-		isAllowed,
+		isAllowed: isLocationAllowed,
 		setIsAllowed,
 		city,
 		country,
@@ -58,7 +58,7 @@ const AlertScreen = () => {
 
 	return (
 		<View style={styles.container}>
-			{!isAllowed ? (
+			{!isLocationAllowed ? (
 				<Fragment>
 					<Label style={{ marginBottom: 16, textAlign: 'center' }}>
 						Molim Vas, dozvolite pristup Vašoj lokaciji prilikom korišćenja
@@ -73,13 +73,17 @@ const AlertScreen = () => {
 			) : (
 				<Fragment>
 					<CircleButton
-					// onPress={() => {
-					// 	setShowHint(true);
-					// }}
-					// onLongPress={() => {
-					// 	sendSMS();
-					// 	setShowHint(false);
-					// }}
+						hint={''}
+						onCancel={() => {}}
+						onStart={() => {}}
+						onComplete={() => {}}
+						// onPress={() => {
+						// 	setShowHint(true);
+						// }}
+						// onLongPress={() => {
+						// 	sendSMS();
+						// 	setShowHint(false);
+						// }}
 					/>
 					<Label>
 						{city}, {country}
