@@ -54,7 +54,7 @@ const AlertScreen = () => {
 	};
 
 	const onCancel = async () => {
-		setHint('Držite dugme 3 sekunde');
+		if (minutes <= 0) setHint('Držite dugme 3 sekunde');
 	};
 
 	const onComplete = async () => {
