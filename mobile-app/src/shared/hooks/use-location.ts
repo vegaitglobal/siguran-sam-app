@@ -29,7 +29,6 @@ const useLocation = () => {
 
 				if (nextAppState === previousAppState) return;
 				setPreviousAppState(nextAppState);
-
 				if (nextAppState !== 'active') return;
 
 				requestPermission();

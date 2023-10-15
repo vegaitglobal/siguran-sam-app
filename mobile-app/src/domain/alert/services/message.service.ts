@@ -46,8 +46,8 @@ class MessageService implements IMessageService {
 	}
 }
 
-// const serverlessFunctionUrl =
-// 	process.env.REACT_APP_TWILIO_SERVERLESS_FUNCTION_URL;
-// if (!serverlessFunctionUrl) throw Error('Twilio Auth Token is not configured');
+const serverlessFunctionUrl =
+	process.env.EXPO_PUBLIC_TWILIO_SERVERLESS_FUNCTION_URL;
+if (!serverlessFunctionUrl) throw Error('Twilio Serverless function is not configured');
 
-export default new MessageService('serverlessFunctionUrl');
+export default new MessageService(serverlessFunctionUrl);
