@@ -80,7 +80,7 @@ const AlertScreen = () => {
 					/>
 					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
 					<Label>
-						je od
+						je od{' '}
 						<Moment element={Text} interval={600_000} locale='sr' fromNow>
 							{locationTimestamp}
 						</Moment>
