@@ -11,6 +11,7 @@ import { AppButton } from '@/shared/components';
 import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
 import Moment from 'react-moment';
+import 'moment/locale/sr';
 
 export interface Props
 	extends CompositeScreenProps<
@@ -66,8 +67,10 @@ const AlertScreen = () => {
 						onComplete={() => {}}
 					/>
 					<Label type='pItalic'>
-						Poslednja zabeležena lokacija je od pre{' '}
-						<Moment element={Text} interval={600_000} ago>
+						Poslednja zabeležena lokacija je od
+					</Label>
+					<Label>
+						<Moment element={Text} interval={600_000} locale='sr' fromNow>
 							{locationTimestamp}
 						</Moment>
 					</Label>
