@@ -78,19 +78,19 @@ const AlertScreen = () => {
 						onStart={onStart}
 						onComplete={() => {}}
 					/>
+					<Label style={{ marginBottom: 12, fontSize:20, fontWeight:'bold' }}>
+						{city}, {country}
+					</Label>
 					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
-					<Label>
+					<Label type='pItalic'>
 						je od{' '}
 						<Moment element={Text} interval={600_000} locale='sr' fromNow>
 							{locationTimestamp}
 						</Moment>
-					</Label>
+					</Label >
 					{accuracy && (
 						<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
 					)}
-					<Label style={{ marginTop: 12 }}>
-						{city}, {country}
-					</Label>
 				</Fragment>
 			)}
 		</View>
