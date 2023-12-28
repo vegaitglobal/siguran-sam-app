@@ -6,7 +6,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
 import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { AppButton } from '@/shared/components';
 import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
 import CircleButton from '../components';
@@ -36,9 +36,9 @@ const AlertScreen = () => {
 	const [hint, setHint] = useState<string>();
 
 	const {
-		permissionsGranted: locationPermissionsGranted,
+		permissionGranted: locationPermissionsGranted,
 		getHighPriorityLocation,
-		getLowPriorityLocation,
+		lowPriorityLocation,
 	} = useLocation();
 
 	useEffect(() => {
@@ -46,14 +46,6 @@ const AlertScreen = () => {
 			setMinutes((old) => old - 1);
 		}, 60_000);
 		return () => clearInterval(interval);
-	}, []);
-
-	useEffect(() => {
-		getLowPriorityLocation().then((location) => {
-			setContext((current) => {
-				return { ...current, location };
-			});
-		});
 	}, []);
 
 	const onStart = async () => {
@@ -93,16 +85,6 @@ const AlertScreen = () => {
 		});
 	};
 
-	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
-		const { accuracy, timestamp, city, country } = context.location;
-		return {
-			accuracy,
-			locationTimestamp: timestamp,
-			city,
-			country,
-		};
-	}, [context.location]);
-
 	const disabled = useMemo(() => minutes > 0, [minutes]);
 
 	return (
@@ -130,17 +112,17 @@ const AlertScreen = () => {
 						minutes={minutes}
 					/>
 					<Label style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>
-						{city}, {country}
+						{lowPriorityLocation?.city}, {lowPriorityLocation?.country}
 					</Label>
 					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
 					<Label type='pItalic'>
 						je od{' '}
 						<Moment element={Text} locale='sr' fromNow>
-							{locationTimestamp}
+							{lowPriorityLocation?.timestamp}
 						</Moment>
 					</Label>
-					{accuracy && (
-						<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
+					{lowPriorityLocation?.accuracy && (
+						<Label type='pItalic'>sa preciznošću od {lowPriorityLocation?.accuracy}</Label>
 					)}
 				</Fragment>
 			)}

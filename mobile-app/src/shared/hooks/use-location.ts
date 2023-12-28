@@ -21,6 +21,29 @@ const useLocation = () => {
 	const [permissionResponse, requestPermission] =
 		Location.useForegroundPermissions();
 
+	const [permissionGranted, setPermissionGranted] = useState(false);
+
+	const [lowPriorityLocation, setLowPriorityLocation] = useState<DeviceLocation | null>(null);
+
+	const requestPermissionSetLocation = async () => {
+		const { status } = await Location.requestForegroundPermissionsAsync();
+
+			if (status !== 'granted') {
+				setPermissionGranted(false);
+				return;
+			}
+
+			setPermissionGranted(true);
+			const location = await getLocation(() => Location.getLastKnownPositionAsync());
+
+			setLowPriorityLocation(location);
+	}
+
+
+	useEffect(() => {
+		requestPermissionSetLocation();
+	}, []);
+
 	useEffect(() => {
 		const subscription = AppState.addEventListener(
 			'change',
@@ -31,7 +54,7 @@ const useLocation = () => {
 				setPreviousAppState(nextAppState);
 				if (nextAppState !== 'active') return;
 
-				requestPermission();
+				requestPermissionSetLocation();
 			}
 		);
 
@@ -72,9 +95,8 @@ const useLocation = () => {
 					Location.getLastKnownPositionAsync
 				)
 			),
-		getLowPriorityLocation: () =>
-			getLocation(() => Location.getLastKnownPositionAsync()),
-		permissionsGranted,
+		lowPriorityLocation,
+		permissionGranted,
 	};
 };
 
