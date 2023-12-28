@@ -4,7 +4,7 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { Linking, View, Text } from 'react-native';
+import { Linking, View, Text, AppState, AppStateStatus } from 'react-native';
 import Label from '@/shared/components/label';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { AppButton } from '@/shared/components';
@@ -29,6 +29,9 @@ const AlertScreen = () => {
 		location: {} as DeviceLocation,
 	});
 
+	const [previousAppState, setPreviousAppState] =
+		useState<AppStateStatus>('unknown');
+
 	const { fullName } = useUserInfoStore();
 	const { contacts } = useContactStore();
 
@@ -38,8 +41,37 @@ const AlertScreen = () => {
 	const {
 		permissionGranted: locationPermissionsGranted,
 		getHighPriorityLocation,
-		lowPriorityLocation,
+		getLowPriorityLocation,
 	} = useLocation();
+
+	const updateLocation = () => {
+		getLowPriorityLocation().then(location => {
+			setContext((current) => {
+				return { ...current, location };
+			});
+		});
+	}
+
+	useEffect(() => {
+		updateLocation();
+	}, []);
+
+	useEffect(() => {
+		const subscription = AppState.addEventListener(
+			'change',
+			async (nextAppState) => {
+				if (locationPermissionsGranted) return;
+
+				if (nextAppState === previousAppState) return;
+				setPreviousAppState(nextAppState);
+				if (nextAppState !== 'active') return;
+
+				updateLocation();
+			}
+		);
+
+		return () => subscription.remove();
+	}, []);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -85,6 +117,16 @@ const AlertScreen = () => {
 		});
 	};
 
+	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
+		const { accuracy, timestamp, city, country } = context.location;
+		return {
+			accuracy,
+			locationTimestamp: timestamp,
+			city,
+			country,
+		};
+	}, [context.location]);
+
 	const disabled = useMemo(() => minutes > 0, [minutes]);
 
 	return (
@@ -112,17 +154,17 @@ const AlertScreen = () => {
 						minutes={minutes}
 					/>
 					<Label style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>
-						{lowPriorityLocation?.city}, {lowPriorityLocation?.country}
+						{city}, {country}
 					</Label>
 					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
 					<Label type='pItalic'>
 						je od{' '}
 						<Moment element={Text} locale='sr' fromNow>
-							{lowPriorityLocation?.timestamp}
+							{locationTimestamp}
 						</Moment>
 					</Label>
-					{lowPriorityLocation?.accuracy && (
-						<Label type='pItalic'>sa preciznošću od {lowPriorityLocation?.accuracy}</Label>
+					{accuracy && (
+						<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
 					)}
 				</Fragment>
 			)}

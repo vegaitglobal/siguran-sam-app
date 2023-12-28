@@ -15,55 +15,19 @@ export interface DeviceLocation {
 }
 
 const useLocation = () => {
-	const [previousAppState, setPreviousAppState] =
-		useState<AppStateStatus>('unknown');
-
-	const [permissionResponse, requestPermission] =
-		Location.useForegroundPermissions();
-
 	const [permissionGranted, setPermissionGranted] = useState(false);
 
-	const [lowPriorityLocation, setLowPriorityLocation] = useState<DeviceLocation | null>(null);
-
-	const requestPermissionSetLocation = async () => {
+	const requestPermissionSetLocation = async (resolveLocation: () => Promise<Location.LocationObject | null>): Promise<DeviceLocation> => {
 		const { status } = await Location.requestForegroundPermissionsAsync();
 
-			if (status !== 'granted') {
-				setPermissionGranted(false);
-				return;
-			}
+		if (status !== 'granted') {
+			setPermissionGranted(false);
+			return {} as DeviceLocation;
+		} 
 
-			setPermissionGranted(true);
-			const location = await getLocation(() => Location.getLastKnownPositionAsync());
-
-			setLowPriorityLocation(location);
+		setPermissionGranted(true);
+		return getLocation(resolveLocation);
 	}
-
-
-	useEffect(() => {
-		requestPermissionSetLocation();
-	}, []);
-
-	useEffect(() => {
-		const subscription = AppState.addEventListener(
-			'change',
-			async (nextAppState) => {
-				if (permissionResponse?.granted) return;
-
-				if (nextAppState === previousAppState) return;
-				setPreviousAppState(nextAppState);
-				if (nextAppState !== 'active') return;
-
-				requestPermissionSetLocation();
-			}
-		);
-
-		return () => subscription.remove();
-	}, []);
-
-	const permissionsGranted = useMemo(() => {
-		return permissionResponse?.granted ? true : false;
-	}, [permissionResponse]);
 
 	const getLocation = async (
 		resolveLocation: () => Promise<Location.LocationObject | null>
@@ -89,13 +53,10 @@ const useLocation = () => {
 	};
 
 	return {
-		getHighPriorityLocation: () =>
-			getLocation(() =>
-				Location.getCurrentPositionAsync().catch(
-					Location.getLastKnownPositionAsync
-				)
-			),
-		lowPriorityLocation,
+		getHighPriorityLocation: () => requestPermissionSetLocation(() => Location.getCurrentPositionAsync().catch(
+			Location.getLastKnownPositionAsync
+		)),
+		getLowPriorityLocation: () => requestPermissionSetLocation(Location.getLastKnownPositionAsync),
 		permissionGranted,
 	};
 };
