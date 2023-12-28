@@ -44,7 +44,7 @@ const AlertScreen = () => {
 		getLowPriorityLocation,
 	} = useLocation();
 
-	const updateLocation = () => {
+	const updateLowPriorityLocationContext = () => {
 		getLowPriorityLocation().then(location => {
 			setContext((current) => {
 				return { ...current, location };
@@ -53,7 +53,7 @@ const AlertScreen = () => {
 	}
 
 	useEffect(() => {
-		updateLocation();
+		updateLowPriorityLocationContext();
 	}, []);
 
 	useEffect(() => {
@@ -66,7 +66,7 @@ const AlertScreen = () => {
 				setPreviousAppState(nextAppState);
 				if (nextAppState !== 'active') return;
 
-				updateLocation();
+				updateLowPriorityLocationContext();
 			}
 		);
 

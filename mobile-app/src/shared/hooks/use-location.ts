@@ -17,7 +17,7 @@ export interface DeviceLocation {
 const useLocation = () => {
 	const [permissionGranted, setPermissionGranted] = useState(false);
 
-	const requestPermissionSetLocation = async (resolveLocation: () => Promise<Location.LocationObject | null>): Promise<DeviceLocation> => {
+	const requestPermissionGetLocationAsync = async (resolveLocation: () => Promise<Location.LocationObject | null>): Promise<DeviceLocation> => {
 		const { status } = await Location.requestForegroundPermissionsAsync();
 
 		if (status !== 'granted') {
@@ -53,10 +53,10 @@ const useLocation = () => {
 	};
 
 	return {
-		getHighPriorityLocation: () => requestPermissionSetLocation(() => Location.getCurrentPositionAsync().catch(
+		getHighPriorityLocation: () => requestPermissionGetLocationAsync(() => Location.getCurrentPositionAsync().catch(
 			Location.getLastKnownPositionAsync
 		)),
-		getLowPriorityLocation: () => requestPermissionSetLocation(Location.getLastKnownPositionAsync),
+		getLowPriorityLocation: () => requestPermissionGetLocationAsync(Location.getLastKnownPositionAsync),
 		permissionGranted,
 	};
 };
