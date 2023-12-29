@@ -15,32 +15,19 @@ export interface DeviceLocation {
 }
 
 const useLocation = () => {
-	const [previousAppState, setPreviousAppState] =
-		useState<AppStateStatus>('unknown');
+	const [permissionGranted, setPermissionGranted] = useState(false);
 
-	const [permissionResponse, requestPermission] =
-		Location.useForegroundPermissions();
+	const requestPermissionGetLocationAsync = async (resolveLocation: () => Promise<Location.LocationObject | null>): Promise<DeviceLocation> => {
+		const { status } = await Location.requestForegroundPermissionsAsync();
 
-	useEffect(() => {
-		const subscription = AppState.addEventListener(
-			'change',
-			async (nextAppState) => {
-				if (permissionResponse?.granted) return;
+		if (status !== 'granted') {
+			setPermissionGranted(false);
+			return {} as DeviceLocation;
+		} 
 
-				if (nextAppState === previousAppState) return;
-				setPreviousAppState(nextAppState);
-				if (nextAppState !== 'active') return;
-
-				requestPermission();
-			}
-		);
-
-		return () => subscription.remove();
-	}, []);
-
-	const permissionsGranted = useMemo(() => {
-		return permissionResponse?.granted ? true : false;
-	}, [permissionResponse]);
+		setPermissionGranted(true);
+		return getLocation(resolveLocation);
+	}
 
 	const getLocation = async (
 		resolveLocation: () => Promise<Location.LocationObject | null>
@@ -66,15 +53,11 @@ const useLocation = () => {
 	};
 
 	return {
-		getHighPriorityLocation: () =>
-			getLocation(() =>
-				Location.getCurrentPositionAsync().catch(
-					Location.getLastKnownPositionAsync
-				)
-			),
-		getLowPriorityLocation: () =>
-			getLocation(() => Location.getLastKnownPositionAsync()),
-		permissionsGranted,
+		getHighPriorityLocation: () => requestPermissionGetLocationAsync(() => Location.getCurrentPositionAsync().catch(
+			Location.getLastKnownPositionAsync
+		)),
+		getLowPriorityLocation: () => requestPermissionGetLocationAsync(Location.getLastKnownPositionAsync),
+		permissionGranted,
 	};
 };
 
