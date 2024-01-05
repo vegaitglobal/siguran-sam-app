@@ -76,6 +76,16 @@ const AlertScreen = () => {
 
 	const disabled = useMemo(() => minutes > 0, [minutes]);
 
+	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
+		const { accuracy, timestamp, city, country } = location;
+		return {
+			accuracy,
+			locationTimestamp: timestamp,
+			city,
+			country,
+		};
+	}, [location]);
+
 	return (
 		<View style={styles.container}>
 			{!isPermissionGranted ? (
@@ -101,17 +111,17 @@ const AlertScreen = () => {
 						minutes={minutes}
 					/>
 					<Label style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>
-						{location.city}, {location.country}
+						{city}, {country}
 					</Label>
 					<Label type='pItalic'>Poslednja zabeležena lokacija</Label>
 					<Label type='pItalic'>
 						je od{' '}
 						<Moment element={Text} locale='sr' fromNow>
-							{location.timestamp}
+							{locationTimestamp}
 						</Moment>
 					</Label>
-					{location.accuracy && (
-						<Label type='pItalic'>sa preciznošću od {location.accuracy}</Label>
+					{accuracy && (
+						<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
 					)}
 				</Fragment>
 			)}
