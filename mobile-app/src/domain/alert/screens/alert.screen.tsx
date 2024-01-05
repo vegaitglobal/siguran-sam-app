@@ -4,11 +4,11 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { Linking, View, Text, AppState, AppStateStatus } from 'react-native';
+import { Linking, View, Text } from 'react-native';
 import Label from '@/shared/components/label';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { AppButton } from '@/shared/components';
-import useLocation, { DeviceLocation } from '@/shared/hooks/use-location';
+import useLocation from '@/shared/hooks/use-location';
 import CircleButton from '../components';
 import Moment from 'react-moment';
 import sendSMS from '../services/sms-service';
@@ -22,16 +22,9 @@ export interface Props
 	extends CompositeScreenProps<
 		BottomTabScreenProps<BottomTabsParamList, AppScreen.ALERT>,
 		NativeStackScreenProps<RootStackParamList>
-	> {}
+	> { }
 
 const AlertScreen = () => {
-	const [context, setContext] = useState<{ location: DeviceLocation }>({
-		location: {} as DeviceLocation,
-	});
-
-	const [previousAppState, setPreviousAppState] =
-		useState<AppStateStatus>('unknown');
-
 	const { fullName } = useUserInfoStore();
 	const { contacts } = useContactStore();
 
@@ -39,39 +32,9 @@ const AlertScreen = () => {
 	const [hint, setHint] = useState<string>();
 
 	const {
-		permissionGranted: locationPermissionsGranted,
-		getHighPriorityLocation,
-		getLowPriorityLocation,
+		isPermissionGranted,
+		location
 	} = useLocation();
-
-	const updateLowPriorityLocationContext = () => {
-		getLowPriorityLocation().then(location => {
-			setContext((current) => {
-				return { ...current, location };
-			});
-		});
-	}
-
-	useEffect(() => {
-		updateLowPriorityLocationContext();
-	}, []);
-
-	useEffect(() => {
-		const subscription = AppState.addEventListener(
-			'change',
-			async (nextAppState) => {
-				if (locationPermissionsGranted) return;
-
-				if (nextAppState === previousAppState) return;
-				setPreviousAppState(nextAppState);
-				if (nextAppState !== 'active') return;
-
-				updateLowPriorityLocationContext();
-			}
-		);
-
-		return () => subscription.remove();
-	}, []);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -90,48 +53,42 @@ const AlertScreen = () => {
 
 	const onComplete = async () => {
 		setMinutes(5);
-		getHighPriorityLocation().then((location) => {
-			setContext((current) => {
-				return { ...current, location };
-			});
+		const recipients = contacts.map((c) => c.number);
 
-			const recipients = contacts.map((c) => c.number);
-
-			sendSMS(fullName, recipients, location).then(() => {
-				trackingService.track({
-					name: EventType.EmergencyRequested,
-					batteryPercentage: 0.65,
-					deviceId: fullName,
-					hasSignal: true,
-					internetConnection: 'wifi',
-					locationPrecision: context.location.accuracy || 'nepoznato',
-					locationTimestamp: context.location.timestamp,
-					location: {
-						lon: context.location.longitude,
-						lat: context.location.latitude,
-					},
-					recipients,
-				});
-				setHint('Sigurnosni kontakti su obavešteni');
+		sendSMS(fullName, recipients, location).then(() => {
+			trackingService.track({
+				name: EventType.EmergencyRequested,
+				batteryPercentage: 0.65,
+				deviceId: fullName,
+				hasSignal: true,
+				internetConnection: 'wifi',
+				locationPrecision: location.accuracy || 'nepoznato',
+				locationTimestamp: location.timestamp,
+				location: {
+					lon: location.longitude,
+					lat: location.latitude,
+				},
+				recipients,
 			});
+			setHint('Sigurnosni kontakti su obavešteni');
 		});
 	};
 
+	const disabled = useMemo(() => minutes > 0, [minutes]);
+
 	const { locationTimestamp, accuracy, city, country } = useMemo(() => {
-		const { accuracy, timestamp, city, country } = context.location;
+		const { accuracy, timestamp, city, country } = location;
 		return {
 			accuracy,
 			locationTimestamp: timestamp,
 			city,
 			country,
 		};
-	}, [context.location]);
-
-	const disabled = useMemo(() => minutes > 0, [minutes]);
+	}, [location]);
 
 	return (
 		<View style={styles.container}>
-			{!locationPermissionsGranted ? (
+			{!isPermissionGranted ? (
 				<Fragment>
 					<Label style={{ marginBottom: 16, textAlign: 'center' }}>
 						Molim Vas, dozvolite pristup Vašoj lokaciji prilikom korišćenja

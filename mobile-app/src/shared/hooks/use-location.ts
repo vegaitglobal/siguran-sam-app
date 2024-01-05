@@ -1,5 +1,6 @@
 import * as Location from 'expo-location';
-import { useEffect, useMemo, useState } from 'react';
+import { LocationSubscription } from 'expo-location';
+import { useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 
 export interface DeviceLocation {
@@ -15,24 +16,95 @@ export interface DeviceLocation {
 }
 
 const useLocation = () => {
-	const [permissionGranted, setPermissionGranted] = useState(false);
+	const [permissionResponse, setPermissionResponse] = useState<Location.LocationPermissionResponse>();
+	const [location, setLocation] = useState({} as DeviceLocation);
+	const appState = useRef(AppState.currentState);
+	const locationWatcher = useRef<LocationSubscription | null>(null);
 
-	const requestPermissionGetLocationAsync = async (resolveLocation: () => Promise<Location.LocationObject | null>): Promise<DeviceLocation> => {
-		const { status } = await Location.requestForegroundPermissionsAsync();
+	useEffect(() => {
+		requestPermissionAndExecute(async () => {
+			await setLastKnownLocation();
+			startLocationTracking();
+		});
+		const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
 
-		if (status !== 'granted') {
-			setPermissionGranted(false);
-			return {} as DeviceLocation;
-		} 
+		return () => {
+			stopLocationTracking();
+			appStateSubscription.remove();
+		}
+	}, []);
 
-		setPermissionGranted(true);
-		return getLocation(resolveLocation);
+	const setLastKnownLocation = async () => {
+		const lastKnownLocation = await Location.getLastKnownPositionAsync();
+		const deviceLocation = await convertToDeviceLocation(lastKnownLocation);
+		if (deviceLocation) {
+			setLocation(deviceLocation);
+		}
 	}
 
-	const getLocation = async (
-		resolveLocation: () => Promise<Location.LocationObject | null>
-	): Promise<DeviceLocation> => {
-		const location = await resolveLocation();
+	const requestPermissionAndExecute = async (callback: () => void) => {
+		const permissionResponse = await Location.requestForegroundPermissionsAsync();
+		setPermissionResponse(permissionResponse);
+		if (permissionResponse.granted) {
+			callback();
+		}
+	}
+
+	const handleAppStateChange = async (nextAppState: AppStateStatus) => {
+		if (nextAppState === appState.current) return;
+
+		const isTransitioningToForeground = appState.current.match(/inactive|background/) && nextAppState === 'active';
+
+		if (isTransitioningToForeground) {
+			await requestPermissionAndExecute(async () => {
+				await setLastKnownLocation();
+				startLocationTracking();
+			});
+		} else {
+			stopLocationTracking();
+		}
+
+		appState.current = nextAppState;
+	}
+
+	const startLocationTracking = async () => {
+		if (locationWatcher.current) {
+			return;
+		}
+
+		const watcherOptions = {
+			accuracy: Location.Accuracy.Highest,
+			distanceInterval: 10,
+			timeInterval: 5000
+		}
+
+		const handleLocationChange = async (newLocation: Location.LocationObject | null) => {
+			const deviceLocation = await convertToDeviceLocation(newLocation);
+
+			if (deviceLocation) {
+				setLocation(deviceLocation);
+			}
+		}
+
+		locationWatcher.current = await Location.watchPositionAsync(
+			watcherOptions,
+			handleLocationChange
+		);
+	}
+
+	const stopLocationTracking = async () => {
+		if (!locationWatcher.current) {
+			return;
+		}
+
+		locationWatcher.current.remove();
+		locationWatcher.current = null;
+	}
+
+	const convertToDeviceLocation = async (location: Location.LocationObject | null): Promise<DeviceLocation | null> => {
+		if (location == null) {
+			return null;
+		}
 
 		const { longitude, latitude, altitude, accuracy } = location!.coords;
 
@@ -50,14 +122,11 @@ const useLocation = () => {
 			streetNumber: streetNumber || undefined,
 			timestamp: new Date(location!.timestamp).toISOString(),
 		};
-	};
+	}
 
 	return {
-		getHighPriorityLocation: () => requestPermissionGetLocationAsync(() => Location.getCurrentPositionAsync().catch(
-			Location.getLastKnownPositionAsync
-		)),
-		getLowPriorityLocation: () => requestPermissionGetLocationAsync(Location.getLastKnownPositionAsync),
-		permissionGranted,
+		isPermissionGranted: permissionResponse?.granted,
+		location
 	};
 };
 
