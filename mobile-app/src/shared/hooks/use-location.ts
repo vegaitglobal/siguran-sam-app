@@ -22,7 +22,10 @@ const useLocation = () => {
 	const locationWatcher = useRef<LocationSubscription | null>(null);
 
 	useEffect(() => {
-		requestPermissionAndExecute(startLocationTracking);
+		requestPermissionAndExecute(async () => {
+			await setLastKnownLocation();
+			startLocationTracking();
+		});
 		const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
 
 		return () => {
@@ -30,6 +33,14 @@ const useLocation = () => {
 			appStateSubscription.remove();
 		}
 	}, []);
+
+	const setLastKnownLocation = async () => {
+		const lastKnownLocation = await Location.getLastKnownPositionAsync();
+		const deviceLocation = await convertToDeviceLocation(lastKnownLocation);
+		if (deviceLocation) {
+			setLocation(deviceLocation);
+		}
+	}
 
 	const requestPermissionAndExecute = async (callback: () => void) => {
 		const permissionResponse = await Location.requestForegroundPermissionsAsync();
@@ -45,12 +56,14 @@ const useLocation = () => {
 		const isTransitioningToForeground = appState.current.match(/inactive|background/) && nextAppState === 'active';
 
 		if (isTransitioningToForeground) {
-			await requestPermissionAndExecute(startLocationTracking);
+			await requestPermissionAndExecute(async () => {
+				await setLastKnownLocation();
+				startLocationTracking();
+			});
 		} else {
 			stopLocationTracking();
 		}
 
-		console.log(isTransitioningToForeground ? "Foreground" : "Background");
 		appState.current = nextAppState;
 	}
 
@@ -66,7 +79,6 @@ const useLocation = () => {
 		}
 
 		const handleLocationChange = async (newLocation: Location.LocationObject | null) => {
-			console.log(newLocation);
 			const deviceLocation = await convertToDeviceLocation(newLocation);
 
 			if (deviceLocation) {
@@ -78,8 +90,6 @@ const useLocation = () => {
 			watcherOptions,
 			handleLocationChange
 		);
-
-		console.log("Tracker added.");
 	}
 
 	const stopLocationTracking = async () => {
@@ -89,8 +99,6 @@ const useLocation = () => {
 
 		locationWatcher.current.remove();
 		locationWatcher.current = null;
-
-		console.log("Tracker removed.");
 	}
 
 	const convertToDeviceLocation = async (location: Location.LocationObject | null): Promise<DeviceLocation | null> => {
