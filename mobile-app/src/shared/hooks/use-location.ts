@@ -17,20 +17,12 @@ export interface DeviceLocation {
 
 const useLocation = () => {
 	const [permissionResponse, setPermissionResponse] = useState<Location.LocationPermissionResponse>();
-	const appState = useRef(AppState.currentState);
 	const [location, setLocation] = useState({} as DeviceLocation);
+	const appState = useRef(AppState.currentState);
 	const locationWatcher = useRef<LocationSubscription | null>(null);
 
 	useEffect(() => {
-		const requestPermissionStartTracking = async () => {
-			const permissionResponse = await Location.requestForegroundPermissionsAsync();
-			setPermissionResponse(permissionResponse);
-			if (permissionResponse.granted) {
-				startLocationTracking();
-			}
-		}
-
-		requestPermissionStartTracking();
+		requestPermissionAndExecute(startLocationTracking);
 		const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
 
 		return () => {
@@ -39,17 +31,21 @@ const useLocation = () => {
 		}
 	}, []);
 
+	const requestPermissionAndExecute = async (callback: () => void) => {
+		const permissionResponse = await Location.requestForegroundPermissionsAsync();
+		setPermissionResponse(permissionResponse);
+		if (permissionResponse.granted) {
+			callback();
+		}
+	}
+
 	const handleAppStateChange = async (nextAppState: AppStateStatus) => {
 		if (nextAppState === appState.current) return;
 
 		const isTransitioningToForeground = appState.current.match(/inactive|background/) && nextAppState === 'active';
 
 		if (isTransitioningToForeground) {
-			const permissionResponse = await Location.requestForegroundPermissionsAsync();
-			setPermissionResponse(permissionResponse);
-			if (permissionResponse.granted) {
-				startLocationTracking();
-			}
+			await requestPermissionAndExecute(startLocationTracking);
 		} else {
 			stopLocationTracking();
 		}
