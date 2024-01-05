@@ -32,7 +32,7 @@ const AlertScreen = () => {
 	const [hint, setHint] = useState<string>();
 
 	const {
-		permissionGranted,
+		isPermissionGranted,
 		location
 	} = useLocation();
 
@@ -78,7 +78,7 @@ const AlertScreen = () => {
 
 	return (
 		<View style={styles.container}>
-			{!permissionGranted ? (
+			{!isPermissionGranted ? (
 				<Fragment>
 					<Label style={{ marginBottom: 16, textAlign: 'center' }}>
 						Molim Vas, dozvolite pristup Vašoj lokaciji prilikom korišćenja

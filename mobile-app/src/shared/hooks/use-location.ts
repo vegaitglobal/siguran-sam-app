@@ -16,59 +16,74 @@ export interface DeviceLocation {
 }
 
 const useLocation = () => {
-	const [permissionGranted, setPermissionGranted] = useState(true);
+	const [permissionResponse, setPermissionResponse] = useState<Location.LocationPermissionResponse>();
+	const appState = useRef(AppState.currentState);
 	const [location, setLocation] = useState({} as DeviceLocation);
 	const locationWatcher = useRef<LocationSubscription | null>(null);
-	const [previousAppState, setPreviousAppState] =
-		useState<AppStateStatus>('unknown');
 
 	useEffect(() => {
-		startLocationTracking();
-		const subscription = AppState.addEventListener('change', handleAppStateChange);
+		const requestPermissionStartTracking = async () => {
+			const permissionResponse = await Location.requestForegroundPermissionsAsync();
+			setPermissionResponse(permissionResponse);
+			if (permissionResponse.granted) {
+				startLocationTracking();
+			}
+		}
+
+		requestPermissionStartTracking();
+		const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
 
 		return () => {
 			stopLocationTracking();
-			subscription.remove();
+			appStateSubscription.remove();
 		}
 	}, []);
 
-	const handleAppStateChange = (nextAppState: AppStateStatus) => {
-		if (!permissionGranted) return;
+	const handleAppStateChange = async (nextAppState: AppStateStatus) => {
+		if (nextAppState === appState.current) return;
 
-		if (nextAppState === previousAppState) return;
+		const isTransitioningToForeground = appState.current.match(/inactive|background/) && nextAppState === 'active';
 
-		setPreviousAppState(nextAppState);
-
-		if (nextAppState !== 'active') {
-			stopLocationTracking();
-			console.log("I'm in background, so I stopped tracking");
+		if (isTransitioningToForeground) {
+			const permissionResponse = await Location.requestForegroundPermissionsAsync();
+			setPermissionResponse(permissionResponse);
+			if (permissionResponse.granted) {
+				startLocationTracking();
+			}
 		} else {
-			console.log("I'm in foreground, so I started tracking");
-			startLocationTracking();
+			stopLocationTracking();
 		}
+
+		console.log(isTransitioningToForeground ? "Foreground" : "Background");
+		appState.current = nextAppState;
 	}
 
 	const startLocationTracking = async () => {
-		let { status } = await Location.requestForegroundPermissionsAsync();
-		if (status !== 'granted') {
-			setPermissionGranted(false);
-			return;
-		}
-		setPermissionGranted(true);
-
 		if (locationWatcher.current) {
 			return;
 		}
 
-		locationWatcher.current = await Location.watchPositionAsync(
-			{ accuracy: Location.Accuracy.Balanced, distanceInterval: 10, timeInterval: 2000 },
-			async (newLocation) => {
-				console.log(newLocation);
-				const deviceLocation = await convertToDeviceLocation(newLocation);
+		const watcherOptions = {
+			accuracy: Location.Accuracy.Highest,
+			distanceInterval: 10,
+			timeInterval: 5000
+		}
+
+		const handleLocationChange = async (newLocation: Location.LocationObject | null) => {
+			console.log(newLocation);
+			const deviceLocation = await convertToDeviceLocation(newLocation);
+
+			if (deviceLocation) {
 				setLocation(deviceLocation);
 			}
+		}
+
+		locationWatcher.current = await Location.watchPositionAsync(
+			watcherOptions,
+			handleLocationChange
 		);
 
+		console.log("Tracker added.");
 	}
 
 	const stopLocationTracking = async () => {
@@ -76,15 +91,15 @@ const useLocation = () => {
 			return;
 		}
 
-		await locationWatcher.current.remove();
+		locationWatcher.current.remove();
 		locationWatcher.current = null;
 
-		console.log("I've been removed.");
+		console.log("Tracker removed.");
 	}
 
-	const convertToDeviceLocation = async (location: Location.LocationObject | null): Promise<DeviceLocation> => {
+	const convertToDeviceLocation = async (location: Location.LocationObject | null): Promise<DeviceLocation | null> => {
 		if (location == null) {
-			return {} as DeviceLocation
+			return null;
 		}
 
 		const { longitude, latitude, altitude, accuracy } = location!.coords;
@@ -106,7 +121,7 @@ const useLocation = () => {
 	}
 
 	return {
-		permissionGranted,
+		isPermissionGranted: permissionResponse?.granted,
 		location
 	};
 };
