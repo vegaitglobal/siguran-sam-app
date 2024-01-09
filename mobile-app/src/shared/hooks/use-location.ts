@@ -37,7 +37,6 @@ const useLocation = () => {
 
 	const getWatcherOptions = async (): Promise<{}> => {
 		const batteryLevel = await getBatteryLevelAsync();
-		console.log(`Battery Level: ${batteryLevel}`);
 		return {
 			accuracy: Location.Accuracy.Highest,
 			distanceInterval: batteryLevel <= 0.2 ? 30 : 10
