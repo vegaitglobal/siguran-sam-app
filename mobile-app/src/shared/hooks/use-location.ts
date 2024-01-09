@@ -2,7 +2,7 @@ import * as Location from 'expo-location';
 import { LocationSubscription } from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
-import { getBatteryLevelAsync } from 'expo-battery';
+import { getWatcherOptions } from '../utils/location-config';
 
 export interface DeviceLocation {
 	longitude: number;
@@ -27,21 +27,15 @@ const useLocation = () => {
 			await setLastKnownLocation();
 			startLocationTracking();
 		});
-		const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
 
-		return () => {
-			stopLocationTracking();
-			appStateSubscription.remove();
-		}
+		return () => stopLocationTracking();
 	}, []);
 
-	const getWatcherOptions = async (): Promise<{}> => {
-		const batteryLevel = await getBatteryLevelAsync();
-		return {
-			accuracy: Location.Accuracy.Highest,
-			distanceInterval: batteryLevel <= 0.2 ? 30 : 10
-		};
-	}
+	useEffect(() => {
+		const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
+
+		return () => appStateSubscription.remove();
+	}, []);
 
 	const setLastKnownLocation = async () => {
 		const lastKnownLocation = await Location.getLastKnownPositionAsync();
@@ -97,7 +91,7 @@ const useLocation = () => {
 		);
 	}
 
-	const stopLocationTracking = async () => {
+	const stopLocationTracking = () => {
 		if (!locationWatcher.current) {
 			return;
 		}
