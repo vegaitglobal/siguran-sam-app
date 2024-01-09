@@ -63,8 +63,9 @@ const TabBar = ({
 	return (
 		<View style={styles.tabBarWrapper}>
 			<View style={styles.tabBar}>
-				{routes.map(({ title }, i) => (
+				{routes.map(({ key, title }, i) => (
 					<TabBarItem
+						key={key}
 						title={title}
 						selected={i === index}
 						onPress={() => onTabChange(i)}
