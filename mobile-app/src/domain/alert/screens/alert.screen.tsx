@@ -95,8 +95,8 @@ const AlertScreen = () => {
 					PODEŠAVANJA
 				</AppButton>
 			</Fragment>
-		)
-	}
+		);
+	};
 
 	const LocationPermissionGrantedScreen = () => {
 		return (
@@ -122,8 +122,8 @@ const AlertScreen = () => {
 					<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
 				)}
 			</Fragment>
-		)
-	}
+		);
+	};
 
 	const LocationLoadingScreen = () => {
 		return (
@@ -131,10 +131,10 @@ const AlertScreen = () => {
 				<Label style={{ marginBottom: 16, textAlign: 'center' }}>
 					Pronalaženje Vaše lokacije...
 				</Label>
-				<ActivityIndicator size="large" color={"#fff"} />
+				<ActivityIndicator size="large" color={'#fff'} />
 			</Fragment>
-		)
-	}
+		);
+	};
 
 	return (
 		<View style={styles.container}>

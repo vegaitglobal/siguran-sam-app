@@ -1,8 +1,8 @@
 import * as Location from 'expo-location';
 import { LocationSubscription } from 'expo-location';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
-import { getWatcherOptions } from '../utils/location-config';
+import { convertToDeviceLocation, getWatcherOptions } from '../utils/location-utils';
 
 export interface DeviceLocation {
 	longitude: number;
@@ -22,55 +22,7 @@ const useLocation = () => {
 	const appState = useRef(AppState.currentState);
 	const locationWatcher = useRef<LocationSubscription | null>(null);
 
-	useEffect(() => {
-		requestPermissionAndExecute(async () => {
-			await setLastKnownLocation();
-			startLocationTracking();
-		});
-
-		return () => stopLocationTracking();
-	}, []);
-
-	useEffect(() => {
-		const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
-
-		return () => appStateSubscription.remove();
-	}, []);
-
-	const setLastKnownLocation = async () => {
-		const lastKnownLocation = await Location.getLastKnownPositionAsync();
-		const deviceLocation = await convertToDeviceLocation(lastKnownLocation);
-		if (deviceLocation) {
-			setLocation(deviceLocation);
-		}
-	}
-
-	const requestPermissionAndExecute = async (callback: () => void) => {
-		const permissionResponse = await Location.requestForegroundPermissionsAsync();
-		setPermissionResponse(permissionResponse);
-		if (permissionResponse.granted) {
-			callback();
-		}
-	}
-
-	const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-		if (nextAppState === appState.current) return;
-
-		const isTransitioningToForeground = appState.current.match(/inactive|background/) && nextAppState === 'active';
-
-		if (isTransitioningToForeground) {
-			await requestPermissionAndExecute(async () => {
-				await setLastKnownLocation();
-				startLocationTracking();
-			});
-		} else {
-			stopLocationTracking();
-		}
-
-		appState.current = nextAppState;
-	}
-
-	const startLocationTracking = async () => {
+	const startLocationTracking = useCallback(async () => {
 		if (locationWatcher.current) {
 			return;
 		}
@@ -83,45 +35,70 @@ const useLocation = () => {
 			if (deviceLocation) {
 				setLocation(deviceLocation);
 			}
-		}
+		};
 
 		locationWatcher.current = await Location.watchPositionAsync(
 			watcherOptions,
 			handleLocationChange
 		);
-	}
+	}, [setLocation]);
 
-	const stopLocationTracking = () => {
+	const stopLocationTracking = useCallback(() => {
 		if (!locationWatcher.current) {
 			return;
 		}
 
 		locationWatcher.current.remove();
 		locationWatcher.current = null;
-	}
+	}, []);
 
-	const convertToDeviceLocation = async (location: Location.LocationObject | null): Promise<DeviceLocation | null> => {
-		if (location == null) {
-			return null;
+	const setLastKnownLocation = useCallback(async () => {
+		const lastKnownLocation = await Location.getLastKnownPositionAsync();
+		const deviceLocation = await convertToDeviceLocation(lastKnownLocation);
+		if (deviceLocation) {
+			setLocation(deviceLocation);
+		}
+	}, [setLocation]);
+
+	const startTrackingAfterLastKnownLocation = useCallback(async () => {
+		await setLastKnownLocation();
+		startLocationTracking();
+	}, [startLocationTracking, setLastKnownLocation]);
+
+	const requestPermission = useCallback(async () => {
+		const permissionResponse = await Location.requestForegroundPermissionsAsync();
+		setPermissionResponse(permissionResponse);
+	}, [setPermissionResponse]);
+
+	const handleAppStateChange = useCallback(async (nextAppState: AppStateStatus) => {
+		if (nextAppState === appState.current) return;
+
+		const isTransitioningToForeground = appState.current.match(/inactive|background/) && nextAppState === 'active';
+
+		if (isTransitioningToForeground) {
+			await requestPermission();
+		} else {
+			stopLocationTracking();
 		}
 
-		const { longitude, latitude, altitude, accuracy } = location!.coords;
+		appState.current = nextAppState;
+	}, [stopLocationTracking, requestPermission]);
 
-		const places = await Location.reverseGeocodeAsync({ longitude, latitude });
-		const { city, country, street, streetNumber } = places[0];
+	useEffect(() => {
+		requestPermission();
+	}, [requestPermission]);
 
-		return {
-			longitude,
-			latitude,
-			accuracy: accuracy?.toFixed(0).concat('m'),
-			altitude: altitude || undefined,
-			country: country || undefined,
-			city: city || undefined,
-			street: street || undefined,
-			streetNumber: streetNumber || undefined,
-			timestamp: new Date(location!.timestamp).toISOString(),
+	useEffect(() => {
+		const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
+		if (permissionResponse?.granted) {
+			startTrackingAfterLastKnownLocation();
+		}
+
+		return () => {
+			appStateSubscription.remove();
+			stopLocationTracking();
 		};
-	}
+	}, [startTrackingAfterLastKnownLocation, handleAppStateChange, stopLocationTracking, permissionResponse]);
 
 	return {
 		isPermissionGranted: permissionResponse?.granted,
