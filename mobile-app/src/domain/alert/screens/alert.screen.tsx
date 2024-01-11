@@ -45,6 +45,9 @@ const AlertScreen = () => {
   };
 
   const onComplete = async () => {
+    if (location === undefined) {
+      return;
+    }
     setMinutes(5);
     const recipients = contacts.map((c) => c.number);
 
@@ -70,6 +73,9 @@ const AlertScreen = () => {
   const disabled = useMemo(() => minutes > 0, [minutes]);
 
   const { locationTimestamp, accuracy, city, country } = useMemo(() => {
+    if (location === undefined) {
+      return {};
+    }
     const { accuracy, timestamp, city, country } = location;
     return {
       accuracy,
@@ -131,7 +137,7 @@ const AlertScreen = () => {
   return (
     <View style={styles.container}>
       {isPermissionGranted ? (
-        Object.keys(location).length === 0 ? (
+        location === undefined ? (
           <LocationLoadingScreen />
         ) : (
           <LocationPermissionGrantedScreen />

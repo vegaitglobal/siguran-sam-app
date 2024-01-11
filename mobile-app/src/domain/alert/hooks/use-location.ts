@@ -19,7 +19,7 @@ export interface DeviceLocation {
 const useLocation = () => {
   const [permissionResponse, setPermissionResponse] =
     useState<Location.LocationPermissionResponse>();
-  const [location, setLocation] = useState({} as DeviceLocation);
+  const [location, setLocation] = useState<DeviceLocation>();
   const appState = useRef(AppState.currentState);
   const locationWatcher = useRef<LocationSubscription | null>(null);
 
