@@ -90,15 +90,17 @@ const useLocation = () => {
 
 	useEffect(() => {
 		const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
-		if (permissionResponse?.granted) {
-			startTrackingAfterLastKnownLocation();
+		return () => appStateSubscription.remove();
+	}, [handleAppStateChange]);
+
+	useEffect(() => {
+		if (!permissionResponse?.granted) {
+			return;
 		}
 
-		return () => {
-			appStateSubscription.remove();
-			stopLocationTracking();
-		};
-	}, [startTrackingAfterLastKnownLocation, handleAppStateChange, stopLocationTracking, permissionResponse]);
+		startTrackingAfterLastKnownLocation();
+		return () => stopLocationTracking();
+	}, [startTrackingAfterLastKnownLocation, stopLocationTracking, permissionResponse]);
 
 	return {
 		isPermissionGranted: permissionResponse?.granted,
