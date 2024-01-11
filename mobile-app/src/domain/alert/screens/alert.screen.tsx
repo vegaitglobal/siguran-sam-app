@@ -22,7 +22,7 @@ export interface Props
 	extends CompositeScreenProps<
 		BottomTabScreenProps<BottomTabsParamList, AppScreen.ALERT>,
 		NativeStackScreenProps<RootStackParamList>
-	> { }
+	> {}
 
 const AlertScreen = () => {
 	const { fullName } = useUserInfoStore();
@@ -31,10 +31,7 @@ const AlertScreen = () => {
 	const [minutes, setMinutes] = useState(0);
 	const [hint, setHint] = useState<string>();
 
-	const {
-		isPermissionGranted,
-		location
-	} = useLocation();
+	const { isPermissionGranted, location } = useLocation();
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -87,9 +84,8 @@ const AlertScreen = () => {
 			<Fragment>
 				<Label style={{ marginBottom: 16, textAlign: 'center' }}>
 					Molim Vas, dozvolite pristup Vašoj lokaciji prilikom korišćenja
-					aplikacije u podešavanjima. Bez dozvole pristupa, nećete moći
-					precizno deliti svoje koordinate sa svojim kontaktima u slučaju
-					opasnosti.
+					aplikacije u podešavanjima. Bez dozvole pristupa, nećete moći precizno
+					deliti svoje koordinate sa svojim kontaktima u slučaju opasnosti.
 				</Label>
 				<AppButton onPress={() => Linking.openSettings()}>
 					PODEŠAVANJA
@@ -118,9 +114,7 @@ const AlertScreen = () => {
 						{locationTimestamp}
 					</Moment>
 				</Label>
-				{accuracy && (
-					<Label type='pItalic'>sa preciznošću od {accuracy}</Label>
-				)}
+				{accuracy && <Label type='pItalic'>sa preciznošću od {accuracy}</Label>}
 			</Fragment>
 		);
 	};
@@ -131,18 +125,22 @@ const AlertScreen = () => {
 				<Label style={{ marginBottom: 16, textAlign: 'center' }}>
 					Pronalaženje Vaše lokacije...
 				</Label>
-				<ActivityIndicator size="large" color={'#fff'} />
+				<ActivityIndicator size='large' color={'#fff'} />
 			</Fragment>
 		);
 	};
 
 	return (
 		<View style={styles.container}>
-			{isPermissionGranted ?
-				Object.keys(location).length === 0 ?
+			{isPermissionGranted ? (
+				Object.keys(location).length === 0 ? (
 					<LocationLoadingScreen />
-					: <LocationPermissionGrantedScreen />
-				: <LocationPermissionDeniedScreen />}
+				) : (
+					<LocationPermissionGrantedScreen />
+				)
+			) : (
+				<LocationPermissionDeniedScreen />
+			)}
 		</View>
 	);
 };
