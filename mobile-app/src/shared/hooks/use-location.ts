@@ -5,107 +5,112 @@ import { AppState, AppStateStatus } from 'react-native';
 import { convertToDeviceLocation, getWatcherOptions } from '../utils/location-utils';
 
 export interface DeviceLocation {
-	longitude: number;
-	latitude: number;
-	altitude?: number;
-	country?: string;
-	city?: string;
-	street?: string;
-	streetNumber?: string;
-	accuracy?: string;
-	timestamp: string;
+  longitude: number;
+  latitude: number;
+  altitude?: number;
+  country?: string;
+  city?: string;
+  street?: string;
+  streetNumber?: string;
+  accuracy?: string;
+  timestamp: string;
 }
 
 const useLocation = () => {
-	const [permissionResponse, setPermissionResponse] = useState<Location.LocationPermissionResponse>();
-	const [location, setLocation] = useState({} as DeviceLocation);
-	const appState = useRef(AppState.currentState);
-	const locationWatcher = useRef<LocationSubscription | null>(null);
+  const [permissionResponse, setPermissionResponse] =
+    useState<Location.LocationPermissionResponse>();
+  const [location, setLocation] = useState({} as DeviceLocation);
+  const appState = useRef(AppState.currentState);
+  const locationWatcher = useRef<LocationSubscription | null>(null);
 
-	const startLocationTracking = useCallback(async () => {
-		if (locationWatcher.current) {
-			return;
-		}
+  const startLocationTracking = useCallback(async () => {
+    if (locationWatcher.current) {
+      return;
+    }
 
-		const watcherOptions = await getWatcherOptions();
+    const watcherOptions = await getWatcherOptions();
 
-		const handleLocationChange = async (newLocation: Location.LocationObject | null) => {
-			const deviceLocation = await convertToDeviceLocation(newLocation);
+    const handleLocationChange = async (newLocation: Location.LocationObject | null) => {
+      const deviceLocation = await convertToDeviceLocation(newLocation);
 
-			if (deviceLocation) {
-				setLocation(deviceLocation);
-			}
-		};
+      if (deviceLocation) {
+        setLocation(deviceLocation);
+      }
+    };
 
-		locationWatcher.current = await Location.watchPositionAsync(
-			watcherOptions,
-			handleLocationChange
-		);
-	}, [setLocation]);
+    locationWatcher.current = await Location.watchPositionAsync(
+      watcherOptions,
+      handleLocationChange
+    );
+  }, [setLocation]);
 
-	const stopLocationTracking = useCallback(() => {
-		if (!locationWatcher.current) {
-			return;
-		}
+  const stopLocationTracking = useCallback(() => {
+    if (!locationWatcher.current) {
+      return;
+    }
 
-		locationWatcher.current.remove();
-		locationWatcher.current = null;
-	}, []);
+    locationWatcher.current.remove();
+    locationWatcher.current = null;
+  }, []);
 
-	const setLastKnownLocation = useCallback(async () => {
-		const lastKnownLocation = await Location.getLastKnownPositionAsync();
-		const deviceLocation = await convertToDeviceLocation(lastKnownLocation);
-		if (deviceLocation) {
-			setLocation(deviceLocation);
-		}
-	}, [setLocation]);
+  const setLastKnownLocation = useCallback(async () => {
+    const lastKnownLocation = await Location.getLastKnownPositionAsync();
+    const deviceLocation = await convertToDeviceLocation(lastKnownLocation);
+    if (deviceLocation) {
+      setLocation(deviceLocation);
+    }
+  }, [setLocation]);
 
-	const startTrackingAfterLastKnownLocation = useCallback(async () => {
-		await setLastKnownLocation();
-		startLocationTracking();
-	}, [startLocationTracking, setLastKnownLocation]);
+  const startTrackingAfterLastKnownLocation = useCallback(async () => {
+    await setLastKnownLocation();
+    startLocationTracking();
+  }, [startLocationTracking, setLastKnownLocation]);
 
-	const requestPermission = useCallback(async () => {
-		const permissionResponse = await Location.requestForegroundPermissionsAsync();
-		setPermissionResponse(permissionResponse);
-	}, [setPermissionResponse]);
+  const requestPermission = useCallback(async () => {
+    const permissionResponse = await Location.requestForegroundPermissionsAsync();
+    setPermissionResponse(permissionResponse);
+  }, [setPermissionResponse]);
 
-	const handleAppStateChange = useCallback(async (nextAppState: AppStateStatus) => {
-		if (nextAppState === appState.current) return;
+  const handleAppStateChange = useCallback(
+    async (nextAppState: AppStateStatus) => {
+      if (nextAppState === appState.current) return;
 
-		const isTransitioningToForeground = appState.current.match(/inactive|background/) && nextAppState === 'active';
+      const isTransitioningToForeground =
+        appState.current.match(/inactive|background/) && nextAppState === 'active';
 
-		if (isTransitioningToForeground) {
-			await requestPermission();
-		} else {
-			stopLocationTracking();
-		}
+      if (isTransitioningToForeground) {
+        await requestPermission();
+      } else {
+        stopLocationTracking();
+      }
 
-		appState.current = nextAppState;
-	}, [stopLocationTracking, requestPermission]);
+      appState.current = nextAppState;
+    },
+    [stopLocationTracking, requestPermission]
+  );
 
-	useEffect(() => {
-		requestPermission();
-	}, [requestPermission]);
+  useEffect(() => {
+    requestPermission();
+  }, [requestPermission]);
 
-	useEffect(() => {
-		const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
-		return () => appStateSubscription.remove();
-	}, [handleAppStateChange]);
+  useEffect(() => {
+    const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
+    return () => appStateSubscription.remove();
+  }, [handleAppStateChange]);
 
-	useEffect(() => {
-		if (!permissionResponse?.granted) {
-			return;
-		}
+  useEffect(() => {
+    if (!permissionResponse?.granted) {
+      return;
+    }
 
-		startTrackingAfterLastKnownLocation();
-		return () => stopLocationTracking();
-	}, [startTrackingAfterLastKnownLocation, stopLocationTracking, permissionResponse]);
+    startTrackingAfterLastKnownLocation();
+    return () => stopLocationTracking();
+  }, [startTrackingAfterLastKnownLocation, stopLocationTracking, permissionResponse]);
 
-	return {
-		isPermissionGranted: permissionResponse?.granted,
-		location
-	};
+  return {
+    isPermissionGranted: permissionResponse?.granted,
+    location,
+  };
 };
 
 export default useLocation;
