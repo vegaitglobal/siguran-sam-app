@@ -16,48 +16,36 @@ import { MoreOptionsScreen } from '@/domain/other';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const RootStack = () => {
-	const initialized = useAppInit();
-	const isOnboardingDone = useOnboardingStore(
-		(state) => state.isOnboardingDone
-	);
+  const initialized = useAppInit();
+  const isOnboardingDone = useOnboardingStore((state) => state.isOnboardingDone);
 
-	return (
-		<Stack.Navigator
-			initialRouteName={!initialized ? AppScreen.SPLASH : AppScreen.BOTTOM_TABS}
-			screenOptions={{
-				headerShown: false,
-				animation: 'slide_from_right',
-				contentStyle: styles.contentStyle,
-			}}
-		>
-			{!initialized ? (
-				<Stack.Screen name={AppScreen.SPLASH} component={SplashScreen} />
-			) : isOnboardingDone ? (
-				<Stack.Group>
-					<Stack.Screen name={AppScreen.BOTTOM_TABS} component={BottomTabs} />
-					<Stack.Screen
-						name={AppScreen.MORE_OPTIONS}
-						component={MoreOptionsScreen}
-					/>
-					<Stack.Screen name={AppScreen.BLOGPOSTLIST}>
-						{(props) => <BlogPostListScreen {...props} />}
-					</Stack.Screen>
-					<Stack.Screen name={AppScreen.BLOGPOST}>
-						{(props) => <BlogPostScreen {...props} />}
-					</Stack.Screen>
-				</Stack.Group>
-			) : (
-				<Stack.Group>
-					<Stack.Screen name={AppScreen.TERMS} component={TermsScreen} />
-					<Stack.Screen
-						name={AppScreen.ONBOARDING}
-						component={OnboardingScreen}
-					/>
-					<Stack.Screen name={AppScreen.WELCOME} component={WelcomeScreen} />
-				</Stack.Group>
-			)}
-		</Stack.Navigator>
-	);
+  return (
+    <Stack.Navigator
+      initialRouteName={!initialized ? AppScreen.SPLASH : AppScreen.BOTTOM_TABS}
+      screenOptions={{
+        headerShown: false,
+        animation: 'slide_from_right',
+        contentStyle: styles.contentStyle,
+      }}
+    >
+      {!initialized ? (
+        <Stack.Screen name={AppScreen.SPLASH} component={SplashScreen} />
+      ) : isOnboardingDone ? (
+        <Stack.Group>
+          <Stack.Screen name={AppScreen.BOTTOM_TABS} component={BottomTabs} />
+          <Stack.Screen name={AppScreen.MORE_OPTIONS} component={MoreOptionsScreen} />
+          <Stack.Screen name={AppScreen.BLOGPOSTLIST} component={BlogPostListScreen} />
+          <Stack.Screen name={AppScreen.BLOGPOST} component={BlogPostScreen} />
+        </Stack.Group>
+      ) : (
+        <Stack.Group>
+          <Stack.Screen name={AppScreen.TERMS} component={TermsScreen} />
+          <Stack.Screen name={AppScreen.ONBOARDING} component={OnboardingScreen} />
+          <Stack.Screen name={AppScreen.WELCOME} component={WelcomeScreen} />
+        </Stack.Group>
+      )}
+    </Stack.Navigator>
+  );
 };
 
 export default RootStack;
