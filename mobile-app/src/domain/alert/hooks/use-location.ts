@@ -41,7 +41,7 @@ const useLocation = () => {
       watcherOptions,
       handleLocationChange
     );
-  }, [setLocation]);
+  }, []);
 
   const stopLocationTracking = useCallback(() => {
     if (!locationWatcher.current) {
@@ -58,7 +58,7 @@ const useLocation = () => {
     if (deviceLocation) {
       setLocation(deviceLocation);
     }
-  }, [setLocation]);
+  }, []);
 
   const startTrackingAfterLastKnownLocation = useCallback(async () => {
     await setLastKnownLocation();
