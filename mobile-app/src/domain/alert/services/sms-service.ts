@@ -3,7 +3,6 @@ import * as Network from 'expo-network';
 import messageService from './message.service';
 import { EventType } from 'src/services/tracking/tracking.interfaces';
 import trackingService from 'src/services/tracking/tracking.service';
-import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { getBatteryLevelAsync } from 'expo-battery';
 import { Contact, DeviceLocation } from '@/shared/types/model';
 
