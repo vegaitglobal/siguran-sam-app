@@ -41,7 +41,12 @@ const AlertScreen = () => {
   }, []);
 
   const onCancel = async () => {
-    if (minutes <= 0) setHint('Držite dugme 3 sekunde');
+    if (minutes <= 0) {
+      setHint('Držite dugme 3 sekunde');
+      setTimeout(() => {
+        setHint('');
+      }, 5500);
+    }
   };
 
   const onComplete = async () => {
@@ -107,6 +112,7 @@ const AlertScreen = () => {
           onComplete={onComplete}
           disabled={disabled}
           minutes={minutes}
+          delay={2000}
         />
         <Label style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>
           {city}, {country}

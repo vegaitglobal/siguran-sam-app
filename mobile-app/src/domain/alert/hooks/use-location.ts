@@ -3,18 +3,7 @@ import { LocationSubscription } from 'expo-location';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { convertToDeviceLocation, getWatcherOptions } from '../../../shared/utils/location-utils';
-
-export interface DeviceLocation {
-  longitude: number;
-  latitude: number;
-  altitude?: number;
-  country?: string;
-  city?: string;
-  street?: string;
-  streetNumber?: string;
-  accuracy?: string;
-  timestamp: string;
-}
+import { DeviceLocation } from '@/shared/types/model';
 
 const useLocation = () => {
   const [permissionResponse, setPermissionResponse] =

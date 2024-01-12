@@ -1,7 +1,7 @@
 import { Accuracy } from 'expo-location';
 import { getBatteryLevelAsync } from 'expo-battery';
-import { DeviceLocation } from '../../domain/alert/hooks/use-location';
 import * as Location from 'expo-location';
+import { DeviceLocation } from '../types/model';
 
 export const getWatcherOptions = async (): Promise<object> => {
   const batteryLevel = await getBatteryLevelAsync();
