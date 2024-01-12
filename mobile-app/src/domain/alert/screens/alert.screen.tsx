@@ -6,17 +6,15 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
 import { Linking, View, Text, ActivityIndicator } from 'react-native';
 import Label from '@/shared/components/label';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { AppButton } from '@/shared/components';
 import useLocation from '@/domain/alert/hooks/use-location';
 import CircleButton from '../components';
 import Moment from 'react-moment';
-import sendSMS from '../services/sms-service';
 import 'moment/locale/sr';
 import { useUserInfoStore } from '@/shared/store';
 import { useContactStore } from '@/shared/store/use-contact-store';
-import trackingService from 'src/services/tracking/tracking.service';
-import { EventType } from 'src/services/tracking/tracking.interfaces';
+import { sendEmergencyRequest } from '../services/sms-service';
 
 export interface Props
   extends CompositeScreenProps<
@@ -40,40 +38,15 @@ const AlertScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const onCancel = async () => {
-    if (minutes <= 0) {
-      setHint('Držite dugme 3 sekunde');
-      setTimeout(() => {
-        setHint('');
-      }, 5500);
-    }
-  };
+  const onCancel = useCallback(async () => {
+    if (minutes <= 0) setHint('Držite dugme 2 sekunde');
+  }, [minutes]);
 
-  const onComplete = async () => {
-    if (location === undefined) {
-      return;
-    }
+  const onComplete = useCallback(async () => {
+    sendEmergencyRequest(contacts, location, fullName);
     setMinutes(5);
-    const recipients = contacts.map((c) => c.number);
-
-    sendSMS(fullName, recipients, location).then(() => {
-      trackingService.track({
-        name: EventType.EmergencyRequested,
-        batteryPercentage: 0.65,
-        deviceId: fullName,
-        hasSignal: true,
-        internetConnection: 'wifi',
-        locationPrecision: location.accuracy || 'nepoznato',
-        locationTimestamp: location.timestamp,
-        location: {
-          lon: location.longitude,
-          lat: location.latitude,
-        },
-        recipients,
-      });
-      setHint('Sigurnosni kontakti su obavešteni');
-    });
-  };
+    setHint('Sigurnosni kontakti su obavešteni');
+  }, [contacts, fullName, location]);
 
   const disabled = useMemo(() => minutes > 0, [minutes]);
 
@@ -90,7 +63,7 @@ const AlertScreen = () => {
     };
   }, [location]);
 
-  const LocationPermissionDeniedScreen = () => {
+  const LocationPermissionDeniedScreen = useCallback(() => {
     return (
       <Fragment>
         <Label style={{ marginBottom: 16, textAlign: 'center' }}>
@@ -101,9 +74,9 @@ const AlertScreen = () => {
         <AppButton onPress={() => Linking.openSettings()}>PODEŠAVANJA</AppButton>
       </Fragment>
     );
-  };
+  }, []);
 
-  const LocationPermissionGrantedScreen = () => {
+  const LocationPermissionGrantedScreen = useCallback(() => {
     return (
       <Fragment>
         <CircleButton
@@ -111,7 +84,7 @@ const AlertScreen = () => {
           onCancel={onCancel}
           onComplete={onComplete}
           disabled={disabled}
-          minutes={minutes}
+          minutes={5}
           delay={2000}
         />
         <Label style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>
@@ -127,9 +100,9 @@ const AlertScreen = () => {
         {accuracy && <Label type='pItalic'>sa preciznošću od {accuracy}</Label>}
       </Fragment>
     );
-  };
+  }, [accuracy, city, country, locationTimestamp, disabled, hint, onComplete, onCancel]);
 
-  const LocationLoadingScreen = () => {
+  const LocationLoadingScreen = useCallback(() => {
     return (
       <Fragment>
         <Label style={{ marginBottom: 16, textAlign: 'center' }}>
@@ -138,7 +111,7 @@ const AlertScreen = () => {
         <ActivityIndicator size='large' color={'#fff'} />
       </Fragment>
     );
-  };
+  }, []);
 
   return (
     <View style={styles.container}>
