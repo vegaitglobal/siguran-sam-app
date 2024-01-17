@@ -1,29 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { ScreenTemplate } from '@/shared/components';
-import { Text, View } from 'react-native';
+import { ScrollView, Text, View, Image, useWindowDimensions } from 'react-native';
 import { styles } from './blog-post.style';
 import RenderHtml, { HTMLSource } from 'react-native-render-html';
 import { BlogPostScreenProps } from '@/shared/types/screen-props';
+import { Header } from '@/shared/components/header';
 
 const BlogPostScreen = ({ route }: BlogPostScreenProps) => {
   const { blogPost } = route.params;
   const [source, setSource] = useState<HTMLSource | undefined>();
+  const { width } = useWindowDimensions();
   useEffect(() => {
-    console.log('opened blog post: ' + blogPost.title);
     console.log(blogPost);
 
-    const htmlContent = blogPost.content[0] || '';
+    const htmlContent = blogPost?.content || '';
     setSource({
       html: htmlContent, // The HTML content as a string
     });
   }, [blogPost]);
 
+  const imageUrl = `https:${blogPost.heroImageURL}`;
+
   return (
     <ScreenTemplate>
-      <View style={styles.wrapper}>
-        <Text style={styles.item}>Blog post title: {blogPost.title}</Text>
-        {source ? <RenderHtml contentWidth={300} source={source} /> : <Text>Loading HTML</Text>}
-      </View>
+      <ScrollView style={styles.scrollview}>
+        <Header title={blogPost.title} />
+        <View style={styles.imageContainer}>
+          <Image style={styles.image} source={{ uri: imageUrl }} />
+        </View>
+        {source ? (
+          <RenderHtml contentWidth={width} source={source} tagsStyles={styles} />
+        ) : (
+          <Text>Loading HTML</Text>
+        )}
+      </ScrollView>
     </ScreenTemplate>
   );
 };
