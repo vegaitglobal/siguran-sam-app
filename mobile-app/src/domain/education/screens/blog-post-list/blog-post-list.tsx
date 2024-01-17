@@ -2,10 +2,19 @@ import { AppScreen } from '@/shared/constants';
 import React, { useEffect, useMemo, useState } from 'react';
 import { BlogPost } from '../../../../services/content/content.interfaces';
 import { ScreenTemplate } from '@/shared/components';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import {
+  FlatList,
+  ListRenderItem,
+  ListRenderItemInfo,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+} from 'react-native';
 import { styles } from './blog-post-list.style';
 import contentService from '../../../../services/content/content.service';
 import { BlogPostListScreenProps } from '@/shared/types/screen-props';
+import Label from '@/shared/components/label';
 
 interface BlogPostListItemProps {
   blogPost: BlogPost;
@@ -13,10 +22,18 @@ interface BlogPostListItemProps {
 }
 
 export const BlogPostListItem = (props: BlogPostListItemProps) => {
+  const imageUrl = `https:${props.blogPost.heroImageURL}`;
+  const { title } = props.blogPost;
+
   return (
     <TouchableOpacity onPress={() => props.onPress(props.blogPost)}>
       <View style={styles.item}>
-        <Text style={styles.title}>{props.blogPost.title}</Text>
+        <View style={styles.upper}>
+          <Image style={styles.image} source={{ uri: imageUrl }} />
+        </View>
+        <View style={styles.lower}>
+          <Label type='p2'>{title}</Label>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -53,15 +70,21 @@ const BlogPostListScreen = ({ route, navigation }: BlogPostListScreenProps) => {
     });
   };
 
+  // React Native team suggests using no anonymous function so the function won’t recreate itself every time list is displayed
+  // https://blog.logrocket.com/deep-dive-react-native-flatlist/
+  const renderItem: ListRenderItem<BlogPost> = ({ item }: ListRenderItemInfo<BlogPost>) => {
+    return <BlogPostListItem blogPost={item} onPress={handleOpenBlogPost} />;
+  };
+
   return (
     <ScreenTemplate>
       <FlatList
         contentContainerStyle={styles.list}
-        numColumns={2}
-        horizontal={false}
         data={blogPosts}
-        renderItem={({ item }) => <BlogPostListItem blogPost={item} onPress={handleOpenBlogPost} />}
-        keyExtractor={({ id }) => id}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        ItemSeparatorComponent={ItemSeparator}
       />
     </ScreenTemplate>
   );
