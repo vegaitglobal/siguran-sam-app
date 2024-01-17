@@ -1,4 +1,4 @@
-import { BlogPost } from 'src/services/content/content.interfaces';
+import { BlogPost, Category } from 'src/services/content/content.interfaces';
 import { AppScreen } from '../constants';
 
 export type RootStackParamList = {
@@ -7,7 +7,7 @@ export type RootStackParamList = {
   [AppScreen.ONBOARDING]: undefined;
   [AppScreen.TERMS]: undefined;
   [AppScreen.WELCOME]: undefined;
-  [AppScreen.BLOGPOSTLIST]: { categoryId: string };
+  [AppScreen.BLOGPOSTLIST]: { category: Category };
   [AppScreen.BLOGPOST]: { blogPost: BlogPost };
   [AppScreen.MORE_OPTIONS]: undefined;
 };

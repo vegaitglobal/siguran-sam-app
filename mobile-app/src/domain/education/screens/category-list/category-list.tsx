@@ -6,14 +6,14 @@ import Label from '@/shared/components/label';
 
 interface CategoryListItemProps {
   category: Category;
-  onPress: (categoryId: string) => void;
+  onPress: (category: Category) => void;
 }
 
 export const CategoryListItem = (props: CategoryListItemProps) => {
   const imageUri = 'http:' + props.category.iconURL;
-  console.log(imageUri);
+
   return (
-    <TouchableOpacity style={styles.item} onPress={() => props.onPress(props.category.id)}>
+    <TouchableOpacity style={styles.item} onPress={() => props.onPress(props.category)}>
       <View style={styles.textContainer}>
         <Label numberOfLines={2} type='h3Black'>
           {props.category.title}
@@ -35,7 +35,7 @@ const ListHeader = () => <View style={styles.listHeader} />;
 
 interface CategoryListProps {
   categories: Category[];
-  onPress: (categoryId: string) => void;
+  onPress: (category: Category) => void;
 }
 
 export const CategoryList = (props: CategoryListProps) => {

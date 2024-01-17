@@ -12,22 +12,25 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     margin: 10,
   },
-  upper: {
+  imageContainer: {
     width: '100%',
     height: '66%',
     backgroundColor: Colors.BLOG_POST_BACKGROUND.PRIMARY,
   },
-  lower: {
+  textContainer: {
     width: '100%',
     height: '34%',
     justifyContent: 'center',
-    padding: 4,
+    padding: 6,
     backgroundColor: Colors.BLOG_POST_BACKGROUND.SECONDARY,
   },
   image: {
     height: '100%',
     width: '100%',
     resizeMode: 'stretch',
+  },
+  text: {
+    width: '100%',
   },
   itemSeparator: {
     height: 10,

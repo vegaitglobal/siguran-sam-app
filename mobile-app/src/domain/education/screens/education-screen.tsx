@@ -12,14 +12,13 @@ const EducationScreen = ({ navigation }: EducationScreenProps) => {
 
   useEffect(() => {
     contentService.getCategories().then((result: Category[]) => {
-      console.log(result);
       setCategories(result);
     });
   }, []);
 
-  const handleOpenCategory = (categoryId: string): void => {
+  const handleOpenCategory = (category: Category): void => {
     navigation.navigate(AppScreen.BLOGPOSTLIST, {
-      categoryId,
+      category,
     });
   };
 

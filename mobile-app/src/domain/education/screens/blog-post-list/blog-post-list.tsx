@@ -6,7 +6,6 @@ import {
   FlatList,
   ListRenderItem,
   ListRenderItemInfo,
-  Text,
   TouchableOpacity,
   View,
   Image,
@@ -15,6 +14,7 @@ import { styles } from './blog-post-list.style';
 import contentService from '../../../../services/content/content.service';
 import { BlogPostListScreenProps } from '@/shared/types/screen-props';
 import Label from '@/shared/components/label';
+import { Header } from '@/shared/components/header';
 
 interface BlogPostListItemProps {
   blogPost: BlogPost;
@@ -28,34 +28,33 @@ export const BlogPostListItem = (props: BlogPostListItemProps) => {
   return (
     <TouchableOpacity onPress={() => props.onPress(props.blogPost)}>
       <View style={styles.item}>
-        <View style={styles.upper}>
+        <View style={styles.imageContainer}>
           <Image style={styles.image} source={{ uri: imageUrl }} />
         </View>
-        <View style={styles.lower}>
-          <Label type='p2'>{title}</Label>
+        <View style={styles.textContainer}>
+          <Label style={styles.text} type='p2' numberOfLines={2}>
+            {title}
+          </Label>
         </View>
       </View>
     </TouchableOpacity>
   );
 };
 
-const ItemSeparator = () => <View style={styles.itemSeparator} />;
-
 const BlogPostListScreen = ({ route, navigation }: BlogPostListScreenProps) => {
-  const { categoryId } = route.params;
+  const { category } = route.params;
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
 
   const fetchBlogPosts = useMemo(
     () => async () => {
       try {
-        const result = await contentService.getBlogPosts(categoryId);
-        console.log(result);
+        const result = await contentService.getBlogPosts(category.id);
         setBlogPosts(result);
       } catch (error) {
         console.error('Error fetching blog posts:', error);
       }
     },
-    [categoryId]
+    [category.id]
   );
 
   // Call the memoized function when the category changes
@@ -64,7 +63,6 @@ const BlogPostListScreen = ({ route, navigation }: BlogPostListScreenProps) => {
   }, [fetchBlogPosts]);
 
   const handleOpenBlogPost = (blogPost: BlogPost): void => {
-    console.log('Opening blog post: ' + blogPost);
     navigation.navigate(AppScreen.BLOGPOST, {
       blogPost,
     });
@@ -76,8 +74,11 @@ const BlogPostListScreen = ({ route, navigation }: BlogPostListScreenProps) => {
     return <BlogPostListItem blogPost={item} onPress={handleOpenBlogPost} />;
   };
 
+  const ItemSeparator = () => <View style={styles.itemSeparator} />;
+
   return (
     <ScreenTemplate>
+      <Header title={category.title} />
       <FlatList
         contentContainerStyle={styles.list}
         data={blogPosts}
