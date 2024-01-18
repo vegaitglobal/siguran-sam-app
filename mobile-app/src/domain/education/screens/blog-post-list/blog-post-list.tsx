@@ -1,5 +1,5 @@
 import { AppScreen } from '@/shared/constants';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BlogPost } from '../../../../services/content/content.interfaces';
 import { ScreenTemplate } from '@/shared/components';
 import {
@@ -15,18 +15,21 @@ import contentService from '../../../../services/content/content.service';
 import { BlogPostListScreenProps } from '@/shared/types/screen-props';
 import Label from '@/shared/components/label';
 import { Header } from '@/shared/components/header';
+import { ItemSeparator, ListHeader } from '../../shared/education-shared';
 
 interface BlogPostListItemProps {
   blogPost: BlogPost;
   onPress: (blogPost: BlogPost) => void;
 }
 
-export const BlogPostListItem = (props: BlogPostListItemProps) => {
-  const imageUrl = `https:${props.blogPost.heroImageURL}`;
-  const { title } = props.blogPost;
+export const BlogPostListItem = ({ blogPost, onPress }: BlogPostListItemProps) => {
+  const imageUrl = `https:${blogPost.heroImageURL}`;
+  const { title } = blogPost;
+
+  const handlePress = () => onPress(blogPost);
 
   return (
-    <TouchableOpacity onPress={() => props.onPress(props.blogPost)}>
+    <TouchableOpacity onPress={handlePress}>
       <View style={styles.item}>
         <View style={styles.imageContainer}>
           <Image style={styles.image} source={{ uri: imageUrl }} />
@@ -42,25 +45,23 @@ export const BlogPostListItem = (props: BlogPostListItemProps) => {
 };
 
 const BlogPostListScreen = ({ route, navigation }: BlogPostListScreenProps) => {
-  const { category } = route.params;
+  const {
+    category: { id: categoryId, title: categoryTitle },
+  } = route.params;
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
 
-  const fetchBlogPosts = useMemo(
-    () => async () => {
+  useEffect(() => {
+    const fetchBlogPosts = async () => {
       try {
-        const result = await contentService.getBlogPosts(category.id);
+        const result = await contentService.getBlogPosts(categoryId);
         setBlogPosts(result);
       } catch (error) {
         console.error('Error fetching blog posts:', error);
       }
-    },
-    [category.id]
-  );
+    };
 
-  // Call the memoized function when the category changes
-  useEffect(() => {
     fetchBlogPosts();
-  }, [fetchBlogPosts]);
+  }, [categoryId]);
 
   const handleOpenBlogPost = (blogPost: BlogPost): void => {
     navigation.navigate(AppScreen.BLOGPOST, {
@@ -74,11 +75,9 @@ const BlogPostListScreen = ({ route, navigation }: BlogPostListScreenProps) => {
     return <BlogPostListItem blogPost={item} onPress={handleOpenBlogPost} />;
   };
 
-  const ItemSeparator = () => <View style={styles.itemSeparator} />;
-
   return (
     <ScreenTemplate>
-      <Header title={category.title} />
+      <Header title={categoryTitle} />
       <FlatList
         columnWrapperStyle={styles.column}
         contentContainerStyle={styles.list}
@@ -87,6 +86,8 @@ const BlogPostListScreen = ({ route, navigation }: BlogPostListScreenProps) => {
         keyExtractor={(item) => item.id}
         numColumns={2}
         horizontal={false}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={ListHeader}
         ItemSeparatorComponent={ItemSeparator}
       />
     </ScreenTemplate>

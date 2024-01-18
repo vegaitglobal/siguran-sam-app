@@ -11,12 +11,12 @@ export const styles = StyleSheet.create({
   li: {
     marginBottom: 8,
   },
-  scrollview: {
+  container: {
     paddingHorizontal: 16,
   },
   imageContainer: {
     width: '100%',
-    height: 130,
+    height: 250,
     borderRadius: 13,
     overflow: 'hidden',
     marginVertical: 16,
