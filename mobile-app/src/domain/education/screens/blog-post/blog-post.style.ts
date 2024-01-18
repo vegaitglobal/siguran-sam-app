@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
     height: 250,
     borderRadius: 13,
     overflow: 'hidden',
-    marginVertical: 16,
+    marginBottom: 16,
   },
   image: {
     height: '100%',

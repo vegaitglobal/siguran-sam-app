@@ -5,6 +5,6 @@ export const styles = StyleSheet.create({
     height: 10,
   },
   listHeader: {
-    height: 16,
+    height: 24,
   },
 });

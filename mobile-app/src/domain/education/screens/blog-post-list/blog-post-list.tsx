@@ -1,5 +1,5 @@
 import { AppScreen } from '@/shared/constants';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BlogPost } from '../../../../services/content/content.interfaces';
 import { ScreenTemplate } from '@/shared/components';
 import {

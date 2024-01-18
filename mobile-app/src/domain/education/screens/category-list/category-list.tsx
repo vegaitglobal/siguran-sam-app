@@ -4,7 +4,6 @@ import { Category } from '../../../../services/content/content.interfaces';
 import { styles } from '@/domain/education/screens/category-list/category-list.style';
 import Label from '@/shared/components/label';
 import { ItemSeparator, ListHeader } from '../../shared/education-shared';
-import { ScreenTemplate } from '@/shared/components';
 
 interface CategoryListItemProps {
   category: Category;

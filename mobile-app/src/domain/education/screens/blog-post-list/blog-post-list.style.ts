@@ -14,7 +14,8 @@ export const styles = StyleSheet.create({
     width: 150,
     borderRadius: 13,
     overflow: 'hidden',
-    margin: 10,
+    marginHorizontal: 12,
+    marginBottom: 12,
   },
   imageContainer: {
     width: '100%',
@@ -35,8 +36,5 @@ export const styles = StyleSheet.create({
   },
   text: {
     width: '100%',
-  },
-  itemSeparator: {
-    height: 8,
   },
 });
