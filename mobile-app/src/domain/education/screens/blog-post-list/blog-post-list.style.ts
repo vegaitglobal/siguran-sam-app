@@ -33,6 +33,6 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   itemSeparator: {
-    height: 10,
+    height: 8,
   },
 });
