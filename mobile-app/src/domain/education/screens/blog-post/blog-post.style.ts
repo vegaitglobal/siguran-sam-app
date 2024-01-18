@@ -5,6 +5,12 @@ export const styles = StyleSheet.create({
   body: {
     color: Colors.WHITE.PRIMARY,
   },
+  p: {
+    marginVertical: 0, // This is necessary in order to align list items, because HTML has <p> tags inside <li> tags
+  },
+  li: {
+    marginBottom: 8,
+  },
   scrollview: {
     paddingHorizontal: 16,
   },
