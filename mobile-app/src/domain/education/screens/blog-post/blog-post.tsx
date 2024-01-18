@@ -19,8 +19,6 @@ const BlogPostScreen = ({ route }: BlogPostScreenProps) => {
   const { width } = useWindowDimensions();
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    console.log(blogPost);
-
     const htmlContent = blogPost?.content || '';
     setSource({
       html: htmlContent, // The HTML content as a string
@@ -31,13 +29,12 @@ const BlogPostScreen = ({ route }: BlogPostScreenProps) => {
 
   return (
     <ScreenTemplate>
-      <ScrollView style={styles.scrollview}>
+      <ScrollView style={styles.scrollview} stickyHeaderIndices={[0]}>
         <Header title={blogPost.title} />
         <View style={styles.imageContainer}>
           <Image
             style={styles.image}
             source={{ uri: imageUrl }}
-            onLoadStart={() => setIsLoading(true)}
             onLoadEnd={() => setIsLoading(false)}
           />
           {isLoading && <ActivityIndicator size='large' style={styles.activityIndicator} />}

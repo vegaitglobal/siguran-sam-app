@@ -1,4 +1,4 @@
-import { Sizes } from '@/shared/styles';
+import { Colors, Sizes } from '@/shared/styles';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
     borderBottomColor: 'white',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderStyle: 'solid',
+    backgroundColor: Colors.BLACK.PRIMARY,
   },
   titleContainer: {
     maxWidth: '80%',

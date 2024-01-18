@@ -4,7 +4,7 @@ import Icon from '../icon';
 import { styles } from './header.style';
 import { AppScreen } from '@/shared/constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { BottomTabsParamList, RootStackParamList } from '@/shared/types';
+import { RootStackParamList } from '@/shared/types';
 
 interface Props {
   leftComponent?: JSX.Element;

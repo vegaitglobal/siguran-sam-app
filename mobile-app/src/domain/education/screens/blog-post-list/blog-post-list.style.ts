@@ -2,10 +2,14 @@ import { Colors } from '@/shared/styles';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
+  column: {
+    justifyContent: 'space-between',
+  },
   list: {
-    alignItems: 'center',
+    paddingHorizontal: 16,
   },
   item: {
+    flex: 0.5,
     height: 160,
     width: 150,
     borderRadius: 13,

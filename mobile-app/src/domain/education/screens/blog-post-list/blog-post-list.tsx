@@ -80,11 +80,13 @@ const BlogPostListScreen = ({ route, navigation }: BlogPostListScreenProps) => {
     <ScreenTemplate>
       <Header title={category.title} />
       <FlatList
+        columnWrapperStyle={styles.column}
         contentContainerStyle={styles.list}
         data={blogPosts}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         numColumns={2}
+        horizontal={false}
         ItemSeparatorComponent={ItemSeparator}
       />
     </ScreenTemplate>
