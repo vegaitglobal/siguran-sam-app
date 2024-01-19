@@ -21,17 +21,4 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: 16,
   },
-  image: {
-    height: '100%',
-    width: '100%',
-    resizeMode: 'stretch',
-  },
-  activityIndicator: {
-    color: Colors.WHITE.PRIMARY,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
 });
