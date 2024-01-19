@@ -2,20 +2,14 @@ import { AppScreen } from '@/shared/constants';
 import React, { useEffect, useState } from 'react';
 import { BlogPost } from '../../../../services/content/content.interfaces';
 import { ScreenTemplate } from '@/shared/components';
-import {
-  FlatList,
-  ListRenderItem,
-  ListRenderItemInfo,
-  TouchableOpacity,
-  View,
-  Image,
-} from 'react-native';
+import { FlatList, ListRenderItem, ListRenderItemInfo, TouchableOpacity, View } from 'react-native';
 import { styles } from './blog-post-list.style';
 import contentService from '../../../../services/content/content.service';
 import { BlogPostListScreenProps } from '@/shared/types/screen-props';
 import Label from '@/shared/components/label';
 import { Header } from '@/shared/components/header';
 import { ItemSeparator, ListHeader } from '../../shared/education-shared';
+import { LoadingImage } from '@/shared/components/loading-image/loading-image';
 
 interface BlogPostListItemProps {
   blogPost: BlogPost;
@@ -32,7 +26,7 @@ export const BlogPostListItem = ({ blogPost, onPress }: BlogPostListItemProps) =
     <TouchableOpacity onPress={handlePress}>
       <View style={styles.item}>
         <View style={styles.imageContainer}>
-          <Image style={styles.image} source={{ uri: imageUrl }} />
+          <LoadingImage imageUrl={imageUrl} />
         </View>
         <View style={styles.textContainer}>
           <Label style={styles.text} type='p2' numberOfLines={2}>
