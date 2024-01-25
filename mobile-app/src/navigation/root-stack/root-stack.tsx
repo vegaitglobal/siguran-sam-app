@@ -11,7 +11,8 @@ import TermsScreen from '@/domain/onboarding/screens/terms-screen';
 import WelcomeScreen from '@/domain/onboarding/screens/welcome-screen';
 import BlogPostListScreen from '@/domain/education/screens/blog-post-list';
 import BlogPostScreen from '@/domain/education/screens/blog-post';
-import { MoreOptionsScreen } from '@/domain/other';
+import { MoreOptionsScreen } from '@/domain/more-options';
+import { TermsOfUseScreen } from '@/domain/more-options/screens/terms-of-use/terms-of-use';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -21,7 +22,7 @@ const RootStack = () => {
 
   return (
     <Stack.Navigator
-      initialRouteName={!initialized ? AppScreen.SPLASH : AppScreen.BOTTOM_TABS}
+      initialRouteName={initialized ? AppScreen.BOTTOM_TABS : AppScreen.SPLASH}
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -34,6 +35,7 @@ const RootStack = () => {
         <Stack.Group>
           <Stack.Screen name={AppScreen.BOTTOM_TABS} component={BottomTabs} />
           <Stack.Screen name={AppScreen.MORE_OPTIONS} component={MoreOptionsScreen} />
+          <Stack.Screen name={AppScreen.TERMS_OF_USE} component={TermsOfUseScreen} />
           <Stack.Screen name={AppScreen.BLOGPOSTLIST} component={BlogPostListScreen} />
           <Stack.Screen name={AppScreen.BLOGPOST} component={BlogPostScreen} />
         </Stack.Group>
