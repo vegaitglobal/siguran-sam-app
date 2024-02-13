@@ -1,35 +1,24 @@
-import { Colors, ContentWidth, Paddings, Sizes } from '@/shared/styles';
+import { Colors } from '@/shared/styles';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-	wrapper: {
-		width: ContentWidth,
-	},
-	list: {
-		maxHeight: '100%',
-	},
-	item: {
-		backgroundColor: 'rgb(114.95, 0.48, 0.48)',
-		borderRadius: 13,
-		width: 315,
-		height: 115,
-		paddingHorizontal: 10,
-		flexWrap: 'wrap',
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-	itemSeparator: {
-		height: 10,
-	},
-	title: {
-		fontSize: 16,
-		color: Colors.WHITE.PRIMARY,
-		fontWeight: '700',
-	},
-	description: {
-		fontSize: 13,
-		color: Colors.WHITE.SECONDARY,
-		fontWeight: '500',
-	},
+  body: {
+    color: Colors.WHITE.PRIMARY,
+  },
+  p: {
+    marginVertical: 0, // This is necessary in order to align list items, because HTML has <p> tags inside <li> tags
+  },
+  li: {
+    marginBottom: 8,
+  },
+  container: {
+    paddingHorizontal: 16,
+  },
+  imageContainer: {
+    width: '100%',
+    height: 250,
+    borderRadius: 13,
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
 });

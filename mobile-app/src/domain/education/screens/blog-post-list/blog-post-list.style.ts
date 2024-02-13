@@ -1,35 +1,40 @@
-import { Colors, ContentWidth, Paddings, Sizes } from '@/shared/styles';
+import { Colors } from '@/shared/styles';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-	wrapper: {
-		width: ContentWidth,
-	},
-	list: {
-		maxHeight: '100%',
-	},
-	item: {
-		backgroundColor: 'rgb(114.95, 0.48, 0.48)',
-		borderRadius: 13,
-		width: 315,
-		height: 115,
-		paddingHorizontal: 10,
-		flexWrap: 'wrap',
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-	itemSeparator: {
-		height: 10,
-	},
-	title: {
-		fontSize: 16,
-		color: Colors.WHITE.PRIMARY,
-		fontWeight: '700',
-	},
-	description: {
-		fontSize: 13,
-		color: Colors.WHITE.SECONDARY,
-		fontWeight: '500',
-	},
+  column: {
+    justifyContent: 'space-between',
+  },
+  list: {
+    paddingHorizontal: 16,
+  },
+  item: {
+    flex: 0.5,
+    height: 160,
+    width: 150,
+    borderRadius: 13,
+    overflow: 'hidden',
+    marginHorizontal: 12,
+    marginBottom: 12,
+  },
+  imageContainer: {
+    width: '100%',
+    height: '66%',
+    backgroundColor: Colors.BLOG_POST_BACKGROUND.PRIMARY,
+  },
+  textContainer: {
+    width: '100%',
+    height: '34%',
+    justifyContent: 'center',
+    padding: 6,
+    backgroundColor: Colors.BLOG_POST_BACKGROUND.SECONDARY,
+  },
+  image: {
+    height: '100%',
+    width: '100%',
+    resizeMode: 'stretch',
+  },
+  text: {
+    width: '100%',
+  },
 });
