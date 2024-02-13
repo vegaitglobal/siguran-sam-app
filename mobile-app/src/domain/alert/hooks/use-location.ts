@@ -3,12 +3,14 @@ import { LocationSubscription } from 'expo-location';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { convertToDeviceLocation, getWatcherOptions } from '../../../shared/utils/location-utils';
-import { DeviceLocation } from '@/shared/types/model';
+import { useLocationStore } from '@/shared/store/use-location-store';
 
 const useLocation = () => {
   const [permissionResponse, setPermissionResponse] =
     useState<Location.LocationPermissionResponse>();
-  const [location, setLocation] = useState<DeviceLocation>();
+  const location = useLocationStore((state) => state.location);
+  const updateDeviceLocation = useLocationStore((state) => state.updateDeviceLocation);
+  const locationRef = useRef(location);
   const appState = useRef(AppState.currentState);
   const locationWatcher = useRef<LocationSubscription | null>(null);
 
@@ -22,7 +24,7 @@ const useLocation = () => {
       const deviceLocation = await convertToDeviceLocation(newLocation);
 
       if (deviceLocation) {
-        setLocation(deviceLocation);
+        updateDeviceLocation(deviceLocation);
       }
     };
 
@@ -30,7 +32,7 @@ const useLocation = () => {
       watcherOptions,
       handleLocationChange
     );
-  }, []);
+  }, [updateDeviceLocation]);
 
   const stopLocationTracking = useCallback(() => {
     if (!locationWatcher.current) {
@@ -45,9 +47,9 @@ const useLocation = () => {
     const lastKnownLocation = await Location.getLastKnownPositionAsync();
     const deviceLocation = await convertToDeviceLocation(lastKnownLocation);
     if (deviceLocation) {
-      setLocation(deviceLocation);
+      updateDeviceLocation(deviceLocation);
     }
-  }, []);
+  }, [updateDeviceLocation]);
 
   const startTrackingAfterLastKnownLocation = useCallback(async () => {
     await setLastKnownLocation();
@@ -78,6 +80,10 @@ const useLocation = () => {
   );
 
   useEffect(() => {
+    useLocationStore.subscribe((state) => (locationRef.current = state.location));
+  }, []);
+
+  useEffect(() => {
     requestPermission();
   }, [requestPermission]);
 
@@ -98,6 +104,7 @@ const useLocation = () => {
   return {
     isPermissionGranted: permissionResponse?.granted,
     location,
+    locationRef,
   };
 };
 
