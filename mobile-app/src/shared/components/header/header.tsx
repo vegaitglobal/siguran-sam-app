@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { Pressable, PressableProps, Text, View } from 'react-native';
+import { Pressable, PressableProps, Text, View, ViewStyle } from 'react-native';
 import Icon from '../icon';
 import { styles } from './header.style';
 import { AppScreen } from '@/shared/constants';
@@ -18,7 +18,7 @@ const BackButton = (props: PressableProps) => {
   const { goBack } = useNavigation();
 
   return (
-    <Pressable onPress={goBack} {...props}>
+    <Pressable hitSlop={8} onPress={goBack} {...props}>
       <Icon name='arrow-back' color='white' pointerEvents='none' />
     </Pressable>
   );
@@ -32,7 +32,7 @@ const MoreOptions = (props: PressableProps) => {
   };
 
   return (
-    <Pressable onPress={handleMoreOptions} {...props}>
+    <Pressable hitSlop={8} onPress={handleMoreOptions} {...props}>
       <Icon name='hamburger' color='white' pointerEvents='none' />
     </Pressable>
   );
@@ -45,15 +45,27 @@ export const Header = ({
   hideLeftComponent,
   hideRightComponent,
 }: Props) => {
+  const leftComponentStyle: ViewStyle = {
+    opacity: +!hideLeftComponent,
+  };
+
+  const rightComponentStyle: ViewStyle = {
+    opacity: +!hideRightComponent,
+  };
+
   return (
     <View style={styles.wrapper}>
-      <View>{!hideLeftComponent && (leftComponent || <BackButton />)}</View>
+      <View pointerEvents={hideLeftComponent ? 'none' : 'auto'} style={leftComponentStyle}>
+        {leftComponent || <BackButton />}
+      </View>
       <View style={styles.titleContainer}>
         <Text style={styles.title} numberOfLines={1}>
           {title}
         </Text>
       </View>
-      <View>{!hideRightComponent && (rightComponent || <MoreOptions />)}</View>
+      <View pointerEvents={hideRightComponent ? 'none' : 'auto'} style={rightComponentStyle}>
+        {rightComponent || <MoreOptions />}
+      </View>
     </View>
   );
 };

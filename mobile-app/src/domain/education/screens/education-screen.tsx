@@ -24,7 +24,7 @@ const EducationScreen = ({ navigation }: EducationScreenProps) => {
 
   return (
     <ScreenTemplate>
-      <Header title='Edukacija' />
+      <Header hideLeftComponent title='Edukacija' />
       <CategoryList categories={categories} onPress={handleOpenCategory} />
     </ScreenTemplate>
   );
