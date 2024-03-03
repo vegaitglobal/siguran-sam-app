@@ -153,8 +153,6 @@ const CircleButton = ({ onCancel, onComplete, hint, disabled, minutes, delay }: 
           onPressIn={onPressInHandler}
           onPressOut={onPressOutHandler}
           style={[styles.innerCircle, dynamicCircleColorStyle]}
-          onLongPress={onComplete}
-          delayLongPress={delay}
           disabled={disabled}
         >
           <DisabledLabel />
