@@ -7,6 +7,7 @@ import Moment from 'react-moment';
 import { sendEmergencyRequest } from '../../services/sms-service';
 import { useUserInfoStore } from '@/shared/store';
 import { useContactStore } from '@/shared/store/use-contact-store';
+import Hint from '../hint';
 
 type Props = {
   location: DeviceLocation | undefined;
@@ -50,8 +51,8 @@ const AlertWidget = ({ location }: Props) => {
 
   return (
     <Fragment>
+      <Hint hint={hint} onHintShouldDissapear={() => setHint(undefined)} />
       <CircleButton
-        hint={hint}
         onCancel={onCancel}
         onComplete={onComplete}
         disabled={disabled}
