@@ -120,33 +120,30 @@ const CircleButton = ({ onCancel, onComplete, hint, disabled, minutes, delay }: 
     );
   }, [animatedHintStyle, hint]);
 
-  const AnimatedOuterCircle = useCallback(() => {
-    return (
-      <Svg width={240} height={240} style={styles.svgProgress}>
-        <AnimatedCircle
-          cx={120}
-          cy={120}
-          r={RADIUS}
-          stroke={Colors.RED.SECONDARY}
-          fill={'transparent'}
-          strokeWidth={5}
-          strokeDasharray={LENGTH}
-          animatedProps={animatedProps}
-        />
-      </Svg>
-    );
-  }, [animatedProps]);
+  const animatedOuterCircle = (
+    <Svg width={240} height={240} style={styles.svgProgress}>
+      <AnimatedCircle
+        cx={120}
+        cy={120}
+        r={RADIUS}
+        stroke={Colors.RED.SECONDARY}
+        fill={'transparent'}
+        strokeWidth={5}
+        strokeDasharray={LENGTH}
+        animatedProps={animatedProps}
+      />
+    </Svg>
+  );
+  const disabledLabel = (
+    <Label type='h3Black' style={dynamicTextColorStyle}>
+      {disabled ? `Dostupno za\n${minutes} minuta` : 'SIGURAN SAM'}
+    </Label>
+  );
 
-  const DisabledLabel = useCallback(() => {
-    return (
-      <Label type='h3Black' style={dynamicTextColorStyle}>
-        {disabled ? `Dostupno za\n${minutes} minuta` : 'SIGURAN SAM'}
-      </Label>
-    );
-  }, [dynamicTextColorStyle, disabled, minutes]);
-
-  const AnimatedButton = useCallback(() => {
-    return (
+  return (
+    <View style={styles.container}>
+      <AnimatedHint />
+      {animatedOuterCircle}
       <Animated.View style={animatedCircleStyle}>
         <TouchableOpacity
           activeOpacity={0.8}
@@ -155,26 +152,9 @@ const CircleButton = ({ onCancel, onComplete, hint, disabled, minutes, delay }: 
           style={[styles.innerCircle, dynamicCircleColorStyle]}
           disabled={disabled}
         >
-          <DisabledLabel />
+          {disabledLabel}
         </TouchableOpacity>
       </Animated.View>
-    );
-  }, [
-    DisabledLabel,
-    animatedCircleStyle,
-    delay,
-    disabled,
-    dynamicCircleColorStyle,
-    onComplete,
-    onPressInHandler,
-    onPressOutHandler,
-  ]);
-
-  return (
-    <View style={styles.container}>
-      <AnimatedHint />
-      <AnimatedOuterCircle />
-      <AnimatedButton />
     </View>
   );
 };
