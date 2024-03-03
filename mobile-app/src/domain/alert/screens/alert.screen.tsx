@@ -4,17 +4,17 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './alert.screen.style';
-import { Linking, View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import Label from '@/shared/components/label';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import { AppButton } from '@/shared/components';
 import useLocation from '@/domain/alert/hooks/use-location';
-import CircleButton from '../components';
+import CircleButton from '../components/circle-button';
 import Moment from 'react-moment';
 import 'moment/locale/sr';
 import { useUserInfoStore } from '@/shared/store';
 import { useContactStore } from '@/shared/store/use-contact-store';
 import { sendEmergencyRequest } from '../services/sms-service';
+import LocationPermissionDenied from '../components/location-permission-denied';
 
 export interface Props
   extends CompositeScreenProps<
@@ -63,19 +63,6 @@ const AlertScreen = () => {
     };
   }, [location]);
 
-  const LocationPermissionDeniedScreen = useCallback(() => {
-    return (
-      <Fragment>
-        <Label style={{ marginBottom: 16, textAlign: 'center' }}>
-          Molim Vas, dozvolite pristup Vašoj lokaciji prilikom korišćenja aplikacije u
-          podešavanjima. Bez dozvole pristupa, nećete moći precizno deliti svoje koordinate sa
-          svojim kontaktima u slučaju opasnosti.
-        </Label>
-        <AppButton onPress={() => Linking.openSettings()}>PODEŠAVANJA</AppButton>
-      </Fragment>
-    );
-  }, []);
-
   const LocationPermissionGrantedScreen = useCallback(() => {
     return (
       <Fragment>
@@ -122,7 +109,7 @@ const AlertScreen = () => {
           <LocationPermissionGrantedScreen />
         )
       ) : (
-        <LocationPermissionDeniedScreen />
+        <LocationPermissionDenied />
       )}
     </View>
   );
