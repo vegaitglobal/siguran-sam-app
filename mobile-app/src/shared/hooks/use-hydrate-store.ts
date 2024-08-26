@@ -21,7 +21,7 @@ export const useHydrateStore = () => {
 			);
 		const unsubFinishContactsHydration =
 			useContactStore.persist.onFinishHydration(() =>
-				setOnboardingHydrated(true)
+				setContactsHydrated(true)
 			);
 
 		setOnboardingHydrated(useOnboardingStore.persist.hasHydrated());
