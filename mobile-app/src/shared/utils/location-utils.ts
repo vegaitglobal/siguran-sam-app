@@ -3,7 +3,7 @@ import { getBatteryLevelAsync } from 'expo-battery';
 import * as Location from 'expo-location';
 import { DeviceLocation } from '../types/model';
 
-export const getWatcherOptions = async (): Promise<object> => {
+export const getWatcherOptions = async () => {
   const batteryLevel = await getBatteryLevelAsync();
   return {
     accuracy: batteryLevel > 0.1 ? Accuracy.Highest : Accuracy.Balanced,
