@@ -106,7 +106,7 @@ const CircleButton = ({ onCancel, onComplete, disabled, minutes, delay }: Props)
 
   const disabledLabel = (
     <Label type='h3Black' style={dynamicTextColorStyle}>
-      {disabled ? `Dostupno za\n${minutes} minuta` : 'SIGURAN SAM'}
+      {disabled ? `Dostupno za\n${minutes} ${minutes === 1 ? 'minut' : 'minuta'}` : 'SIGURAN SAM'}
     </Label>
   );
 

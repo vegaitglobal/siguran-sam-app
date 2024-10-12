@@ -13,6 +13,8 @@ type Props = {
   location: DeviceLocation | undefined;
 };
 
+const MAX_WAIT_MINUTES = 3;
+
 const AlertWidget = ({ location }: Props) => {
   const { fullName } = useUserInfoStore();
   const { contacts } = useContactStore();
@@ -33,7 +35,7 @@ const AlertWidget = ({ location }: Props) => {
 
   const onComplete = useCallback(() => {
     sendEmergencyRequest(contacts, location, fullName);
-    setMinutes(5);
+    setMinutes(MAX_WAIT_MINUTES);
     setHint('Sigurnosni kontakti su obavešteni');
   }, [contacts, fullName, location]);
 
@@ -56,7 +58,7 @@ const AlertWidget = ({ location }: Props) => {
         onCancel={onCancel}
         onComplete={onComplete}
         disabled={disabled}
-        minutes={5}
+        minutes={minutes}
         delay={2000}
       />
       <Label style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>
