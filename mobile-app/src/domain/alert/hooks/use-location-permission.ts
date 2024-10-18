@@ -19,7 +19,10 @@ export const useLocationPermission = () => {
     }
   }, []);
 
-  const handleOnAppForeground = useCallback(() => requestPermission(), [requestPermission]);
+  const handleOnAppForeground = useCallback(async () => {
+    const permissionResponse = await Location.requestForegroundPermissionsAsync();
+    setPermission(permissionResponse);
+  }, []);
 
   useAppStateChange({ onAppForeground: handleOnAppForeground });
 

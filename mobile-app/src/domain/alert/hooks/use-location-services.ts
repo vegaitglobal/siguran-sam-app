@@ -19,7 +19,10 @@ export const useLocationServices = () => {
     }
   }, []);
 
-  const handleOnAppForeground = useCallback(() => checkLocationServices(), [checkLocationServices]);
+  const handleOnAppForeground = useCallback(async () => {
+    const value = await Location.hasServicesEnabledAsync();
+    setLocationServicesEnabled(value);
+  }, []);
 
   useAppStateChange({ onAppForeground: handleOnAppForeground });
 
