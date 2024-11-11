@@ -3,20 +3,23 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface OnboardingStoreState {
-	isOnboardingDone: boolean;
+  isOnboardingDone: boolean;
 }
 
 export const useOnboardingStore = create<OnboardingStoreState>()(
-	persist(
-		(_set) => ({
-			isOnboardingDone: false,
-		}),
-		{
-			name: 'onboarding-storage',
-			storage: createJSONStorage(() => AsyncStorage),
-		}
-	)
+  persist(
+    (_set) => ({
+      isOnboardingDone: false,
+    }),
+    {
+      name: 'onboarding-storage',
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
 );
 
 export const setIsOnboardingDone = () =>
-	useOnboardingStore.setState(() => ({ isOnboardingDone: true }));
+  useOnboardingStore.setState(() => ({ isOnboardingDone: true }));
+
+export const resetOnboarding = () =>
+  useOnboardingStore.setState(() => ({ isOnboardingDone: false }));

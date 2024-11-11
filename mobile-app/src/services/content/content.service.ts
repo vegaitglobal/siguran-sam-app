@@ -22,8 +22,17 @@ type BlogPostEntrySkeleton = {
   };
 };
 
+type TermsEntrySkeleton = {
+  contentTypeId: 'termsAndConditions';
+  fields: {
+    title: Contentful.EntryFieldTypes.Text;
+    content: Contentful.EntryFieldTypes.RichText;
+  };
+};
+
 class ContentfulContentService implements ContentService {
   private client: Contentful.ContentfulClientApi<undefined>;
+
   constructor(spaceID: string, accessToken: string) {
     this.client = Contentful.createClient({
       space: spaceID,
@@ -68,6 +77,22 @@ class ContentfulContentService implements ContentService {
         content: documentToHtmlString(item.fields.content as Document),
       };
     });
+  }
+
+  async getTermsAndConditions() {
+    const data = await this.client.getEntries<TermsEntrySkeleton>({
+      content_type: 'termsAndConditions',
+      include: 1,
+    });
+
+    // Taking only the first one as it is not supposed to have more than one instance of terms and conditions
+    const item = data.items[0];
+
+    return {
+      id: item.sys.id,
+      title: item.fields.title,
+      content: documentToHtmlString(item.fields.content as Document),
+    };
   }
 }
 

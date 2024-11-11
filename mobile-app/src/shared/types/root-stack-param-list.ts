@@ -5,6 +5,7 @@ export type RootStackParamList = {
   [AppScreen.BOTTOM_TABS]: undefined;
   [AppScreen.SPLASH]: undefined;
   [AppScreen.ONBOARDING]: undefined;
+  [AppScreen.ONBOARDING_TERMS]: undefined;
   [AppScreen.TERMS]: undefined;
   [AppScreen.WELCOME]: undefined;
   [AppScreen.BLOGPOSTLIST]: { category: Category };
