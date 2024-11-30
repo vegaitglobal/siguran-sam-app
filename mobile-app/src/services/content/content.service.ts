@@ -1,5 +1,5 @@
 import * as Contentful from 'contentful';
-import { ContentService } from './content.interfaces';
+import { ContentService, LogoType } from './content.interfaces';
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import { Document } from '@contentful/rich-text-types';
 
@@ -29,6 +29,17 @@ type TermsEntrySkeleton = {
     content: Contentful.EntryFieldTypes.RichText;
   };
 };
+
+type LogoEntrySkeleton = {
+  contentTypeId: 'logo';
+  fields: {
+    title: Contentful.EntryFieldTypes.Text;
+    data: Contentful.EntryFieldTypes.AssetLink;
+    type: Contentful.EntryFieldTypes.Text<LogoType>;
+  };
+};
+
+const SVGType = 'image/svg+xml';
 
 class ContentfulContentService implements ContentService {
   private client: Contentful.ContentfulClientApi<undefined>;
@@ -93,6 +104,26 @@ class ContentfulContentService implements ContentService {
       title: item.fields.title,
       content: documentToHtmlString(item.fields.content as Document),
     };
+  }
+
+  async getLogos() {
+    const data = await this.client.getEntries<LogoEntrySkeleton>({
+      content_type: 'logo',
+      include: 1,
+    });
+
+    return data.items.map((item) => {
+      const logoData = item.fields.data as Contentful.Asset;
+
+      const { url, contentType } = logoData.fields.file as Contentful.AssetFile;
+
+      return {
+        id: item.sys.id,
+        type: item.fields.type,
+        url: url.startsWith('http') ? url : `http:${url}`,
+        isSVG: contentType === SVGType,
+      };
+    });
   }
 }
 

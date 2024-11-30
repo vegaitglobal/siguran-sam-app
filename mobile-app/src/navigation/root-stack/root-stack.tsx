@@ -8,11 +8,12 @@ import TermsScreen from '@/domain/other/screens/terms-screen';
 import SplashScreen from '@/domain/splash/screens/splash-screen';
 import { AppScreen } from '@/shared/constants';
 import { useAppInit } from '@/shared/hooks';
-import { useOnboardingStore } from '@/shared/store';
+import { resetOnboarding, useOnboardingStore } from '@/shared/store';
 import { RootStackParamList } from '@/shared/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomTabs from '../bottom-tabs';
 import { styles } from './root-stack.style';
+import { useEffect } from 'react';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -21,9 +22,9 @@ const RootStack = () => {
   const isOnboardingDone = useOnboardingStore((state) => state.isOnboardingDone);
 
   // To be used only for testing onboarding flow
-  // useEffect(() => {
-  //   resetOnboarding();
-  // }, []);
+  useEffect(() => {
+    resetOnboarding();
+  }, []);
 
   return (
     <Stack.Navigator
