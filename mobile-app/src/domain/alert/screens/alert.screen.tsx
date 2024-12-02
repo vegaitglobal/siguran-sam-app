@@ -12,6 +12,8 @@ import AlertWidget from '../components/alert-widget';
 import { useLocationServices } from '../hooks/use-location-services';
 import { LocationServicesNotEnabled } from '../components/location-services-not-enabled/location-services-not-enabled';
 import { useLocationPermission } from '../hooks/use-location-permission';
+import { Fragment } from 'react';
+import Label from '@/shared/components/label';
 
 export interface Props
   extends CompositeScreenProps<
@@ -19,22 +21,29 @@ export interface Props
     NativeStackScreenProps<RootStackParamList>
   > {}
 
-const loadingComponent = (
+const LoadingComponent = () => (
   <View style={styles.container}>
     <ActivityIndicator />
   </View>
 );
 
-const locationServicesDisabledComponent = (
+const LocationServicesDisabledComponent = () => (
   <View style={styles.container}>
     <LocationServicesNotEnabled />
   </View>
 );
 
-const permissionDeniedComponent = (
+const PermissionDeniedComponent = () => (
   <View style={styles.container}>
     <LocationPermissionDenied />
   </View>
+);
+
+const LoadingLocationIndicator = () => (
+  <Fragment>
+    <Label style={{ marginBottom: 16, textAlign: 'center' }}>Pronalaženje Vaše lokacije...</Label>
+    <ActivityIndicator size='large' color={'#fff'} />
+  </Fragment>
 );
 
 const AlertScreen = () => {
@@ -44,15 +53,15 @@ const AlertScreen = () => {
     canGetLocation: permission?.granted === true && locationServicesEnabled === true,
   });
 
-  if (loadingLocationServices || loadingPermission) return loadingComponent;
+  if (loadingLocationServices || loadingPermission) return <LoadingComponent />;
 
-  if (locationServicesEnabled === false) return locationServicesDisabledComponent;
+  if (!locationServicesEnabled) return <LocationServicesDisabledComponent />;
 
-  if (permission?.granted === false) return permissionDeniedComponent;
+  if (!permission?.granted) return <PermissionDeniedComponent />;
 
   return (
     <View style={styles.container}>
-      <AlertWidget location={location} />
+      {location ? <AlertWidget location={location} /> : <LoadingLocationIndicator />}
     </View>
   );
 };

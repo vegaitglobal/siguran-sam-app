@@ -30,6 +30,28 @@ type TermsEntrySkeleton = {
   };
 };
 
+type ContactEntrySkeleton = {
+  contentTypeId: 'contact';
+  fields: {
+    title: Contentful.EntryFieldTypes.Text;
+    phoneNumber: Contentful.EntryFieldTypes.Text;
+    website: Contentful.EntryFieldTypes.Text;
+    email: Contentful.EntryFieldTypes.Text;
+    instagram: Contentful.EntryFieldTypes.Text;
+    facebook: Contentful.EntryFieldTypes.Text;
+    twitter: Contentful.EntryFieldTypes.Text;
+    linkedin: Contentful.EntryFieldTypes.Text;
+  };
+};
+
+type EmergencyMessageEntrySkeleton = {
+  contentTypeId: 'emergencyMessage';
+  fields: {
+    title: Contentful.EntryFieldTypes.Text;
+    content: Contentful.EntryFieldTypes.Text;
+  };
+};
+
 type LogoEntrySkeleton = {
   contentTypeId: 'logo';
   fields: {
@@ -103,6 +125,36 @@ class ContentfulContentService implements ContentService {
       id: item.sys.id,
       title: item.fields.title,
       content: documentToHtmlString(item.fields.content as Document),
+    };
+  }
+
+  async getContactDetails() {
+    const data = await this.client.getEntries<ContactEntrySkeleton>({
+      content_type: 'contact',
+      include: 1,
+    });
+
+    // Taking only the first one as it is not supposed to have more than one instance of contact details
+    const item = data.items[0];
+
+    return {
+      id: item.sys.id,
+      ...item.fields,
+    };
+  }
+
+  async getEmergencyMessage() {
+    const data = await this.client.getEntries<EmergencyMessageEntrySkeleton>({
+      content_type: 'emergencyMessage',
+      include: 1,
+    });
+
+    // Taking only the first one as it is not supposed to have more than one instance of emergency message
+    const item = data.items[0];
+
+    return {
+      id: item.sys.id,
+      ...item.fields,
     };
   }
 

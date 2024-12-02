@@ -1,25 +1,22 @@
-import { Platform } from 'react-native';
+import { getPersonalizedMessage } from '@/shared/store/use-message-store';
+import { Contact, DeviceLocation } from '@/shared/types/model';
+import { getBatteryLevelAsync } from 'expo-battery';
 import * as Network from 'expo-network';
-import messageService from './message.service';
 import { EventType } from 'src/services/tracking/tracking.interfaces';
 import trackingService from 'src/services/tracking/tracking.service';
-import { getBatteryLevelAsync } from 'expo-battery';
-import { Contact, DeviceLocation } from '@/shared/types/model';
+import messageService from './message.service';
 
-export const sendEmergencyRequest = async (
+export const sendEmergencyMessage = async (
+  messageTemplate: string,
   contacts: Contact[],
-  location: DeviceLocation | undefined,
+  location: DeviceLocation,
   fullName: string
 ) => {
-  if (location === undefined) {
-    return;
-  }
-
-  const { type, isConnected, isInternetReachable } = await Network.getNetworkStateAsync();
+  const { type, isInternetReachable } = await Network.getNetworkStateAsync();
   const batteryLevel = await getBatteryLevelAsync();
   const recipients = contacts.map((c) => c.number);
 
-  sendSMS(fullName, recipients, location).then(() => {
+  sendSMS(messageTemplate, fullName, recipients, location).then(() => {
     trackingService.track({
       name: EventType.EmergencyRequested,
       batteryPercentage: batteryLevel,
@@ -37,30 +34,29 @@ export const sendEmergencyRequest = async (
   });
 };
 
-const sendSMS = async (username: string, recipients: string[], location: DeviceLocation) => {
-  const { type, isConnected, isInternetReachable } = await Network.getNetworkStateAsync();
+const sendSMS = async (
+  messageTemplate: string,
+  fullName: string,
+  recipients: string[],
+  location: DeviceLocation
+) => {
+  const { isInternetReachable } = await Network.getNetworkStateAsync();
 
   const isTest = true;
 
-  let message = `${username}: "Siguran Sam"
-	Lokacija: https://maps.google.com/?q=${location.latitude},${location.longitude}
-	Pozovite O.T.I.S: +3816102306685`;
+  const locationUrl = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
+
+  const message = getPersonalizedMessage(messageTemplate, fullName, locationUrl);
 
   if (isTest) {
-    messageService.sendNativeSMS(
-      Platform.OS === 'ios' ? recipients : recipients.join(', '),
-      message
-    );
+    messageService.sendNativeSMS(recipients, message);
     return;
   }
 
   if (isInternetReachable) {
     messageService.sendOnlineSMS(recipients, message);
   } else {
-    messageService.sendNativeSMS(
-      Platform.OS === 'ios' ? recipients : recipients.join(', '),
-      message
-    );
+    messageService.sendNativeSMS(recipients, message);
   }
 };
 

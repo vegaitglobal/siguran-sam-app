@@ -1,4 +1,3 @@
-import { NetInfoStateType } from '@react-native-community/netinfo';
 import { NetworkStateType } from 'expo-network';
 
 export enum EventType {

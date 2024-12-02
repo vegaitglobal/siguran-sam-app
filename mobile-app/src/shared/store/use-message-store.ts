@@ -2,40 +2,31 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-const INITIAL_TEMPLATE =
-	'Ja sam <fullName>. Siguran sam. Moja lokacija: <location>';
-const INITIAL_FULLNAME = 'Pera Perić';
-const INITIAL_LOCATION = 'Novi Sad, Serbia - 45.2396° N, 19.8227° E';
+const NAME_PLACEHOLDER = '<name>';
+const LOCATION_PLACEHOLDER = '<location>';
 
-const generateInitialMessage = (fullName: string, location?: string) =>
-	INITIAL_TEMPLATE.replace('<fullName>', fullName).replace(
-		'<location>',
-		location || INITIAL_LOCATION
-	);
+// Default template that will be used before first population from Contentful
+const defaultMessage = `${NAME_PLACEHOLDER}: "Siguran sam"
+Lokacija: ${LOCATION_PLACEHOLDER}
+Pozovite O.T.I.S: +3816102306685`;
 
 interface MessageStoreState {
-	message: string;
+  message: string;
 }
 
 export const useMessageStore = create<MessageStoreState>()(
-	persist(
-		(_set) => ({
-			message: generateInitialMessage(INITIAL_FULLNAME, INITIAL_LOCATION),
-		}),
-		{
-			name: 'message-storage',
-			storage: createJSONStorage(() => AsyncStorage),
-		}
-	)
+  persist(
+    (_set) => ({
+      message: defaultMessage,
+    }),
+    {
+      name: 'message-storage',
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
 );
 
-export const setPersistedMessage = (message: string) =>
-	useMessageStore.setState({ message });
+export const setPersistedMessage = (message: string) => useMessageStore.setState({ message });
 
-export const setPersistedMessageByTemplate = (
-	fullName: string,
-	location?: string
-) =>
-	useMessageStore.setState({
-		message: generateInitialMessage(fullName, location),
-	});
+export const getPersonalizedMessage = (message: string, fullName: string, location: string) =>
+  message.replaceAll(NAME_PLACEHOLDER, fullName).replaceAll(LOCATION_PLACEHOLDER, location);

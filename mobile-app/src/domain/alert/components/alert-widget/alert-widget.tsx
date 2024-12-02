@@ -1,16 +1,17 @@
 import Label from '@/shared/components/label';
-import { DeviceLocation } from '@/shared/types';
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Text } from 'react-native';
-import CircleButton from '../circle-button';
-import Moment from 'react-moment';
-import { sendEmergencyRequest } from '../../services/sms-service';
 import { useUserInfoStore } from '@/shared/store';
 import { useContactStore } from '@/shared/store/use-contact-store';
+import { DeviceLocation } from '@/shared/types';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import Moment from 'react-moment';
+import { Text } from 'react-native';
+import { sendEmergencyMessage } from '../../services/sms-service';
+import CircleButton from '../circle-button';
 import Hint from '../hint';
+import { useMessageStore } from '@/shared/store/use-message-store';
 
 type Props = {
-  location: DeviceLocation | undefined;
+  location: DeviceLocation;
 };
 
 const MAX_WAIT_MINUTES = 3;
@@ -18,6 +19,7 @@ const MAX_WAIT_MINUTES = 3;
 const AlertWidget = ({ location }: Props) => {
   const { fullName } = useUserInfoStore();
   const { contacts } = useContactStore();
+  const { message } = useMessageStore();
 
   const [minutes, setMinutes] = useState(0);
   const [hint, setHint] = useState<string>();
@@ -34,22 +36,12 @@ const AlertWidget = ({ location }: Props) => {
   }, [minutes]);
 
   const onComplete = useCallback(() => {
-    sendEmergencyRequest(contacts, location, fullName);
+    sendEmergencyMessage(message, contacts, location, fullName);
     setMinutes(MAX_WAIT_MINUTES);
     setHint('Sigurnosni kontakti su obavešteni');
-  }, [contacts, fullName, location]);
+  }, [contacts, fullName, location, message]);
 
   const disabled = useMemo(() => minutes > 0, [minutes]);
-
-  if (!location)
-    return (
-      <Fragment>
-        <Label style={{ marginBottom: 16, textAlign: 'center' }}>
-          Pronalaženje Vaše lokacije...
-        </Label>
-        <ActivityIndicator size='large' color={'#fff'} />
-      </Fragment>
-    );
 
   return (
     <Fragment>

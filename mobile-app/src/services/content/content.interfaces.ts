@@ -20,6 +20,24 @@ export interface TermsAndConditions {
   content: string;
 }
 
+export interface ContactDetails {
+  id: string;
+  title: string;
+  phoneNumber: string;
+  website: string;
+  email: string;
+  instagram: string;
+  facebook: string;
+  twitter: string;
+  linkedin: string;
+}
+
+export interface EmergencyMessage {
+  id: string;
+  title: string;
+  content: string;
+}
+
 export enum LogoType {
   WITH_TEXT = 'Sa tekstom',
   WITHOUT_TEXT = 'Bez teksta',
@@ -38,4 +56,6 @@ export interface ContentService {
   getTermsAndConditions: () => Promise<TermsAndConditions>;
   getBlogPosts: (categoryID: string) => Promise<BlogPost[]>;
   getLogos: () => Promise<Logo[]>;
+  getContactDetails: () => Promise<ContactDetails>;
+  getEmergencyMessage: () => Promise<EmergencyMessage>;
 }

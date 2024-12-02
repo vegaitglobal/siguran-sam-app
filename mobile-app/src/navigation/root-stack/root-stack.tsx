@@ -8,12 +8,14 @@ import TermsScreen from '@/domain/other/screens/terms-screen';
 import SplashScreen from '@/domain/splash/screens/splash-screen';
 import { AppScreen } from '@/shared/constants';
 import { useAppInit } from '@/shared/hooks';
-import { resetOnboarding, useOnboardingStore } from '@/shared/store';
+import { useOnboardingStore } from '@/shared/store';
 import { RootStackParamList } from '@/shared/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomTabs from '../bottom-tabs';
 import { styles } from './root-stack.style';
 import { useEffect } from 'react';
+import contentService from 'src/services/content/content.service';
+import { setPersistedMessage } from '@/shared/store/use-message-store';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -21,9 +23,13 @@ const RootStack = () => {
   const initialized = useAppInit();
   const isOnboardingDone = useOnboardingStore((state) => state.isOnboardingDone);
 
-  // To be used only for testing onboarding flow
+  // Fetching emergency message template from Contentfull at the app's root stack
+  // since it will be needed in multiple parts of the app
   useEffect(() => {
-    resetOnboarding();
+    contentService.getEmergencyMessage().then((result) => {
+      // The idea is to persist the last value from Contentful to enable the app to work in offline mode
+      setPersistedMessage(result.content);
+    });
   }, []);
 
   return (
