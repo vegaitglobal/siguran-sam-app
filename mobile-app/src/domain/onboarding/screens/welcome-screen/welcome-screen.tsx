@@ -14,7 +14,7 @@ import { LoadingImage } from '@/shared/components/loading-image/loading-image';
 export interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.WELCOME> {}
 
 const WelcomeScreen = () => {
-  const { logoWithoutText, logoOnlyText } = useContentStore();
+  const { logoWithoutText, logoTextOnly } = useContentStore();
 
   useEffect(() => {
     const timeout = setTimeout(setIsOnboardingDone, 3500);
@@ -43,10 +43,10 @@ const WelcomeScreen = () => {
           </Animated.View>
           <View style={styles.separator} />
           <Animated.View entering={FadeIn.delay(1500).duration(1000)}>
-            {logoOnlyText ? (
+            {logoTextOnly ? (
               <LoadingImage
-                imageUrl={logoOnlyText.url}
-                isSVG={logoOnlyText.isSVG}
+                imageUrl={logoTextOnly.url}
+                isSVG={logoTextOnly.isSVG}
                 width='120'
                 height='60'
                 viewBox='0 0 46 22'

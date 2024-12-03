@@ -38,24 +38,23 @@ export interface EmergencyMessage {
   content: string;
 }
 
-export enum LogoType {
-  WITH_TEXT = 'Sa tekstom',
-  WITHOUT_TEXT = 'Bez teksta',
-  ONLY_TEXT = 'Samo tekst',
-}
-
 export interface Logo {
-  id: string;
-  type: LogoType;
   url: string;
   isSVG: boolean;
+}
+
+export interface LogoVariants {
+  id: string;
+  logoWithText: Logo;
+  logoWithoutText: Logo;
+  logoTextOnly: Logo;
 }
 
 export interface ContentService {
   getCategories: () => Promise<Category[]>;
   getTermsAndConditions: () => Promise<TermsAndConditions>;
   getBlogPosts: (categoryID: string) => Promise<BlogPost[]>;
-  getLogos: () => Promise<Logo[]>;
+  getLogos: () => Promise<LogoVariants>;
   getContactDetails: () => Promise<ContactDetails>;
   getEmergencyMessage: () => Promise<EmergencyMessage>;
 }

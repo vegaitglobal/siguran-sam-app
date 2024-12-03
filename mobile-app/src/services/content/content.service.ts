@@ -1,7 +1,8 @@
-import * as Contentful from 'contentful';
-import { ContentService, LogoType } from './content.interfaces';
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import { Document } from '@contentful/rich-text-types';
+import * as Contentful from 'contentful';
+import { ContentService, LogoVariants } from './content.interfaces';
+import { Logo } from 'src/services/content/content.interfaces';
 
 type CategoryEntrySkeleton = {
   contentTypeId: 'category';
@@ -56,12 +57,22 @@ type LogoEntrySkeleton = {
   contentTypeId: 'logo';
   fields: {
     title: Contentful.EntryFieldTypes.Text;
-    data: Contentful.EntryFieldTypes.AssetLink;
-    type: Contentful.EntryFieldTypes.Text<LogoType>;
+    logoWithText: Contentful.EntryFieldTypes.AssetLink;
+    logoWithoutText: Contentful.EntryFieldTypes.AssetLink;
+    logoTextOnly: Contentful.EntryFieldTypes.AssetLink;
   };
 };
 
 const SVGType = 'image/svg+xml';
+
+const parseContentfulLogo = (logo: Contentful.Asset): Logo => {
+  const { url, contentType } = logo.fields.file as Contentful.AssetFile;
+
+  return {
+    url: url.startsWith('http') ? url : `http:${url}`,
+    isSVG: contentType === SVGType,
+  };
+};
 
 class ContentfulContentService implements ContentService {
   private client: Contentful.ContentfulClientApi<undefined>;
@@ -158,24 +169,21 @@ class ContentfulContentService implements ContentService {
     };
   }
 
-  async getLogos() {
+  async getLogos(): Promise<LogoVariants> {
     const data = await this.client.getEntries<LogoEntrySkeleton>({
       content_type: 'logo',
       include: 1,
     });
 
-    return data.items.map((item) => {
-      const logoData = item.fields.data as Contentful.Asset;
+    // Taking only the first one as it is not supposed to have more than one instance of logo
+    const item = data.items[0];
 
-      const { url, contentType } = logoData.fields.file as Contentful.AssetFile;
-
-      return {
-        id: item.sys.id,
-        type: item.fields.type,
-        url: url.startsWith('http') ? url : `http:${url}`,
-        isSVG: contentType === SVGType,
-      };
-    });
+    return {
+      id: item.sys.id,
+      logoWithText: parseContentfulLogo(item.fields.logoWithText as Contentful.Asset),
+      logoWithoutText: parseContentfulLogo(item.fields.logoWithoutText as Contentful.Asset),
+      logoTextOnly: parseContentfulLogo(item.fields.logoTextOnly as Contentful.Asset),
+    };
   }
 }
 

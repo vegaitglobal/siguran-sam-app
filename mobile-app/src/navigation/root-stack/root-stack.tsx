@@ -4,21 +4,20 @@ import OnboardingScreen from '@/domain/onboarding/screens/onboarding-screen';
 import OnboardingTermsScreen from '@/domain/onboarding/screens/onboarding-terms-screen';
 import WelcomeScreen from '@/domain/onboarding/screens/welcome-screen';
 import { MoreOptionsScreen } from '@/domain/other';
+import ContactDetailsScreen from '@/domain/other/screens/contact-details-screen';
 import TermsScreen from '@/domain/other/screens/terms-screen';
+import UserDetailsScreen from '@/domain/other/screens/user-details-screen';
 import SplashScreen from '@/domain/splash/screens/splash-screen';
 import { AppScreen } from '@/shared/constants';
 import { useAppInit } from '@/shared/hooks';
-import { resetOnboarding, setContentStore, useOnboardingStore } from '@/shared/store';
+import { setContentStore, useOnboardingStore } from '@/shared/store';
+import { setPersistedMessage } from '@/shared/store/use-message-store';
 import { RootStackParamList } from '@/shared/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import BottomTabs from '../bottom-tabs';
-import { styles } from './root-stack.style';
 import { useEffect } from 'react';
 import contentService from 'src/services/content/content.service';
-import { setPersistedMessage } from '@/shared/store/use-message-store';
-import ContactDetailsScreen from '@/domain/other/screens/contact-details-screen';
-import { Logo, LogoType } from 'src/services/content/content.interfaces';
-import UserDetailsScreen from '@/domain/other/screens/user-details-screen';
+import BottomTabs from '../bottom-tabs';
+import { styles } from './root-stack.style';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -26,19 +25,18 @@ const RootStack = () => {
   const initialized = useAppInit();
   const isOnboardingDone = useOnboardingStore((state) => state.isOnboardingDone);
 
-  // Fetching emergency message template from Contentfull at the app's root stack
-  // since it will be needed in multiple parts of the app
+  // Fetching relevant Contentful data in root stack that will be needed in multiple parts of the app.
+  // The idea is to persist the last value from Contentful to enable the app to work in offline mode
   useEffect(() => {
     contentService.getEmergencyMessage().then((result) => {
-      // The idea is to persist the last value from Contentful to enable the app to work in offline mode
       setPersistedMessage(result.content);
     });
 
-    contentService.getLogos().then((result: Logo[]) => {
+    contentService.getLogos().then(({ logoTextOnly, logoWithText, logoWithoutText }) => {
       setContentStore({
-        logoWithText: result.find((elem) => elem.type === LogoType.WITH_TEXT),
-        logoWithoutText: result.find((elem) => elem.type === LogoType.WITHOUT_TEXT),
-        logoOnlyText: result.find((elem) => elem.type === LogoType.ONLY_TEXT),
+        logoWithText,
+        logoWithoutText,
+        logoTextOnly,
       });
     });
   }, []);
