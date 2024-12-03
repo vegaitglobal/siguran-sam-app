@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import RenderHtml, { HTMLSource } from 'react-native-render-html';
-import { TermsAndConditions } from 'src/services/content/content.interfaces';
 import contentService from 'src/services/content/content.service';
 
 interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.ONBOARDING_TERMS> {}
@@ -26,8 +25,8 @@ const OnboardingTermsScreen = ({ navigation }: Props) => {
 
   // TODO think of moving this to root stack
   useEffect(() => {
-    contentService.getTermsAndConditions().then((result: TermsAndConditions) => {
-      setTerms({ html: result.content });
+    contentService.getTermsAndConditions().then((result) => {
+      result && setTerms({ html: result.content });
     });
   }, []);
 

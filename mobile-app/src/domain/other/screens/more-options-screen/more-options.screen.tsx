@@ -1,27 +1,18 @@
 import { ScreenTemplate } from '@/shared/components';
 import { Header } from '@/shared/components/header';
 import { AppScreen } from '@/shared/constants';
-import { setPersistedContactDetails, useContactDetailsStore } from '@/shared/store';
+import { useContactDetailsStore } from '@/shared/store';
 import { RootStackParamList } from '@/shared/types';
 import { openExternalLink } from '@/shared/utils/linking-utils';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useEffect } from 'react';
 import { View } from 'react-native';
-import contentService from 'src/services/content/content.service';
-import { styles } from './more-options.screen.style';
 import ListLink from '../../components';
+import { styles } from './more-options.screen.style';
 
 interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.MORE_OPTIONS> {}
 
 export const MoreOptionsScreen = ({ navigation }: Props) => {
   const { website } = useContactDetailsStore();
-
-  // TODO think about moving this to root stack
-  useEffect(() => {
-    contentService.getContactDetails().then((result) => {
-      setPersistedContactDetails(result);
-    });
-  }, []);
 
   return (
     <ScreenTemplate>

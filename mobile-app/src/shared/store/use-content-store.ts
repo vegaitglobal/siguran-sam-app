@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LogoVariants } from 'src/services/content/content.interfaces';
+import { StaticContent } from 'src/services/content/content.interfaces';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-type ContentStoreState = Partial<Omit<LogoVariants, 'id'>>;
+type ContentStoreState = Partial<StaticContent>;
 
 export const useContentStore = create<ContentStoreState>()(
   persist(() => ({}), {

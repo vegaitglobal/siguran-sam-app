@@ -15,14 +15,10 @@ export interface BlogPost {
 }
 
 export interface TermsAndConditions {
-  id: string;
-  title: string;
   content: string;
 }
 
 export interface ContactDetails {
-  id: string;
-  title: string;
   phoneNumber: string;
   website: string;
   email: string;
@@ -33,8 +29,6 @@ export interface ContactDetails {
 }
 
 export interface EmergencyMessage {
-  id: string;
-  title: string;
   content: string;
 }
 
@@ -43,8 +37,7 @@ export interface Logo {
   isSVG: boolean;
 }
 
-export interface LogoVariants {
-  id: string;
+export interface StaticContent {
   logoWithText: Logo;
   logoWithoutText: Logo;
   logoTextOnly: Logo;
@@ -52,9 +45,9 @@ export interface LogoVariants {
 
 export interface ContentService {
   getCategories: () => Promise<Category[]>;
-  getTermsAndConditions: () => Promise<TermsAndConditions>;
+  getTermsAndConditions: () => Promise<TermsAndConditions | undefined>;
   getBlogPosts: (categoryID: string) => Promise<BlogPost[]>;
-  getLogos: () => Promise<LogoVariants>;
-  getContactDetails: () => Promise<ContactDetails>;
-  getEmergencyMessage: () => Promise<EmergencyMessage>;
+  getLogos: () => Promise<StaticContent | undefined>;
+  getContactDetails: () => Promise<ContactDetails | undefined>;
+  getEmergencyMessage: () => Promise<EmergencyMessage | undefined>;
 }

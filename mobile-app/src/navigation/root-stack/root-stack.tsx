@@ -10,7 +10,7 @@ import UserDetailsScreen from '@/domain/other/screens/user-details-screen';
 import SplashScreen from '@/domain/splash/screens/splash-screen';
 import { AppScreen } from '@/shared/constants';
 import { useAppInit } from '@/shared/hooks';
-import { setContentStore, useOnboardingStore } from '@/shared/store';
+import { setContentStore, setPersistedContactDetails, useOnboardingStore } from '@/shared/store';
 import { setPersistedMessage } from '@/shared/store/use-message-store';
 import { RootStackParamList } from '@/shared/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -29,15 +29,15 @@ const RootStack = () => {
   // The idea is to persist the last value from Contentful to enable the app to work in offline mode
   useEffect(() => {
     contentService.getEmergencyMessage().then((result) => {
-      setPersistedMessage(result.content);
+      result && setPersistedMessage(result.content);
     });
 
-    contentService.getLogos().then(({ logoTextOnly, logoWithText, logoWithoutText }) => {
-      setContentStore({
-        logoWithText,
-        logoWithoutText,
-        logoTextOnly,
-      });
+    contentService.getLogos().then((result) => {
+      result && setContentStore(result);
+    });
+
+    contentService.getContactDetails().then((result) => {
+      result && setPersistedContactDetails(result);
     });
   }, []);
 

@@ -1,7 +1,13 @@
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import { Document } from '@contentful/rich-text-types';
 import * as Contentful from 'contentful';
-import { ContentService, LogoVariants } from './content.interfaces';
+import {
+  ContactDetails,
+  ContentService,
+  EmergencyMessage,
+  StaticContent,
+  TermsAndConditions,
+} from './content.interfaces';
 import { Logo } from 'src/services/content/content.interfaces';
 
 type CategoryEntrySkeleton = {
@@ -123,63 +129,62 @@ class ContentfulContentService implements ContentService {
     });
   }
 
-  async getTermsAndConditions() {
+  async getTermsAndConditions(): Promise<TermsAndConditions | undefined> {
     const data = await this.client.getEntries<TermsEntrySkeleton>({
       content_type: 'termsAndConditions',
       include: 1,
     });
 
+    if (!data.items.length) return;
+
     // Taking only the first one as it is not supposed to have more than one instance of terms and conditions
     const item = data.items[0];
 
     return {
-      id: item.sys.id,
-      title: item.fields.title,
       content: documentToHtmlString(item.fields.content as Document),
     };
   }
 
-  async getContactDetails() {
+  async getContactDetails(): Promise<ContactDetails | undefined> {
     const data = await this.client.getEntries<ContactEntrySkeleton>({
       content_type: 'contact',
       include: 1,
     });
 
+    if (!data.items.length) return;
+
     // Taking only the first one as it is not supposed to have more than one instance of contact details
     const item = data.items[0];
 
-    return {
-      id: item.sys.id,
-      ...item.fields,
-    };
+    return item.fields;
   }
 
-  async getEmergencyMessage() {
+  async getEmergencyMessage(): Promise<EmergencyMessage | undefined> {
     const data = await this.client.getEntries<EmergencyMessageEntrySkeleton>({
       content_type: 'emergencyMessage',
       include: 1,
     });
 
+    if (!data.items.length) return;
+
     // Taking only the first one as it is not supposed to have more than one instance of emergency message
     const item = data.items[0];
 
-    return {
-      id: item.sys.id,
-      ...item.fields,
-    };
+    return item.fields;
   }
 
-  async getLogos(): Promise<LogoVariants> {
+  async getLogos(): Promise<StaticContent | undefined> {
     const data = await this.client.getEntries<LogoEntrySkeleton>({
       content_type: 'logo',
       include: 1,
     });
 
+    if (!data.items.length) return;
+
     // Taking only the first one as it is not supposed to have more than one instance of logo
     const item = data.items[0];
 
     return {
-      id: item.sys.id,
       logoWithText: parseContentfulLogo(item.fields.logoWithText as Contentful.Asset),
       logoWithoutText: parseContentfulLogo(item.fields.logoWithoutText as Contentful.Asset),
       logoTextOnly: parseContentfulLogo(item.fields.logoTextOnly as Contentful.Asset),

@@ -3,7 +3,7 @@ import { ContactDetails } from 'src/services/content/content.interfaces';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-interface ContactDetailsStoreState extends Omit<ContactDetails, 'id' | 'title'> {}
+type ContactDetailsStoreState = ContactDetails;
 
 export const useContactDetailsStore = create<ContactDetailsStoreState>()(
   persist(

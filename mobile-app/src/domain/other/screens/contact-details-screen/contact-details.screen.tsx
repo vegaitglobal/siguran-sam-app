@@ -8,6 +8,7 @@ import { useContactDetailsStore, useContentStore } from '@/shared/store';
 import { openEmailLink, openExternalLink, openPhoneNumberLink } from '@/shared/utils/linking-utils';
 import { LoadingImage } from '@/shared/components/loading-image/loading-image';
 import * as Application from 'expo-application';
+import DefaultLogo from '@/shared/assets/images/logo-with-text.svg';
 
 const ContactDetailsScreen = () => {
   const { logoWithText } = useContentStore();
@@ -63,12 +64,14 @@ const ContactDetailsScreen = () => {
           </View>
         </ScrollView>
         <View style={styles.bottomContent}>
-          {logoWithText && (
+          {logoWithText ? (
             <LoadingImage
               imageUrl={logoWithText.url}
               isSVG={logoWithText.isSVG}
               style={styles.logo}
             />
+          ) : (
+            <DefaultLogo style={styles.logo} />
           )}
           <Label type='pItalicSmallest' color={Colors.GRAY.DISABLED}>
             Verzija aplikacije {Application.nativeApplicationVersion}
@@ -92,6 +95,7 @@ const styles = StyleSheet.create({
   bottomContent: {
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 10,
   },
   logo: {
     marginBottom: 10,
