@@ -26,10 +26,10 @@ export interface ContactDetails {
   phoneNumber: string;
   website: string;
   email: string;
-  instagram: string;
-  facebook: string;
-  twitter: string;
-  linkedin: string;
+  instagram?: string;
+  facebook?: string;
+  twitter?: string;
+  linkedin?: string;
 }
 
 export interface EmergencyMessage {

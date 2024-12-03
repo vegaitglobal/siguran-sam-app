@@ -15,25 +15,37 @@ import FollowUs from '@/shared/assets/icons/follow-us.svg';
 import Tutorial from '@/shared/assets/icons/tutorial.svg';
 import AboutUs from '@/shared/assets/icons/about-us.svg';
 import Terms from '@/shared/assets/icons/terms.svg';
+import Phone from '@/shared/assets/icons/phone.svg';
+import Website from '@/shared/assets/icons/website.svg';
+import Instagram from '@/shared/assets/icons/instagram-icon.svg';
+import Facebook from '@/shared/assets/icons/facebook-icon.svg';
+import Twitter from '@/shared/assets/icons/twitter-icon.svg';
+import Linkedin from '@/shared/assets/icons/linkedin-icon.svg';
 
 export const iconComponents = {
-	home: Home,
-	'star-outline': StarOutline,
-	'education-hat': EducationHat,
-	hamburger: Hamburger,
-	'arrow-back': ArrowBack,
-	'arrow-down': ArrowDown,
-	'trash-can': TrashCan,
-	'add-user': AddUser,
-	'arrow-big-left': ArrowBigLeft,
-	'arrow-big-right': ArrowBigRight,
-	tutorial: Tutorial,
-	'arrow-small-right': ArrowSmallRight,
-	'contact-us': ContactUs,
-	'edit-data': EditData,
-	'follow-us': FollowUs,
-	'about-us': AboutUs,
-	terms: Terms,
+  home: Home,
+  'star-outline': StarOutline,
+  'education-hat': EducationHat,
+  hamburger: Hamburger,
+  'arrow-back': ArrowBack,
+  'arrow-down': ArrowDown,
+  'trash-can': TrashCan,
+  'add-user': AddUser,
+  'arrow-big-left': ArrowBigLeft,
+  'arrow-big-right': ArrowBigRight,
+  tutorial: Tutorial,
+  'arrow-small-right': ArrowSmallRight,
+  'contact-us': ContactUs,
+  'edit-data': EditData,
+  'follow-us': FollowUs,
+  'about-us': AboutUs,
+  terms: Terms,
+  phone: Phone,
+  website: Website,
+  instagram: Instagram,
+  facebook: Facebook,
+  twitter: Twitter,
+  linkedin: Linkedin,
 };
 
 export type IconName = keyof typeof iconComponents;
