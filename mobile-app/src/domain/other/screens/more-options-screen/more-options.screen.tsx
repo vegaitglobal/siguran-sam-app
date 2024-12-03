@@ -32,7 +32,11 @@ export const MoreOptionsScreen = ({ navigation }: Props) => {
           title='Uslovi korišćenja'
           onPress={() => navigation.navigate(AppScreen.TERMS)}
         />
-        <ListLink icon='edit-data' title='Izmeni podatke' />
+        <ListLink
+          icon='edit-data'
+          title='Izmeni podatke'
+          onPress={() => navigation.navigate(AppScreen.USER_DETAILS)}
+        />
         <ListLink icon='about-us' title='O nama' onPress={() => openExternalLink(website)} />
         <ListLink
           icon='contact-us'

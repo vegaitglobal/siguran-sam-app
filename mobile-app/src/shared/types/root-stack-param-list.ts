@@ -12,4 +12,5 @@ export type RootStackParamList = {
   [AppScreen.BLOGPOST]: { blogPost: BlogPost };
   [AppScreen.MORE_OPTIONS]: undefined;
   [AppScreen.CONTACT_DETAILS]: undefined;
+  [AppScreen.USER_DETAILS]: undefined;
 };

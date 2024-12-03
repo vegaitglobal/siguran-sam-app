@@ -12,4 +12,5 @@ export enum AppScreen {
   BLOGPOST = 'BlogPost',
   MORE_OPTIONS = 'More options',
   CONTACT_DETAILS = 'Contact details',
+  USER_DETAILS = 'User details',
 }

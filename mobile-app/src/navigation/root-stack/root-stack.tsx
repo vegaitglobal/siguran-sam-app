@@ -8,7 +8,7 @@ import TermsScreen from '@/domain/other/screens/terms-screen';
 import SplashScreen from '@/domain/splash/screens/splash-screen';
 import { AppScreen } from '@/shared/constants';
 import { useAppInit } from '@/shared/hooks';
-import { setContentStore, useOnboardingStore } from '@/shared/store';
+import { resetOnboarding, setContentStore, useOnboardingStore } from '@/shared/store';
 import { RootStackParamList } from '@/shared/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomTabs from '../bottom-tabs';
@@ -18,6 +18,7 @@ import contentService from 'src/services/content/content.service';
 import { setPersistedMessage } from '@/shared/store/use-message-store';
 import ContactDetailsScreen from '@/domain/other/screens/contact-details-screen';
 import { Logo, LogoType } from 'src/services/content/content.interfaces';
+import UserDetailsScreen from '@/domain/other/screens/user-details-screen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -61,6 +62,7 @@ const RootStack = () => {
           <Stack.Screen name={AppScreen.BLOGPOST} component={BlogPostScreen} />
           <Stack.Screen name={AppScreen.TERMS} component={TermsScreen} />
           <Stack.Screen name={AppScreen.CONTACT_DETAILS} component={ContactDetailsScreen} />
+          <Stack.Screen name={AppScreen.USER_DETAILS} component={UserDetailsScreen} />
         </Stack.Group>
       ) : (
         <Stack.Group>
