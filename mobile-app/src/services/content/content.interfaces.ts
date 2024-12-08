@@ -41,6 +41,7 @@ export interface StaticContent {
   logoWithText: Logo;
   logoWithoutText: Logo;
   logoTextOnly: Logo;
+  logoAnimated: Logo;
 }
 
 export interface ContentService {

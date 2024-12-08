@@ -66,6 +66,7 @@ type LogoEntrySkeleton = {
     logoWithText: Contentful.EntryFieldTypes.AssetLink;
     logoWithoutText: Contentful.EntryFieldTypes.AssetLink;
     logoTextOnly: Contentful.EntryFieldTypes.AssetLink;
+    logoAnimated: Contentful.EntryFieldTypes.AssetLink;
   };
 };
 
@@ -188,6 +189,7 @@ class ContentfulContentService implements ContentService {
       logoWithText: parseContentfulLogo(item.fields.logoWithText as Contentful.Asset),
       logoWithoutText: parseContentfulLogo(item.fields.logoWithoutText as Contentful.Asset),
       logoTextOnly: parseContentfulLogo(item.fields.logoTextOnly as Contentful.Asset),
+      logoAnimated: parseContentfulLogo(item.fields.logoAnimated as Contentful.Asset),
     };
   }
 }
