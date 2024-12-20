@@ -37,18 +37,22 @@ export interface Logo {
   isSVG: boolean;
 }
 
+export interface WelcomeAnimation {
+  url: string;
+  duration: number;
+}
+
 export interface StaticContent {
-  logoWithText: Logo;
-  logoWithoutText: Logo;
-  logoTextOnly: Logo;
-  logoAnimated: Logo;
+  logo: Logo;
+  welcomeAnimation: WelcomeAnimation;
 }
 
 export interface ContentService {
   getCategories: () => Promise<Category[]>;
   getTermsAndConditions: () => Promise<TermsAndConditions | undefined>;
   getBlogPosts: (categoryID: string) => Promise<BlogPost[]>;
-  getLogos: () => Promise<StaticContent | undefined>;
+  getLogos: () => Promise<Logo | undefined>;
   getContactDetails: () => Promise<ContactDetails | undefined>;
   getEmergencyMessage: () => Promise<EmergencyMessage | undefined>;
+  getWelcomeAnimation: () => Promise<WelcomeAnimation | undefined>;
 }

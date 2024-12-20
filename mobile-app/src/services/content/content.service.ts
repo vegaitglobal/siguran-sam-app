@@ -1,14 +1,14 @@
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import { Document } from '@contentful/rich-text-types';
 import * as Contentful from 'contentful';
+import { Logo } from 'src/services/content/content.interfaces';
 import {
   ContactDetails,
   ContentService,
   EmergencyMessage,
-  StaticContent,
   TermsAndConditions,
+  WelcomeAnimation
 } from './content.interfaces';
-import { Logo } from 'src/services/content/content.interfaces';
 
 type CategoryEntrySkeleton = {
   contentTypeId: 'category';
@@ -63,20 +63,28 @@ type LogoEntrySkeleton = {
   contentTypeId: 'logo';
   fields: {
     title: Contentful.EntryFieldTypes.Text;
-    logoWithText: Contentful.EntryFieldTypes.AssetLink;
-    logoWithoutText: Contentful.EntryFieldTypes.AssetLink;
-    logoTextOnly: Contentful.EntryFieldTypes.AssetLink;
-    logoAnimated: Contentful.EntryFieldTypes.AssetLink;
+    file: Contentful.EntryFieldTypes.AssetLink;
+  };
+};
+
+type WelcomeAnimationEntrySkeleton = {
+  contentTypeId: 'welcomeAnimation';
+  fields: {
+    title: Contentful.EntryFieldTypes.Text;
+    file: Contentful.EntryFieldTypes.AssetLink;
+    duration: Contentful.EntryFieldTypes.Number;
   };
 };
 
 const SVGType = 'image/svg+xml';
 
+const prependUrl = (url: string) => url.startsWith('http') ? url : `http:${url}`;
+
 const parseContentfulLogo = (logo: Contentful.Asset): Logo => {
   const { url, contentType } = logo.fields.file as Contentful.AssetFile;
 
   return {
-    url: url.startsWith('http') ? url : `http:${url}`,
+    url: prependUrl(url),
     isSVG: contentType === SVGType,
   };
 };
@@ -174,7 +182,7 @@ class ContentfulContentService implements ContentService {
     return item.fields;
   }
 
-  async getLogos(): Promise<StaticContent | undefined> {
+  async getLogos(): Promise<Logo | undefined> {
     const data = await this.client.getEntries<LogoEntrySkeleton>({
       content_type: 'logo',
       include: 1,
@@ -185,11 +193,23 @@ class ContentfulContentService implements ContentService {
     // Taking only the first one as it is not supposed to have more than one instance of logo
     const item = data.items[0];
 
+    return parseContentfulLogo(item.fields.file as Contentful.Asset);
+  }
+
+  async getWelcomeAnimation(): Promise<WelcomeAnimation | undefined> {
+    const data = await this.client.getEntries<WelcomeAnimationEntrySkeleton>({
+      content_type: 'welcomeAnimation',
+      include: 1,
+    });
+
+    if (!data.items.length) return;
+
+    // Taking only the first one as it is not supposed to have more than one instance of welcome animation
+    const {duration, file} = data.items[0].fields;
+
     return {
-      logoWithText: parseContentfulLogo(item.fields.logoWithText as Contentful.Asset),
-      logoWithoutText: parseContentfulLogo(item.fields.logoWithoutText as Contentful.Asset),
-      logoTextOnly: parseContentfulLogo(item.fields.logoTextOnly as Contentful.Asset),
-      logoAnimated: parseContentfulLogo(item.fields.logoAnimated as Contentful.Asset),
+      url: prependUrl((file as Contentful.Asset).fields.file?.url as string),
+      duration
     };
   }
 }

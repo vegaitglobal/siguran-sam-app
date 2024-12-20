@@ -10,7 +10,7 @@ import UserDetailsScreen from '@/domain/other/screens/user-details-screen';
 import SplashScreen from '@/domain/splash/screens/splash-screen';
 import { AppScreen } from '@/shared/constants';
 import { useAppInit } from '@/shared/hooks';
-import { setContentStore, setPersistedContactDetails, useOnboardingStore } from '@/shared/store';
+import { resetOnboarding, setContentStore, setLogo, setPersistedContactDetails, setWelcomeAnimation, useOnboardingStore } from '@/shared/store';
 import { setPersistedMessage } from '@/shared/store/use-message-store';
 import { RootStackParamList } from '@/shared/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -33,7 +33,11 @@ const RootStack = () => {
     });
 
     contentService.getLogos().then((result) => {
-      result && setContentStore(result);
+      result && setLogo(result);
+    });
+
+    contentService.getWelcomeAnimation().then((result) => {
+      result && setWelcomeAnimation(result);
     });
 
     contentService.getContactDetails().then((result) => {

@@ -13,22 +13,20 @@ import { setIsOnboardingDone, useContentStore } from '@/shared/store';
 export interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.WELCOME> {}
 
 const WelcomeScreen = () => {
-  const { logoAnimated } = useContentStore();
+  const { welcomeAnimation } = useContentStore();
 
   useEffect(() => {
-    const timeout = setTimeout(setIsOnboardingDone, 2500);
+    const timeout = setTimeout(setIsOnboardingDone, welcomeAnimation?.duration || 2500);
     return () => {
       clearTimeout(timeout);
     };
   }, []);
 
-  console.log(logoAnimated);
-
   return (
     <ScreenTemplate>
       <View style={styles.screenContainer}>
-        {logoAnimated ? (
-          <Image source={{ uri: logoAnimated.url }} style={styles.logoImage} />
+        {welcomeAnimation ? (
+          <Image source={{ uri: welcomeAnimation.url }} style={styles.logoImage} />
         ) : (
           <DefaultAnimatedLogo />
         )}

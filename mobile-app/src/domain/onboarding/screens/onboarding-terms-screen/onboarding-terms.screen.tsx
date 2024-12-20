@@ -17,7 +17,7 @@ interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.ONB
 const OnboardingTermsScreen = ({ navigation }: Props) => {
   const [termsContent, setTerms] = useState<HTMLSource>();
 
-  const { logoWithText: logo } = useContentStore();
+  const { logo } = useContentStore();
 
   const { width } = useWindowDimensions();
 
