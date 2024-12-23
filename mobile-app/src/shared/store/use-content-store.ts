@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StaticContent } from 'src/services/content/content.interfaces';
+import { Logo, StaticContent, WelcomeAnimation } from 'src/services/content/content.interfaces';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -13,3 +13,7 @@ export const useContentStore = create<ContentStoreState>()(
 );
 
 export const setContentStore = (data: ContentStoreState) => useContentStore.setState(data);
+
+export const setLogo = (logo: Logo) => useContentStore.setState(data => ({...data, logo}));
+
+export const setWelcomeAnimation = (welcomeAnimation: WelcomeAnimation) => useContentStore.setState(data => ({...data, welcomeAnimation}));

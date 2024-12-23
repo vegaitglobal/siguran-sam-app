@@ -11,7 +11,7 @@ import * as Application from 'expo-application';
 import DefaultLogo from '@/shared/assets/images/logo-with-text.svg';
 
 const ContactDetailsScreen = () => {
-  const { logoWithText } = useContentStore();
+  const { logo } = useContentStore();
 
   const { website, phoneNumber, email, facebook, instagram, twitter, linkedin } =
     useContactDetailsStore();
@@ -64,10 +64,10 @@ const ContactDetailsScreen = () => {
           </View>
         </ScrollView>
         <View style={styles.bottomContent}>
-          {logoWithText ? (
+          {logo ? (
             <LoadingImage
-              imageUrl={logoWithText.url}
-              isSVG={logoWithText.isSVG}
+              imageUrl={logo.url}
+              isSVG={logo.isSVG}
               style={styles.logo}
             />
           ) : (
