@@ -8,7 +8,6 @@ interface Props extends TouchableOpacityProps {
 
 const ListLink = ({ title, icon, ...props }: Props) => {
   return (
-    // TODO Convert this to TouchableOpacity to give user some feedback on touching
     <TouchableOpacity style={styles.link} {...props}>
       <View style={styles.linkTitleGroup}>
         <Icon size={30} name={icon} />
