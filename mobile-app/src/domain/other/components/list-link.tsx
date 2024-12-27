@@ -1,9 +1,7 @@
 import Icon, { IconName } from '@/shared/components/icon';
-import { Colors } from '@/shared/styles';
-import { Pressable, PressableProps, Text, View } from 'react-native';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 
-interface Props extends PressableProps {
+interface Props extends TouchableOpacityProps {
   title: string;
   icon: IconName;
 }
@@ -11,13 +9,13 @@ interface Props extends PressableProps {
 const ListLink = ({ title, icon, ...props }: Props) => {
   return (
     // TODO Convert this to TouchableOpacity to give user some feedback on touching
-    <Pressable style={styles.link} {...props}>
+    <TouchableOpacity style={styles.link} {...props}>
       <View style={styles.linkTitleGroup}>
         <Icon size={30} name={icon} />
         <Text style={styles.linkTitle}>{title}</Text>
       </View>
       <Icon name='arrow-small-right' size={10} />
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
@@ -26,7 +24,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 15,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   linkTitleGroup: {
     flexDirection: 'row',
