@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { DeviceLocation } from '../types';
 
 const NAME_PLACEHOLDER = '<name>';
 const LOCATION_PLACEHOLDER = '<location>';
@@ -28,5 +29,8 @@ export const useMessageStore = create<MessageStoreState>()(
 
 export const setPersistedMessage = (message: string) => useMessageStore.setState({ message });
 
-export const getPersonalizedMessage = (message: string, fullName: string, location: string) =>
-  message.replaceAll(NAME_PLACEHOLDER, fullName).replaceAll(LOCATION_PLACEHOLDER, location);
+export const getPersonalizedMessage = (message: string, fullName: string, location: DeviceLocation) => {
+  const locationUrl = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
+
+  return message.replaceAll(NAME_PLACEHOLDER, fullName).replaceAll(LOCATION_PLACEHOLDER, locationUrl);
+}

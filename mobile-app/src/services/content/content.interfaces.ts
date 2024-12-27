@@ -47,6 +47,11 @@ export interface StaticContent {
   welcomeAnimation: WelcomeAnimation;
 }
 
+export interface TwilioConfiguration {
+  serverlessFunctionURL: string;
+  enabled: boolean;
+}
+
 export interface ContentService {
   getCategories: () => Promise<Category[]>;
   getTermsAndConditions: () => Promise<TermsAndConditions | undefined>;
@@ -55,4 +60,5 @@ export interface ContentService {
   getContactDetails: () => Promise<ContactDetails | undefined>;
   getEmergencyMessage: () => Promise<EmergencyMessage | undefined>;
   getWelcomeAnimation: () => Promise<WelcomeAnimation | undefined>;
+  getTwilioConfiguration: () => Promise<TwilioConfiguration | undefined>;
 }

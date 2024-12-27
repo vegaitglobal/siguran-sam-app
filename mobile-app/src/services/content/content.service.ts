@@ -1,7 +1,7 @@
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import { Document } from '@contentful/rich-text-types';
 import * as Contentful from 'contentful';
-import { Logo } from 'src/services/content/content.interfaces';
+import { Logo, TwilioConfiguration } from 'src/services/content/content.interfaces';
 import {
   ContactDetails,
   ContentService,
@@ -73,6 +73,15 @@ type WelcomeAnimationEntrySkeleton = {
     title: Contentful.EntryFieldTypes.Text;
     file: Contentful.EntryFieldTypes.AssetLink;
     duration: Contentful.EntryFieldTypes.Number;
+  };
+};
+
+type TwilioConfigurationEntrySkeleton = {
+  contentTypeId: 'twilioConfiguration';
+  fields: {
+    title: Contentful.EntryFieldTypes.Text;
+    serverlessFunctionURL: Contentful.EntryFieldTypes.Text;
+    enabled: Contentful.EntryFieldTypes.Boolean;
   };
 };
 
@@ -211,6 +220,20 @@ class ContentfulContentService implements ContentService {
       url: prependUrl((file as Contentful.Asset).fields.file?.url as string),
       duration
     };
+  }
+
+  async getTwilioConfiguration(): Promise<TwilioConfiguration | undefined> {
+    const data = await this.client.getEntries<TwilioConfigurationEntrySkeleton>({
+      content_type: 'twilioConfiguration',
+      include: 1,
+    });
+
+    if (!data.items.length) return;
+
+    // Taking only the first one as it is not supposed to have more than one instance of Twilio configuration
+    const item = data.items[0];
+
+    return item.fields;
   }
 }
 

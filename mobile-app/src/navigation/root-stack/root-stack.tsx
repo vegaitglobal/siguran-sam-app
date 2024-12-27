@@ -10,20 +10,25 @@ import UserDetailsScreen from '@/domain/other/screens/user-details-screen';
 import SplashScreen from '@/domain/splash/screens/splash-screen';
 import { AppScreen } from '@/shared/constants';
 import { useAppInit } from '@/shared/hooks';
-import { resetOnboarding, setContentStore, setLogo, setPersistedContactDetails, setWelcomeAnimation, useOnboardingStore } from '@/shared/store';
+import { setLogo, setPersistedContactDetails, setWelcomeAnimation, useOnboardingStore } from '@/shared/store';
 import { setPersistedMessage } from '@/shared/store/use-message-store';
+import { setTwilioStore, useTwilioConfigurationStore } from '@/shared/store/use-twilio-configuration-store';
 import { RootStackParamList } from '@/shared/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
 import contentService from 'src/services/content/content.service';
 import BottomTabs from '../bottom-tabs';
 import { styles } from './root-stack.style';
+import * as SMS from 'expo-sms';
+import { Alert } from 'react-native';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const RootStack = () => {
   const initialized = useAppInit();
   const isOnboardingDone = useOnboardingStore((state) => state.isOnboardingDone);
+
+  const { enabled: twilioEnabled } = useTwilioConfigurationStore();
 
   // Fetching relevant Contentful data in root stack that will be needed in multiple parts of the app.
   // The idea is to persist the last value from Contentful to enable the app to work in offline mode
@@ -42,6 +47,19 @@ const RootStack = () => {
 
     contentService.getContactDetails().then((result) => {
       result && setPersistedContactDetails(result);
+    });
+
+    contentService.getTwilioConfiguration().then((result) => {
+      result && setTwilioStore(result);
+    });
+
+    SMS.isAvailableAsync().then((isAvailable) => {
+      if (!isAvailable && !twilioEnabled) {
+        Alert.alert("Slanje standardne SMS poruke nije omogućeno na ovom uređaju.", "Aplikacija trenutno podržava slanje sigurnosnih poruka isključivo putem SMS-a.");
+      }
+      else if (!isAvailable) {
+        Alert.alert("Slanje standardne SMS poruke nije omogućeno na ovom uređaju.", "Slanje sigurnosne poruke će biti moguće isključivo ukoliko uređaj u tom momentu bude imao internet konekciju.");
+      }
     });
   }, []);
 
