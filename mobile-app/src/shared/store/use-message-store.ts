@@ -29,8 +29,6 @@ export const useMessageStore = create<MessageStoreState>()(
 
 export const setPersistedMessage = (message: string) => useMessageStore.setState({ message });
 
-export const getPersonalizedMessage = (message: string, fullName: string, location: DeviceLocation) => {
-  const locationUrl = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
-
+export const getPersonalizedMessage = (message: string, fullName: string, locationUrl: string) => {
   return message.replaceAll(NAME_PLACEHOLDER, fullName).replaceAll(LOCATION_PLACEHOLDER, locationUrl);
 }

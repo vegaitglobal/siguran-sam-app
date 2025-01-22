@@ -7,7 +7,8 @@ export const LocationServicesNotEnabled = () => {
   return (
     <Fragment>
       <Label style={{ marginBottom: 16, textAlign: 'center' }}>
-        Molim Vas, ukljičite servise lokacije u podešavanjima.
+        Molimo Vas, uključite servise lokacije u podešavanjima uređaja.
+        Bez uključenih servisa, aplikacija neće moći deliti Vaše koordinate u slučaju opasnosti.
       </Label>
       <AppButton onPress={() => Linking.openSettings()}>PODEŠAVANJA</AppButton>
     </Fragment>

@@ -47,13 +47,12 @@ const LoadingLocationIndicator = () => (
 );
 
 const AlertScreen = () => {
-  const { locationServicesEnabled, loadingLocationServices } = useLocationServices();
-  const { permission, loadingPermission } = useLocationPermission();
+  const { locationServicesEnabled } = useLocationServices();
+  const { permission } = useLocationPermission();
+  
   const { location } = useLocation({
     canGetLocation: permission?.granted === true && locationServicesEnabled === true,
   });
-
-  if (loadingLocationServices || loadingPermission) return <LoadingComponent />;
 
   if (!locationServicesEnabled) return <LocationServicesDisabledComponent />;
 

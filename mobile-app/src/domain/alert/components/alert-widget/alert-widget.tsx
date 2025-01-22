@@ -68,7 +68,7 @@ const AlertWidget = ({ location }: Props) => {
     if (widgetState == WidgetState.IDLE) {
       setHint('Držite dugme 2 sekunde');
     }
-      
+
   }, [minutes, widgetState]);
 
   const onComplete = useCallback(() => {
@@ -82,7 +82,9 @@ const AlertWidget = ({ location }: Props) => {
       serverlessFunctionURL
     }
 
-    const message = getPersonalizedMessage(template, fullName, location);
+    const locationUrl = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
+
+    const message = getPersonalizedMessage(template, fullName, locationUrl);
 
     sendEmergencyMessage(message, recipients, twilioData).then(result => {
       if (result != 'cancelled') {

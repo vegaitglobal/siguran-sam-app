@@ -10,7 +10,7 @@ import UserDetailsScreen from '@/domain/other/screens/user-details-screen';
 import SplashScreen from '@/domain/splash/screens/splash-screen';
 import { AppScreen } from '@/shared/constants';
 import { useAppInit } from '@/shared/hooks';
-import { setLogo, setPersistedContactDetails, setWelcomeAnimation, useOnboardingStore } from '@/shared/store';
+import { resetOnboarding, setLogo, setPersistedContactDetails, setWelcomeAnimation, useOnboardingStore } from '@/shared/store';
 import { setPersistedMessage } from '@/shared/store/use-message-store';
 import { setTwilioStore, useTwilioConfigurationStore } from '@/shared/store/use-twilio-configuration-store';
 import { RootStackParamList } from '@/shared/types';
@@ -53,11 +53,11 @@ const RootStack = () => {
       result && setTwilioStore(result);
     });
 
-    SMS.isAvailableAsync().then((isAvailable) => {
-      if (!isAvailable && !twilioEnabled) {
+    SMS.isAvailableAsync().then((isSMSAvailable) => {
+      if (!isSMSAvailable && !twilioEnabled) {
         Alert.alert("Slanje standardne SMS poruke nije omogućeno na ovom uređaju.", "Aplikacija trenutno podržava slanje sigurnosnih poruka isključivo putem SMS-a.");
       }
-      else if (!isAvailable) {
+      else if (!isSMSAvailable) {
         Alert.alert("Slanje standardne SMS poruke nije omogućeno na ovom uređaju.", "Slanje sigurnosne poruke će biti moguće isključivo ukoliko uređaj u tom momentu bude imao internet konekciju.");
       }
     });

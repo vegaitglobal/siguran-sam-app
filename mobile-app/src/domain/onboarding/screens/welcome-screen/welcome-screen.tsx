@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 
 import { setIsOnboardingDone, useContentStore } from '@/shared/store';
 
-export interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.WELCOME> {}
+export interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.WELCOME> { }
 
 const WelcomeScreen = () => {
   const { welcomeAnimation } = useContentStore();

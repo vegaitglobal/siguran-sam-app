@@ -7,12 +7,13 @@ import { Colors } from '@/shared/styles';
 import { RootStackParamList } from '@/shared/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import RenderHtml, { HTMLSource } from 'react-native-render-html';
 import contentService from 'src/services/content/content.service';
+import * as Network from 'expo-network';
 
-interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.ONBOARDING_TERMS> {}
+interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.ONBOARDING_TERMS> { }
 
 const OnboardingTermsScreen = ({ navigation }: Props) => {
   const [termsContent, setTerms] = useState<HTMLSource>();
@@ -25,8 +26,24 @@ const OnboardingTermsScreen = ({ navigation }: Props) => {
 
   // TODO think of moving this to root stack
   useEffect(() => {
-    contentService.getTermsAndConditions().then((result) => {
-      result && setTerms({ html: result.content });
+    Network.getNetworkStateAsync().then((state) => {
+      if (!state.isInternetReachable) {
+        Alert.alert('Nema internet konekcije', 'Za inicijalno pokretanje aplikacije je potrebna internet konekcija. Proverite Vašu internet konekciju i pokušajte ponovo.');
+        return;
+      }
+
+      contentService.getTermsAndConditions().then((result) => {
+        if (result) {
+          setTimeout(() => {
+            setTerms({ html: result.content });
+          }, 300);
+        }
+        else {
+          Alert.alert('Greška', 'Došlo je do greške prilikom učitavanja aplikacije. Pokušajte ponovo kasnije.');
+        }
+      }).catch(() => {
+        Alert.alert('Greška', 'Došlo je do greške prilikom učitavanja aplikacije. Pokušajte ponovo kasnije.');
+      });
     });
   }, []);
 
@@ -37,25 +54,27 @@ const OnboardingTermsScreen = ({ navigation }: Props) => {
   return (
     <ScreenTemplate>
       <View style={styles.screenContainer}>
-        <Animated.View entering={FadeIn.delay(500)}>
-          {logo ? (
-            <LoadingImage imageUrl={logo.url} isSVG={logo.isSVG} />
-          ) : (
-            <DefaultLogo style={styles.logo} />
-          )}
-        </Animated.View>
-        <Animated.View entering={FadeIn.delay(500)} style={styles.content}>
-          {termsContent ? (
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <RenderHtml contentWidth={width} source={termsContent} tagsStyles={styles} />
-            </ScrollView>
-          ) : (
-            <LoadingIndicator />
-          )}
-        </Animated.View>
-        <Animated.View entering={FadeIn.delay(500)}>
-          <AppButton onPress={acceptOnPressHandler}>PRIHVATI USLOVE KORIŠĆENJA</AppButton>
-        </Animated.View>
+        {termsContent ? (
+          <Animated.View style={styles.innerContainer} entering={FadeIn.delay(500)}>
+            <View>
+              {logo ? (
+                <LoadingImage imageUrl={logo.url} isSVG={logo.isSVG} />
+              ) : (
+                <DefaultLogo style={styles.logo} />
+              )}
+            </View>
+            <View style={styles.content}>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <RenderHtml contentWidth={width} source={termsContent} tagsStyles={styles} />
+              </ScrollView>
+            </View>
+            <View>
+              <AppButton onPress={acceptOnPressHandler}>PRIHVATI USLOVE KORIŠĆENJA</AppButton>
+            </View>
+          </Animated.View>
+        ) : (
+          <LoadingIndicator />
+        )}
       </View>
     </ScreenTemplate>
   );
@@ -72,6 +91,11 @@ export default OnboardingTermsScreen;
 const styles = StyleSheet.create({
   screenContainer: {
     paddingHorizontal: 20,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  innerContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
