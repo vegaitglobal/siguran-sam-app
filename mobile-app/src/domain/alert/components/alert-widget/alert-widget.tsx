@@ -4,13 +4,14 @@ import { useContactStore } from '@/shared/store/use-contact-store';
 import { getPersonalizedMessage, useMessageStore } from '@/shared/store/use-message-store';
 import { useTwilioConfigurationStore } from '@/shared/store/use-twilio-configuration-store';
 import { DeviceLocation } from '@/shared/types';
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import Moment from 'react-moment';
 import { Alert, Text } from 'react-native';
 import { TwilioConfiguration } from 'src/services/content/content.interfaces';
 import { sendEmergencyMessage, trackEmergency } from '../../services/emergency';
 import CircleButton from '../circle-button';
 import Hint from '../hint';
+import * as SMS from 'expo-sms';
 
 type Props = {
   location: DeviceLocation;
@@ -21,7 +22,7 @@ const MAX_WAIT_MINUTES = 3;
 enum WidgetState {
   SENDING,
   IDLE,
-  DISABLED
+  DISABLED,
 }
 
 const AlertWidget = ({ location }: Props) => {
@@ -44,8 +45,22 @@ const AlertWidget = ({ location }: Props) => {
   }, []);
 
   useEffect(() => {
+    SMS.isAvailableAsync().then((isSMSAvailable) => {
+      if (!isSMSAvailable && !twilioEnabled) {
+        Alert.alert(
+          'Slanje standardne SMS poruke nije omogućeno na ovom uređaju.',
+          'Aplikacija trenutno podržava slanje sigurnosnih poruka isključivo putem SMS-a.'
+        );
+      } else if (!isSMSAvailable) {
+        Alert.alert(
+          'Slanje standardne SMS poruke nije omogućeno na ovom uređaju.',
+          'Slanje sigurnosne poruke će biti moguće isključivo ukoliko uređaj u tom momentu bude imao internet konekciju.'
+        );
+      }
+    });
+
     return clearTimer;
-  }, []);
+  }, [twilioEnabled, clearTimer]);
 
   const startTimer = useCallback(() => {
     setMinutes(MAX_WAIT_MINUTES);
@@ -62,14 +77,13 @@ const AlertWidget = ({ location }: Props) => {
       setWidgetState(WidgetState.IDLE);
       clearTimer();
     }
-  }, [minutes]);
+  }, [minutes, clearTimer]);
 
   const onCancel = useCallback(() => {
     if (widgetState == WidgetState.IDLE) {
       setHint('Držite dugme 2 sekunde');
     }
-
-  }, [minutes, widgetState]);
+  }, [widgetState]);
 
   const onComplete = useCallback(() => {
     setWidgetState(WidgetState.SENDING);
@@ -79,33 +93,35 @@ const AlertWidget = ({ location }: Props) => {
 
     const twilioData: TwilioConfiguration = {
       enabled: twilioEnabled,
-      serverlessFunctionURL
-    }
+      serverlessFunctionURL,
+    };
 
     const locationUrl = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
 
     const message = getPersonalizedMessage(template, fullName, locationUrl);
+    
+    sendEmergencyMessage(message, recipients, twilioData)
+      .then((result) => {
+        if (result != 'cancelled') {
+          setWidgetState(WidgetState.DISABLED);
+          startTimer();
+          setHint('Sigurnosni kontakti su obavešteni');
 
-    sendEmergencyMessage(message, recipients, twilioData).then(result => {
-      if (result != 'cancelled') {
-        setWidgetState(WidgetState.DISABLED);
-        startTimer();
-        setHint('Sigurnosni kontakti su obavešteni');
+          trackEmergency(fullName, location, recipients);
+        } else {
+          setWidgetState(WidgetState.IDLE);
+          setHint('Slanje poruke prekinuto');
+        }
+      })
+      .catch((err) => {
+        Alert.alert(err);
+
+        setWidgetState(WidgetState.IDLE);
+        clearHint();
 
         trackEmergency(fullName, location, recipients);
-      } else {
-        setWidgetState(WidgetState.IDLE);
-        setHint('Slanje poruke prekinuto');
-      }
-    }).catch(err => {
-      Alert.alert(err);
-
-      setWidgetState(WidgetState.IDLE);
-      clearHint();
-
-      trackEmergency(fullName, location, recipients);
-    })
-  }, [contacts, fullName, location, template]);
+      });
+  }, [contacts, fullName, location, serverlessFunctionURL, startTimer, template, twilioEnabled]);
 
   return (
     <Fragment>

@@ -21,12 +21,6 @@ export interface Props
     NativeStackScreenProps<RootStackParamList>
   > {}
 
-const LoadingComponent = () => (
-  <View style={styles.container}>
-    <ActivityIndicator />
-  </View>
-);
-
 const LocationServicesDisabledComponent = () => (
   <View style={styles.container}>
     <LocationServicesNotEnabled />
