@@ -11,7 +11,6 @@ import { ActivityIndicator, Alert, ScrollView, StyleSheet, useWindowDimensions, 
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import RenderHtml, { HTMLSource } from 'react-native-render-html';
 import contentService from 'src/services/content/content.service';
-import * as Network from 'expo-network';
 
 interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.ONBOARDING_TERMS> { }
 
@@ -26,24 +25,17 @@ const OnboardingTermsScreen = ({ navigation }: Props) => {
 
   // TODO think of moving this to root stack
   useEffect(() => {
-    Network.getNetworkStateAsync().then((state) => {
-      if (!state.isInternetReachable) {
-        Alert.alert('Nema internet konekcije', 'Za inicijalno pokretanje aplikacije je potrebna internet konekcija. Proverite Vašu internet konekciju i pokušajte ponovo.');
-        return;
+    contentService.getTermsAndConditions().then((result) => {
+      if (result) {
+        setTimeout(() => {
+          setTerms({ html: result.content });
+        }, 300);
       }
-
-      contentService.getTermsAndConditions().then((result) => {
-        if (result) {
-          setTimeout(() => {
-            setTerms({ html: result.content });
-          }, 300);
-        }
-        else {
-          Alert.alert('Greška', 'Došlo je do greške prilikom učitavanja aplikacije. Pokušajte ponovo kasnije.');
-        }
-      }).catch(() => {
+      else {
         Alert.alert('Greška', 'Došlo je do greške prilikom učitavanja aplikacije. Pokušajte ponovo kasnije.');
-      });
+      }
+    }).catch(() => {
+      Alert.alert('Greška', 'Došlo je do greške prilikom učitavanja aplikacije. Pokušajte ponovo kasnije.');
     });
   }, []);
 
