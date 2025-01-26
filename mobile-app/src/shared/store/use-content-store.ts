@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert, Image } from 'react-native';
+import { Image } from 'react-native';
 import { Logo, StaticContent, WelcomeAnimation } from 'src/services/content/content.interfaces';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -19,7 +19,6 @@ export const setLogo = (logo: Logo) => useContentStore.setState((data) => ({ ...
 
 export const setWelcomeAnimation = (welcomeAnimation: WelcomeAnimation) => {
   Image.prefetch(welcomeAnimation.url).then((loaded) => {
-    Alert.alert(`Loaded: ${loaded}`, JSON.stringify(welcomeAnimation));
     loaded && useContentStore.setState((data) => ({ ...data, welcomeAnimation }));
   });
 };

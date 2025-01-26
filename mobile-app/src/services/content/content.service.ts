@@ -7,7 +7,7 @@ import {
   ContentService,
   EmergencyMessage,
   TermsAndConditions,
-  WelcomeAnimation
+  WelcomeAnimation,
 } from './content.interfaces';
 
 type CategoryEntrySkeleton = {
@@ -87,7 +87,7 @@ type TwilioConfigurationEntrySkeleton = {
 
 const SVGType = 'image/svg+xml';
 
-const prependUrl = (url: string) => url.startsWith('http') ? url : `http:${url}`;
+const prependUrl = (url: string) => (url.startsWith('https') ? url : `https:${url}`);
 
 const parseContentfulLogo = (logo: Contentful.Asset): Logo => {
   const { url, contentType } = logo.fields.file as Contentful.AssetFile;
@@ -214,11 +214,11 @@ class ContentfulContentService implements ContentService {
     if (!data.items.length) return;
 
     // Taking only the first one as it is not supposed to have more than one instance of welcome animation
-    const {duration, file} = data.items[0].fields;
+    const { duration, file } = data.items[0].fields;
 
     return {
       url: prependUrl((file as Contentful.Asset).fields.file?.url as string),
-      duration
+      duration,
     };
   }
 

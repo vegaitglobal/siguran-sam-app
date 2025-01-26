@@ -2,7 +2,7 @@ import { ScreenTemplate } from '@/shared/components';
 import { AppScreen } from '@/shared/constants';
 import { RootStackParamList } from '@/shared/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StyleSheet, View, Image, Alert } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import DefaultLogoWithoutText from '@/shared/assets/images/logo.svg';
 import DefaultLogoOnlyText from '@/shared/assets/images/logo-text.svg';
 import Animated, { FadeIn, FadeInRight } from 'react-native-reanimated';
@@ -12,12 +12,13 @@ import { setIsOnboardingDone, useContentStore } from '@/shared/store';
 
 export interface Props extends NativeStackScreenProps<RootStackParamList, AppScreen.WELCOME> {}
 
+const DEFAULT_TIMEOUT = 2500;
+
 const WelcomeScreen = () => {
   const { welcomeAnimation } = useContentStore();
 
   useEffect(() => {
-    Alert.alert(JSON.stringify(welcomeAnimation));
-    const timeout = setTimeout(setIsOnboardingDone, welcomeAnimation?.duration || 2500);
+    const timeout = setTimeout(setIsOnboardingDone, welcomeAnimation?.duration || DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(timeout);
     };
