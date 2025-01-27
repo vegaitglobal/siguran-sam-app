@@ -98,7 +98,7 @@ const Tutorial = ({ step }: Props) => {
 						style={styles.labelContainer}
 					>
 						<Label type='h1' style={styles.text} color={Colors.WHITE.SECONDARY}>
-							U sekciji <Label type='h1'>Moja poruka</Label> možete izmeniti
+							U sekciji <Label type='h1'>Moja poruka</Label> možete pregledati
 							Vašu sigurnosnu poruku.
 						</Label>
 					</Animated.View>
